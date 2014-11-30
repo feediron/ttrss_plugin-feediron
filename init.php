@@ -1,6 +1,6 @@
 <?php
 
-class Af_Feediron extends Plugin implements IHandler
+class Feediron extends Plugin implements IHandler
 {
 	private $host;
 	private $debug;
@@ -427,7 +427,7 @@ class Af_Feediron extends Plugin implements IHandler
 	function hook_prefs_tabs($args)
 	{
 		print '<div id="feedironConfigTab" dojoType="dijit.layout.ContentPane"
-			href="backend.php?op=af_feediron"
+			href="backend.php?op=feediron"
 			title="' . __('FeedIron') . '"></div>';
 	}
 
@@ -453,7 +453,7 @@ class Af_Feediron extends Plugin implements IHandler
 
 		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"op\" value=\"pluginhandler\">";
 		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"method\" value=\"save\">";
-		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"plugin\" value=\"af_feediron\">";
+		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"plugin\" value=\"feediron\">";
 
 		print "<table width='100%'><tr><td>";
 		print "<textarea dojoType=\"dijit.form.SimpleTextarea\" name=\"json_conf\" style=\"font-size: 12px; width: 99%; height: 500px;\">$json_conf</textarea>";
@@ -480,7 +480,7 @@ class Af_Feediron extends Plugin implements IHandler
 		print "Save before you test!<br />";
 		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"op\" value=\"pluginhandler\">";
 		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"method\" value=\"test\">";
-		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"plugin\" value=\"af_feediron\">";
+		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"plugin\" value=\"feediron\">";
 
 		print "<table width='100%'><tr><td>";
 		print "<input dojoType=\"dijit.form.TextBox\" name=\"test_url\" style=\"font-size: 12px; width: 99%;\" />";
