@@ -176,5 +176,5 @@ or
 ```
 
 ## Special Thanks
-Thanks to (mbirth)[https://github.com/mbirth] who wrote (af_feedmod)[https://github.com/mbirth/ttrss_plugin-af_feedmod) who gave me a starting base.
+Thanks to [mbirth](https://github.com/mbirth) who wrote [af_feedmod](https://github.com/mbirth/ttrss_plugin-af_feedmod) who gave me a starting base.
 
