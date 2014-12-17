@@ -78,7 +78,7 @@ A configuration looks like this:
 "blog.beetlebum.de": {
     "type": "xpath",
     "xpath": "div[@class='entry-content']",
-    "cleanup": [ "header", "footer" ],
+    "cleanup": [ "header", "footer" ]
 },
 "www.spiegel.de": {
     "type": "split",
