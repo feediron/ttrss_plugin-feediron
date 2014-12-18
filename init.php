@@ -5,6 +5,7 @@ class Feediron extends Plugin implements IHandler
 	private $host;
 	private $debug;
 	private $charset;
+	private $json_error;
 
 	// Required API
 	function about()
@@ -444,8 +445,15 @@ class Feediron extends Plugin implements IHandler
 			new Ajax.Request('backend.php', {
 				parameters: dojo.objectToQuery(this.getValues()),
 					onComplete: function(transport) {
-						if (transport.responseText.indexOf('error')>=0) notify_error(transport.responseText);
-						else notify_info(transport.responseText);
+						if (transport.responseJSON.success == false){
+						   	notify_error(transport.responseJSON.errormessage);
+dojo.query('#json_error').attr('innerHTML', transport.responseJSON.json_error).attr('class','error');
+						}
+						else {
+							notify_info(transport.responseJSON.message);
+dojo.query('#json_conf').attr('value',transport.responseJSON.json_conf);
+dojo.query('#json_error').attr('innerHTML', '').attr('class','');
+						}
 	}
 	});
 	}
@@ -456,10 +464,10 @@ class Feediron extends Plugin implements IHandler
 		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"plugin\" value=\"feediron\">";
 
 		print "<table width='100%'><tr><td>";
-		print "<textarea dojoType=\"dijit.form.SimpleTextarea\" name=\"json_conf\" style=\"font-size: 12px; width: 99%; height: 500px;\">$json_conf</textarea>";
+		print "<textarea dojoType=\"dijit.form.SimpleTextarea\" id=\"json_conf\" name=\"json_conf\" style=\"font-size: 12px; width: 99%; height: 500px;\">$json_conf</textarea>";
 		print "</td></tr></table>";
 
-		print "<p><button dojoType=\"dijit.form.Button\" type=\"submit\">".__("Save")."</button>";
+		print "<p><button dojoType=\"dijit.form.Button\" type=\"submit\">".__("Save")."</button><div id=\"json_error\"></div></p>";
 
 		print "</form>";
 		print "<form dojoType=\"dijit.form.Form\">";
@@ -490,20 +498,35 @@ class Feediron extends Plugin implements IHandler
 		print "<div id='test_result'></div>";
 	}
 
+	/*
+	 * Storing the json reformat data
+	 */
 	function save()
 	{
 		$json_conf = $_POST['json_conf'];
 
+		$json_reply = array();
+		$this->indent($json_conf);
+		header('Content-Type: application/json');
 		if (is_null(json_decode($json_conf)))
 		{
-			echo __("error: Invalid JSON!\n").json_last_error_msg();
+			$json_reply['success'] = false;
+			$json_reply['errormessage'] = __('Invalid JSON! ').json_last_error_msg();
+			$json_reply['json_error'] = $this->json_error;
+			echo json_encode($json_reply);
 			return false;
 		}
 
-		$this->host->set($this, 'json_conf', $json_conf);
-		echo __("Configuration saved.");
+		$this->host->set($this, 'json_conf', $this->indent($json_conf));
+		$json_reply['success'] = true;
+		$json_reply['message'] = __('Configuration saved.');
+		$json_reply['json_conf'] = $this->indent($json_conf);
+		echo json_encode($json_reply);
 	}
 
+	/*
+	 *  this function tests the rules using a given url
+	 */
 	function test()
 	{
 	   $test_url = $_POST['test_url'];
@@ -521,6 +544,135 @@ class Feediron extends Plugin implements IHandler
 		  echo $this->getNewContent($test_url, $config);
 	   }
 	}
+	/**
+	 * Indents a flat JSON string to make it more human-readable.
+	 * from http://www.daveperrett.com/articles/2008/03/11/format-json-with-php/
+	 *
+	 * @param string $json The original JSON string to process.
+	 *
+	 * @return string Indented version of the original JSON string.
+	 */
+	function indent($json) {
+
+		$result      = '';
+		$pos         = 0;
+		$strLen      = strlen($json);
+		$indentStr   = '    ';
+		$newLine     = "\n";
+		$prevChar    = '';
+		$outOfQuotes = true;
+		$currentline = 0;
+		$possible_errors = array (
+			',]' => 'Additional comma before ] (%s)',
+			'""' => 'Missing seperator between after " (%s)',
+			',}' => 'Additional comma before } (%s)',
+			',:' => 'Comma before :(%s)',
+			']:' => '] before :(%s)',
+			'}:' => '} before :(%s)',
+			'[:' => '[ before :(%s)',
+			'{:' => '{ before :(%s)',
+		);
+
+		for ($i=0; $i<=$strLen; $i++) {
+
+			// Grab the next character in the string.
+			$char = substr($json, $i, 1);
+			if($char == $newLine){
+				$currentline++;
+				continue;
+			}
+			if($char == ' '){
+				continue;
+			}
+
+			if (array_key_exists($prevChar.$char, $possible_errors)){
+				$this->json_error = sprintf($possible_errors[$prevChar.$char]. ' in line %s', substr($result, $this->strrpos_count($result,$newLine,3)), $currentline);
+			}
+			// Are we inside a quoted string?
+			if ($char == '"' && $prevChar != '\\') {
+				$outOfQuotes = !$outOfQuotes;
+
+				// If this character is the end of an element,
+				// output a new line and indent the next line.
+			} else if(($char == '}' || $char == ']') && $outOfQuotes) {
+				$result .= $newLine;
+				$pos --;
+				for ($j=0; $j<$pos; $j++) {
+					$result .= $indentStr;
+				}
+			}
+
+			// Add the character to the result string.
+			$result .= $char;
+
+			
+			// If the last character was the beginning of an element,
+			// output a new line and indent the next line.
+			if (($char == ',' || $char == '{' || $char == '[') && $outOfQuotes) {
+				$result .= $newLine;
+				if ($char == '{' || $char == '[') {
+					$pos ++;
+				}
+
+				for ($j = 0; $j < $pos; $j++) {
+					$result .= $indentStr;
+				}
+			}
+			else if($char == ':'){
+				$result .= ' ';
+			}
+
+			$prevChar = $char;
+		}
+
+		return $result;
+	}
+	function strrpos_count($haystack, $needle, $count)
+	{
+		if($count <= 0)
+			return false;
+
+		$len = strlen($haystack);
+		$pos = $len;
+
+		for($i = 0; $i < $count && $pos; $i++)
+			$pos = strrpos($haystack, $needle, $pos - $len - 1);
+
+		return $pos;
+	}
+}
+
+
+/*
+	json_last_error_msg requires php >= 5.5.0 see http://php.net/manual/en/function.json-last-error-msg.php
+	a possible fix would be:
+*/
+
+if (!function_exists('json_last_error_msg'))
+{
+    function json_last_error_msg()
+    {
+        switch (json_last_error()) {
+            default:
+                return;
+            case JSON_ERROR_DEPTH:
+                $error = 'Maximum stack depth exceeded';
+            break;
+            case JSON_ERROR_STATE_MISMATCH:
+                $error = 'Underflow or the modes mismatch';
+            break;
+            case JSON_ERROR_CTRL_CHAR:
+                $error = 'Unexpected control character found';
+            break;
+            case JSON_ERROR_SYNTAX:
+                $error = 'Syntax error, malformed JSON';
+            break;
+            case JSON_ERROR_UTF8:
+                $error = 'Malformed UTF-8 characters, possibly incorrectly encoded';
+            break;
+        }
+        return $error;
+    }
 }
 
 
