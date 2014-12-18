@@ -552,6 +552,6 @@ if (!function_exists('json_last_error_msg'))
                 $error = 'Malformed UTF-8 characters, possibly incorrectly encoded';
             break;
         }
-        throw new Exception($error);
+        return $error;
     }
 }
