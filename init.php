@@ -4,8 +4,11 @@ class Feediron extends Plugin implements IHandler
 {
 	private $host;
 	private $debug;
+	private $is_test;
+	private $testlog;
 	private $charset;
 	private $json_error;
+	const plugindata_tag = 'feediron';
 
 	// Required API
 	function about()
@@ -60,32 +63,49 @@ class Feediron extends Plugin implements IHandler
 	{
 		if ($this->debug)
 		{
-		   	trigger_error($msg, E_USER_WARNING);
+			trigger_error($msg, E_USER_WARNING);
+		}
+		if($this->is_test){
+			array_push($this->testlog, "LOG:<pre>$msg</pre>");
+		}
+	}
+	private function _testlog($title, $msg){
+		if($this->is_test){
+			array_push($this->testlog, "<h2>$title</h2>");
+			array_push($this->testlog, "<pre>$msg</pre>");
 		}
 	}
 
+
+	// The hook to filter the article. Called for each article
 	function hook_article_filter($article)
 	{
+		$this->is_test = 0;
 		if (($config = $this->getConfigSection($article['link'])) !== FALSE)
 		{
-			$articleMarker = "feediron:".$article['owner_uid'].",".md5(print_r($config, true)).":";
+			$articleMarker = $this->getMarker($article, $config);
 			if (strpos($article['plugin_data'], $articleMarker) !== false)
 			{
-				// do not process an article more than once
-				if (isset($article['stored']['content']))
-				{
-				   	$article['content'] = $article['stored']['content'];
-				}
 				return $article;
 			}
 
 			$this->_log("Article was not fetched yet: ".$article['link']);
 			$link = $this->reformatUrl($article['link'], $config);
 			$article['content'] = $this->getNewContent($link, $config);
-			$article['plugin_data'] = $articleMarker . $article['plugin_data'];
+			$article['plugin_data'] = $this->addArticleMarker($article, $articleMarker);
 		}
 
 		return $article;
+	}
+	//Creates a marker for the article processed with specific config
+	function getMarker($article, $config){
+		$articleMarker = self::plugindata_tag.":".$article['owner_uid'].",".md5(print_r($config, true)).":";
+		return $articleMarker;
+	}
+
+	// Removes old marker and adds new one
+	function addArticleMarker($article, $marker){
+		return preg_replace('/'.self::plugindata_tag.':'.$article['owner_id'].',.*?:/','',$article['plugin_data']).$marker;
 	}
 
 	function getConfigSection($url)
@@ -94,37 +114,42 @@ class Feediron extends Plugin implements IHandler
 		if(is_array($data)){
 			foreach ($data as $urlpart=>$config) {
 				if (strpos($url, $urlpart) === false){
-				   	continue;   // skip this config if URL not matching
+					continue;   // skip this config if URL not matching
 				}
 				$this->_log("Config found");
+				$this->_testlog("Config", $this->formatjson(json_encode($config)));
 				return $config;
 			}
 		}
+		$this->_log("No config found for ".$url);
 		return FALSE;
 	}
 
+	// Load config
 	function getConfig()
 	{
 		$json_conf = $this->host->get($this, 'json_conf');
 		$data = json_decode($json_conf, true);
 		if(!is_array($data)){
-		   	$this->_log("No Config found");
+			$this->_log("No Config found");
 		}
 		$this->debug = isset($data['debug']) && $data['debug'];
 		return $data;
 	}
 
+	// reformat an url with a given config
 	function reformatUrl($url, $config)
 	{
 		$link = trim($url);
 		if(is_array($config['reformat']))
 		{
 			$link = $this->reformat($link, $config['reformat']);
+			$this->_log("Reformated url: ".$link);
 		}
-		$this->_log("Reformated url: ".$link);
 		return $link;
 	}
 
+	// reformat a string with given options
 	function reformat($string, $options)
 	{
 		foreach($options as $option)
@@ -143,8 +168,25 @@ class Feediron extends Plugin implements IHandler
 		return $string;
 	}
 
+	// grep new content for a link and aplly config
 	function getNewContent($link, $config)
 	{
+		$links = $this->getLinks($link, $config);
+		$this->_log("Fetching ".count($links)." links");
+		$html_complete = "";
+		foreach($links as $lnk)
+		{
+			$html = $this->getArticleContent($lnk, $config);
+			$this->_testlog("Original Source ".$lnk.":", htmlentities($html));
+			$html = $this->processArticle($html, $config);
+			$this->_testlog("Modified Source ".$lnk.":", htmlentities($html));
+			$html_complete .= $html;
+		}
+		return $html_complete;
+
+	}
+	//extract links for multipage articles
+	function getLinks($link, $config){
 		if (isset($config['multipage']))
 		{
 			$links = $this->fetch_links($link, $config);
@@ -153,16 +195,7 @@ class Feediron extends Plugin implements IHandler
 		{
 			$links = array($link);
 		}
-		$this->_log("Fetching ".count($links)." links");
-		$html_complete = "";
-		foreach($links as $lnk)
-		{
-			$html = $this->getArticleContent($lnk, $config);
-			$html = $this->processArticle($html, $config);
-			$html_complete .= $html;
-		}
-		return $html_complete;
-
+		return $links;
 	}
 	function getArticleContent($link, $config)
 	{
@@ -183,6 +216,8 @@ class Feediron extends Plugin implements IHandler
 			$this->charset = $config['force_charset'];
 		}
 
+	
+		$this->_testlog("charset:", $this->charset);
 		if ($this->charset && isset($config['force_unicode']) && $config['force_unicode'])
 		{
 			$html = iconv($this->charset, 'utf-8', $html);
@@ -248,7 +283,7 @@ class Feediron extends Plugin implements IHandler
 
 
 		if ($entries->length < 1){
-		   	return array();
+			return array();
 		}
 		foreach($entries as $entry)
 		{
@@ -446,14 +481,14 @@ class Feediron extends Plugin implements IHandler
 				parameters: dojo.objectToQuery(this.getValues()),
 					onComplete: function(transport) {
 						if (transport.responseJSON.success == false){
-						   	notify_error(transport.responseJSON.errormessage);
-dojo.query('#json_error').attr('innerHTML', transport.responseJSON.json_error).attr('class','error');
-						}
-						else {
-							notify_info(transport.responseJSON.message);
-dojo.query('#json_conf').attr('value',transport.responseJSON.json_conf);
-dojo.query('#json_error').attr('innerHTML', '').attr('class','');
-						}
+							notify_error(transport.responseJSON.errormessage);
+							dojo.query('#json_error').attr('innerHTML', transport.responseJSON.json_error).attr('class','error');
+	}
+else {
+	notify_info(transport.responseJSON.message);
+	dojo.query('#json_conf').attr('value',transport.responseJSON.json_conf);
+	dojo.query('#json_error').attr('innerHTML', '').attr('class','');
+	}
 	}
 	});
 	}
@@ -478,9 +513,13 @@ dojo.query('#json_error').attr('innerHTML', '').attr('class','');
 		new Ajax.Request('backend.php', {
 			parameters: dojo.objectToQuery(this.getValues()),
 				onComplete: function(transport) {
-					if (transport.responseText.indexOf('error')>=0 && transport.responseText.indexOf('error') <= 10) notify_error(transport.responseText);
-					else
-						dojo.query('#test_result').attr('innerHTML', transport.responseText);
+					if (transport.responseJSON.success == false){
+						notify_error(transport.responseJSON.errormessage);
+	}else{
+		dojo.query('#test_url').attr('innerHTML', '<pre>'+transport.responseJSON.url+'</pre>');
+		dojo.query('#test_result').attr('innerHTML', transport.responseJSON.content);
+		dojo.query('#test_log').attr('innerHTML', transport.responseJSON.log.join(\"\\n\"));
+	}
 	}
 	});
 	</script>";
@@ -495,7 +534,11 @@ dojo.query('#json_error').attr('innerHTML', '').attr('class','');
 		print "</td></tr></table>";
 		print "<p><button dojoType=\"dijit.form.Button\" type=\"submit\">".__("Test")."</button>";
 		print "</form>";
-		print "<div id='test_result'></div>";
+		print "<div data-dojo-type='dijit/layout/TabContainer' style='width: 100%;' doLayout='false'>";
+		print "<div data-dojo-type='dijit/layout/ContentPane' title='log' data-dojo-props='selected:true' id='test_log'></div>";
+		print "<div data-dojo-type='dijit/layout/ContentPane' title='result' data-dojo-props='selected:true' id='test_result'></div>";
+		print "<div data-dojo-type='dijit/layout/ContentPane' title='url' data-dojo-props='selected:true' id='test_url'></div>";
+		print "</div>";
 	}
 
 	/*
@@ -506,7 +549,7 @@ dojo.query('#json_error').attr('innerHTML', '').attr('class','');
 		$json_conf = $_POST['json_conf'];
 
 		$json_reply = array();
-		$this->indent($json_conf);
+		$this->formatjson($json_conf);
 		header('Content-Type: application/json');
 		if (is_null(json_decode($json_conf)))
 		{
@@ -517,10 +560,10 @@ dojo.query('#json_error').attr('innerHTML', '').attr('class','');
 			return false;
 		}
 
-		$this->host->set($this, 'json_conf', $this->indent($json_conf));
+		$this->host->set($this, 'json_conf', $this->formatjson($json_conf));
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Configuration saved.');
-		$json_reply['json_conf'] = $this->indent($json_conf);
+		$json_reply['json_conf'] = $this->formatjson($json_conf);
 		echo json_encode($json_reply);
 	}
 
@@ -529,20 +572,30 @@ dojo.query('#json_error').attr('innerHTML', '').attr('class','');
 	 */
 	function test()
 	{
+	   $this->is_test = 1;
+	   $this->testlog = array();
 	   $test_url = $_POST['test_url'];
 	   $this->_log("Test url: $test_url");
 	   $config = $this->getConfigSection($test_url);
 	   $test_url = $this->reformatUrl($test_url, $config);
 	   $this->_log("Url after reformat: $test_url");
+	   header('Content-Type: application/json');
+	   $reply = array();
 	   if($config === FALSE)
 	   {
- 		   echo "error: URL did not match";
+		   $reply['success'] = false;
+		   $reply['errormessage'] = "URL did not match";
+		   echo json_encode($reply);
+		   return false;
 	   }
 	   else
 	   {
-		  echo "<h1>RESULT:</h1>";
-		  echo $this->getNewContent($test_url, $config);
-	   }
+		   $reply['success'] = true;
+		   $reply['url'] = $test_url;
+		   $reply['content'] = $this->getNewContent($test_url, $config);
+		   $reply['log'] = $this->testlog;
+		   echo json_encode($reply);
+		}
 	}
 	/**
 	 * Indents a flat JSON string to make it more human-readable.
@@ -552,7 +605,7 @@ dojo.query('#json_error').attr('innerHTML', '').attr('class','');
 	 *
 	 * @return string Indented version of the original JSON string.
 	 */
-	function indent($json) {
+	function formatjson($json) {
 
 		$result      = '';
 		$pos         = 0;
@@ -605,7 +658,7 @@ dojo.query('#json_error').attr('innerHTML', '').attr('class','');
 			// Add the character to the result string.
 			$result .= $char;
 
-			
+
 			// If the last character was the beginning of an element,
 			// output a new line and indent the next line.
 			if (($char == ',' || $char == '{' || $char == '[') && $outOfQuotes) {
@@ -618,7 +671,7 @@ dojo.query('#json_error').attr('innerHTML', '').attr('class','');
 					$result .= $indentStr;
 				}
 			}
-			else if($char == ':'){
+			else if($char == ':' && $outOfQuotes){
 				$result .= ' ';
 			}
 
@@ -650,60 +703,28 @@ dojo.query('#json_error').attr('innerHTML', '').attr('class','');
 
 if (!function_exists('json_last_error_msg'))
 {
-    function json_last_error_msg()
-    {
-        switch (json_last_error()) {
-            default:
-                return;
-            case JSON_ERROR_DEPTH:
-                $error = 'Maximum stack depth exceeded';
-            break;
-            case JSON_ERROR_STATE_MISMATCH:
-                $error = 'Underflow or the modes mismatch';
-            break;
-            case JSON_ERROR_CTRL_CHAR:
-                $error = 'Unexpected control character found';
-            break;
-            case JSON_ERROR_SYNTAX:
-                $error = 'Syntax error, malformed JSON';
-            break;
-            case JSON_ERROR_UTF8:
-                $error = 'Malformed UTF-8 characters, possibly incorrectly encoded';
-            break;
-        }
-        return $error;
-    }
+	function json_last_error_msg()
+	{
+		switch (json_last_error()) {
+			default:
+				return;
+			case JSON_ERROR_DEPTH:
+				$error = 'Maximum stack depth exceeded';
+			break;
+			case JSON_ERROR_STATE_MISMATCH:
+				$error = 'Underflow or the modes mismatch';
+			break;
+			case JSON_ERROR_CTRL_CHAR:
+				$error = 'Unexpected control character found';
+			break;
+			case JSON_ERROR_SYNTAX:
+				$error = 'Syntax error, malformed JSON';
+			break;
+			case JSON_ERROR_UTF8:
+				$error = 'Malformed UTF-8 characters, possibly incorrectly encoded';
+			break;
+		}
+		return $error;
+	}
 }
 
-
-/*
-	json_last_error_msg requires php >= 5.5.0 see http://php.net/manual/en/function.json-last-error-msg.php
-	a possible fix would be:
-*/
-
-if (!function_exists('json_last_error_msg'))
-{
-    function json_last_error_msg()
-    {
-        switch (json_last_error()) {
-            default:
-                return;
-            case JSON_ERROR_DEPTH:
-                $error = 'Maximum stack depth exceeded';
-            break;
-            case JSON_ERROR_STATE_MISMATCH:
-                $error = 'Underflow or the modes mismatch';
-            break;
-            case JSON_ERROR_CTRL_CHAR:
-                $error = 'Unexpected control character found';
-            break;
-            case JSON_ERROR_SYNTAX:
-                $error = 'Syntax error, malformed JSON';
-            break;
-            case JSON_ERROR_UTF8:
-                $error = 'Malformed UTF-8 characters, possibly incorrectly encoded';
-            break;
-        }
-        return $error;
-    }
-}
