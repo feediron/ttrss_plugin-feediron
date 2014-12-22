@@ -176,8 +176,8 @@ or
 ```
 
 ## Todo
-* Make a recipe base here
-* Add a simple mechanism to add recipes to the configuration
+* ~~Make a recipe base here~~
+* ~~Add a simple mechanism to add recipes to the configuration~~
 * Make test output collapsable
 
 
