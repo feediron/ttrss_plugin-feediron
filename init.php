@@ -504,6 +504,9 @@ class Feediron extends Plugin implements IHandler
 	{
 		$pluginhost = PluginHost::getInstance();
 		$json_conf = $pluginhost->get($this, 'json_conf');
+		include "RecipeManager.php";
+
+		$rm = new RecipeManager();
 
 		print "<form dojoType=\"dijit.form.Form\">";
 
@@ -537,6 +540,28 @@ else {
 
 		print "<p><button dojoType=\"dijit.form.Button\" type=\"submit\">".__("Save")."</button><div id=\"json_error\"></div></p>";
 
+		print "</form>";
+		print "<form dojoType=\"dijit.form.Form\">";
+		print "
+			<script type=\"dojo/method\" event=\"onSubmit\" args=\"evt\">
+				evt.preventDefault();
+				new Ajax.Request('backend.php', {
+					parameters: dojo.objectToQuery(this.getValues()),
+						onComplete: function(transport) {
+							if (transport.responseJSON.success == false){
+								notify_error(transport.responseJSON.errormessage);
+							}else{
+								notify_info(\"Updated\");
+							}
+						}
+					}
+				);
+			</script>";
+		print "<select name=\"addrecipe\">";
+	foreach($rm->getRecipes as $recipe){
+		print "<option>$recipe</option>";
+	}
+		print "</select>";
 		print "</form>";
 		print "<form dojoType=\"dijit.form.Form\">";
 
