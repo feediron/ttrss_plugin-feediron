@@ -153,7 +153,7 @@ class Feediron extends Plugin implements IHandler
 		$this->_log(self::LOG_VERBOSE, "Reformat ", $string);
 		foreach($options as $option)
 		{
-			$this->_log(self::LOG_VERBOSE, "Reformat step with option ", json_encode($option));
+			$this->_log(self::LOG_VERBOSE, "Reformat step with option ", $this->formatjson(json_encode($option)));
 			switch($option['type'])
 			{
 			case 'replace':
@@ -387,7 +387,7 @@ class Feediron extends Plugin implements IHandler
 		$orig_html = $html;
 		foreach($config['steps'] as $step)
 		{
-			$this->_log(self::LOG_VERBOSE, "Perform step: ", json_encode($step));
+			$this->_log(self::LOG_VERBOSE, "Perform step: ", $this->formatjson(json_encode($step)));
 			if(isset($step['after']))
 			{
 				$result = preg_split ($step['after'], $html);
@@ -489,7 +489,7 @@ class Feediron extends Plugin implements IHandler
 				$cconfig = array($cconfig);
 			}
 		}
-		$this->_log(self::LOG_VERBOSE, "Cleanup config", json_encode($cconfig));
+		$this->_log(self::LOG_VERBOSE, "Cleanup config", $this->formatjson(json_encode($cconfig)));
 		return $cconfig;
 	}
 
@@ -598,8 +598,7 @@ else {
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Configuration saved.');
 		$json_reply['json_conf'] = $this->formatjson($json_conf);
-		echo json_encode($json_reply);
-	}
+		echo json_encode($json_reply); }
 
 	/*
 	 *  this function tests the rules using a given url
