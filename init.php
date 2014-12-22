@@ -3,12 +3,14 @@
 class Feediron extends Plugin implements IHandler
 {
 	private $host;
-	private $debug;
-	private $is_test;
+	private $loglevel;
 	private $testlog;
 	private $charset;
 	private $json_error;
 	const plugindata_tag = 'feediron';
+	const LOG_TTRSS = 1;
+	const LOG_TEST = 2;
+	const LOG_VERBOSE = 3;
 
 	// Required API
 	function about()
@@ -59,20 +61,16 @@ class Feediron extends Plugin implements IHandler
 	}
 
 	// Log messages to syslog
-	private function _log($msg)
+	private function _log($level, $msg, $details)
 	{
-		if ($this->debug)
-		{
-			trigger_error($msg, E_USER_WARNING);
-		}
-		if($this->is_test){
-			array_push($this->testlog, "LOG:<pre>$msg</pre>");
-		}
-	}
-	private function _testlog($title, $msg){
-		if($this->is_test){
-			array_push($this->testlog, "<h2>$title</h2>");
-			array_push($this->testlog, "<pre>$msg</pre>");
+		if($level > $this->loglevel)
+			return;
+		if($level == self::LOG_TTRSS){
+				trigger_error($msg, E_USER_WARNING);
+				array_push($this->testlog, "LOG:<pre>$msg</pre>");
+		}else{
+			array_push($this->testlog, "<h2>$msg</h2>");
+			array_push($this->testlog, "<pre>$details</pre>");
 		}
 	}
 
@@ -80,7 +78,7 @@ class Feediron extends Plugin implements IHandler
 	// The hook to filter the article. Called for each article
 	function hook_article_filter($article)
 	{
-		$this->is_test = 0;
+		$this->loglevel = 0;
 		if (($config = $this->getConfigSection($article['link'])) !== FALSE)
 		{
 			$articleMarker = $this->getMarker($article, $config);
@@ -89,7 +87,7 @@ class Feediron extends Plugin implements IHandler
 				return $article;
 			}
 
-			$this->_log("Article was not fetched yet: ".$article['link']);
+			$this->_log(self::LOG_TTRSS, "Article was not fetched yet: ".$article['link']);
 			$link = $this->reformatUrl($article['link'], $config);
 			$article['content'] = $this->getNewContent($link, $config);
 			$article['plugin_data'] = $this->addArticleMarker($article, $articleMarker);
@@ -116,12 +114,10 @@ class Feediron extends Plugin implements IHandler
 				if (strpos($url, $urlpart) === false){
 					continue;   // skip this config if URL not matching
 				}
-				$this->_log("Config found");
-				$this->_testlog("Config", $this->formatjson(json_encode($config)));
+				$this->_log(self::LOG_TEST, "Config found", $this->formatjson(json_encode($config)));
 				return $config;
 			}
 		}
-		$this->_log("No config found for ".$url);
 		return FALSE;
 	}
 
@@ -130,10 +126,12 @@ class Feediron extends Plugin implements IHandler
 	{
 		$json_conf = $this->host->get($this, 'json_conf');
 		$data = json_decode($json_conf, true);
-		if(!is_array($data)){
-			$this->_log("No Config found");
+		if($this->loglevel == 0){
+			$this->loglevel = (isset($data['debug']) && $data['debug'])||!is_array($data);
 		}
-		$this->debug = isset($data['debug']) && $data['debug'];
+		if(!is_array($data)){
+			$this->_log(self::LOG_TTRSS, "No Config found");
+		}
 		return $data;
 	}
 
@@ -144,7 +142,7 @@ class Feediron extends Plugin implements IHandler
 		if(is_array($config['reformat']))
 		{
 			$link = $this->reformat($link, $config['reformat']);
-			$this->_log("Reformated url: ".$link);
+			$this->_log(self::LOG_TTRSS, "Reformated url: ".$link);
 		}
 		return $link;
 	}
@@ -152,8 +150,10 @@ class Feediron extends Plugin implements IHandler
 	// reformat a string with given options
 	function reformat($string, $options)
 	{
+		$this->_log(self::LOG_VERBOSE, "Reformat ", $string);
 		foreach($options as $option)
 		{
+			$this->_log(self::LOG_VERBOSE, "Reformat step with option ", json_encode($option));
 			switch($option['type'])
 			{
 			case 'replace':
@@ -164,7 +164,9 @@ class Feediron extends Plugin implements IHandler
 				$string = preg_replace($option['pattern'], $option['replace'], $string);
 				break;
 			}
+			$this->_log(self::LOG_VERBOSE, "Step result ", $string);
 		}
+		$this->_log(self::LOG_VERBOSE, "Result ", $string);
 		return $string;
 	}
 
@@ -172,14 +174,15 @@ class Feediron extends Plugin implements IHandler
 	function getNewContent($link, $config)
 	{
 		$links = $this->getLinks($link, $config);
-		$this->_log("Fetching ".count($links)." links");
+		$this->_log(self::LOG_TTRSS, "Fetching ".count($links)." links");
+		$this->_log(self::LOG_TEST, "Fetching ".count($links)." links", join("\n", $links));
 		$html_complete = "";
 		foreach($links as $lnk)
 		{
 			$html = $this->getArticleContent($lnk, $config);
-			$this->_testlog("Original Source ".$lnk.":", htmlentities($html));
+			$this->_log(self::LOG_TEST, "Original Source ".$lnk.":", htmlentities($html));
 			$html = $this->processArticle($html, $config);
-			$this->_testlog("Modified Source ".$lnk.":", htmlentities($html));
+			$this->_log(self::LOG_TEST, "Modified Source ".$lnk.":", htmlentities($html));
 			$html_complete .= $html;
 		}
 		return $html_complete;
@@ -216,19 +219,19 @@ class Feediron extends Plugin implements IHandler
 			$this->charset = $config['force_charset'];
 		}
 
-	
-		$this->_testlog("charset:", $this->charset);
+		$this->_log(self::LOG_TEST, "charset:", $this->charset);
 		if ($this->charset && isset($config['force_unicode']) && $config['force_unicode'])
 		{
 			$html = iconv($this->charset, 'utf-8', $html);
 			$this->charset = 'utf-8';
+			$this->_log(self::LOG_VERBOSE, "Changed charset to utf-8:", htmlentities($html));
 		}
 		return $html;
 	}
 	function get_content($link)
 	{
 		global $fetch_last_content_type;
-		$this->_log($link);
+		$this->_log(self::LOG_TTRSS, $link);
 		if (version_compare(VERSION, '1.7.9', '>='))
 		{
 			$html = fetch_file_contents($link);
@@ -264,7 +267,7 @@ class Feediron extends Plugin implements IHandler
 		$links = $this->fixlinks($link, $links);
 		foreach ($links as $lnk)
 		{
-			$this->_log("link:".$lnk);
+			$this->_log(self::LOG_TEST, "link:".$lnk);
 		}
 		if(isset($config['multipage']['append']) && $config['multipage']['append'])
 		{
@@ -285,12 +288,22 @@ class Feediron extends Plugin implements IHandler
 		if ($entries->length < 1){
 			return array();
 		}
+		if($this->loglevel == self::LOG_VERBOSE){
+			$log_entries = array_map( array($this, 'getHtmlNode') , $entries);
+			$this->_log(self::LOG_VERBOSE, "Found ".count($entries)." link elements:", htmlentities(join("\n", $log_entries)));
+		}
 		foreach($entries as $entry)
 		{
 			$links[] = $entry->getAttribute('href');
 		}
 		return $links;
 	}
+	function getHtmlNode($node){ 
+		$newdoc = new DOMDocument();
+		$cloned = $node->cloneNode(TRUE);
+		$newdoc->appendChild($newdoc->importNode($cloned,TRUE));
+		return $newdoc->saveHTML();
+   	}
 	function getDOM($html){
 		$doc = new DOMDocument();
 		if ($this->charset) {
@@ -300,12 +313,12 @@ class Feediron extends Plugin implements IHandler
 		$doc->loadHTML($html);
 		if(!$doc)
 		{
-			$this->_log("The content is not a valid xml format");
+			$this->_log(self::LOG_TTRSS, "The content is not a valid xml format");
 			if($this->debug)
 			{
 				foreach (libxml_get_errors() as $value)
 				{
-					$this->_log($value);
+					$this->_log(self::LOG_TTRSS, $value);
 				}
 			}
 			return new DOMDocument();
@@ -329,6 +342,7 @@ class Feediron extends Plugin implements IHandler
 		if ($rel[0]=='#' || $rel[0]=='?') {
 			return $base.$rel;
 		}
+		$this->_log(self::LOG_VERBOSE, "Transform url for base ".$base, $rel);
 		extract(parse_url($base));
 		$path = preg_replace('#/[^/]*$#', '', $path);
 		if ($rel[0] == '/') {
@@ -342,6 +356,7 @@ class Feediron extends Plugin implements IHandler
 		$re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
 		for($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
 
+		$this->_log(self::LOG_VERBOSE, "Transform result ", $scheme.'://'.$abs);
 		/* absolute URL is ready! */
 		return $scheme.'://'.$abs;
 	}
@@ -358,7 +373,7 @@ class Feediron extends Plugin implements IHandler
 			break;
 
 		default:
-			$this->_log("Unrecognized option: ".$config['type']);
+			$this->_log(self::LOG_TTRSS, "Unrecognized option: ".$config['type']);
 			continue;
 		}
 		if(is_array($config['modify']))
@@ -372,6 +387,7 @@ class Feediron extends Plugin implements IHandler
 		$orig_html = $html;
 		foreach($config['steps'] as $step)
 		{
+			$this->_log(self::LOG_VERBOSE, "Perform step: ", json_encode($step));
 			if(isset($step['after']))
 			{
 				$result = preg_split ($step['after'], $html);
@@ -382,16 +398,20 @@ class Feediron extends Plugin implements IHandler
 				$result = preg_split ($step['before'], $html);
 				$html = $result[0];
 			}
+			$this->_log(self::LOG_VERBOSE, "Step result", htmlentities($html));
 		}
 		if(strlen($html) == 0)
 		{
+			$this->_log(self::LOG_VERBOSE, "removed all content, reverting");
 			return $orig_html;
 		}
 		if(isset($config['cleanup']))
 		{
 			foreach($config['cleanup'] as $cleanup)
 			{
+				$this->_log(self::LOG_VERBOSE, "Cleaning up", $cleanup);
 				$html = preg_replace($cleanup, '', $html);
+				$this->_log(self::LOG_VERBOSE, "cleanup  result", htmlentities($html));
 			}
 		}
 		return $html;
@@ -409,21 +429,32 @@ class Feediron extends Plugin implements IHandler
 		}
 
 		if (!$basenode) {
+			$this->_log(self::LOG_VERBOSE, "removed all content, reverting");
 			return $html;
 		}
 
+		$this->_log(self::LOG_VERBOSE, "Extracted node", htmlentities($this->getHtmlNode($basenode)));
 		// remove nodes from cleanup configuration
 		$basenode = $this->cleanupNode($xpath, $basenode, $config);
-		$html = $doc->saveXML($basenode);
+		$html = $this->getInnerHtml($basenode);
 		return $html;
 	}
+	function getInnerHtml( $node ) {
+		$innerHTML= '';
+		$children = $node->childNodes;
+		foreach ($children as $child) {
+			$innerHTML .= $child->ownerDocument->saveXML( $child );
+		}
 
+		return $innerHTML;
+	} 
 	function cleanupNode($xpath, $basenode, $config)
 	{
 		if(($cconfig = $this->getCleanupConfig($config))!== FALSE)
 		{
 			foreach ($cconfig as $cleanup)
 			{
+				$this->_log(self::LOG_VERBOSE, "cleanup", $cleanup);
 				if(strpos($cleanup, "./") !== 0)
 				{
 					$cleanup = '//'.$cleanup;
@@ -440,6 +471,7 @@ class Feediron extends Plugin implements IHandler
 						$node->parentNode->removeChild($node);
 					}
 				}
+				$this->_log(self::LOG_VERBOSE, "Node after cleanup", htmlentities($this->getHtmlNode($basenode)));
 			}
 		}
 		return $basenode;
@@ -457,6 +489,7 @@ class Feediron extends Plugin implements IHandler
 				$cconfig = array($cconfig);
 			}
 		}
+		$this->_log(self::LOG_VERBOSE, "Cleanup config", json_encode($cconfig));
 		return $cconfig;
 	}
 
@@ -516,6 +549,7 @@ else {
 					if (transport.responseJSON.success == false){
 						notify_error(transport.responseJSON.errormessage);
 	}else{
+	    notify_info(\"Updated\");
 		dojo.query('#test_url').attr('innerHTML', '<pre>'+transport.responseJSON.url+'</pre>');
 		dojo.query('#test_result').attr('innerHTML', transport.responseJSON.content);
 		dojo.query('#test_log').attr('innerHTML', transport.responseJSON.log.join(\"\\n\"));
@@ -532,7 +566,7 @@ else {
 		print "<table width='100%'><tr><td>";
 		print "<input dojoType=\"dijit.form.TextBox\" name=\"test_url\" style=\"font-size: 12px; width: 99%;\" />";
 		print "</td></tr></table>";
-		print "<p><button dojoType=\"dijit.form.Button\" type=\"submit\">".__("Test")."</button>";
+		print "<p><button dojoType=\"dijit.form.Button\" type=\"submit\">".__("Test")."</button> <input id=\"verbose\" dojoType=\"dijit.form.CheckBox\" name=\"verbose\" /><label for=\"verbose\">Show every step</label> </p>";
 		print "</form>";
 		print "<div data-dojo-type='dijit/layout/TabContainer' style='width: 100%;' doLayout='false'>";
 		print "<div data-dojo-type='dijit/layout/ContentPane' title='log' data-dojo-props='selected:true' id='test_log'></div>";
@@ -572,13 +606,13 @@ else {
 	 */
 	function test()
 	{
-	   $this->is_test = 1;
+	   $this->loglevel = $_POST['verbose']?self::LOG_VERBOSE:self::LOG_TEST;
 	   $this->testlog = array();
 	   $test_url = $_POST['test_url'];
-	   $this->_log("Test url: $test_url");
+	   $this->_log(self::LOG_TTRSS, "Test url: $test_url");
 	   $config = $this->getConfigSection($test_url);
 	   $test_url = $this->reformatUrl($test_url, $config);
-	   $this->_log("Url after reformat: $test_url");
+	   $this->_log(self::LOG_TTRSS, "Url after reformat: $test_url");
 	   header('Content-Type: application/json');
 	   $reply = array();
 	   if($config === FALSE)
