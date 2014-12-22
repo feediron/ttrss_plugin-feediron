@@ -1,10 +1,11 @@
 <?php
 
+include "RecipeManager.php";
 class Feediron extends Plugin implements IHandler
 {
 	private $host;
 	private $loglevel;
-	private $testlog;
+	private $testlog = array();
 	private $charset;
 	private $json_error;
 	const plugindata_tag = 'feediron';
@@ -61,7 +62,7 @@ class Feediron extends Plugin implements IHandler
 	}
 
 	// Log messages to syslog
-	private function _log($level, $msg, $details)
+	private function _log($level, $msg, $details="")
 	{
 		if($level > $this->loglevel)
 			return;
@@ -504,9 +505,9 @@ class Feediron extends Plugin implements IHandler
 	{
 		$pluginhost = PluginHost::getInstance();
 		$json_conf = $pluginhost->get($this, 'json_conf');
-		include "RecipeManager.php";
 
 		$rm = new RecipeManager();
+		$rm->loadAvailableRecipes();
 
 		print "<form dojoType=\"dijit.form.Form\">";
 
@@ -542,27 +543,35 @@ else {
 
 		print "</form>";
 		print "<form dojoType=\"dijit.form.Form\">";
+		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"op\" value=\"pluginhandler\">";
+		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"method\" value=\"add\">";
+		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"plugin\" value=\"feediron\">";
 		print "
 			<script type=\"dojo/method\" event=\"onSubmit\" args=\"evt\">
 				evt.preventDefault();
 				new Ajax.Request('backend.php', {
 					parameters: dojo.objectToQuery(this.getValues()),
 						onComplete: function(transport) {
+							console.log(transport);
 							if (transport.responseJSON.success == false){
 								notify_error(transport.responseJSON.errormessage);
 							}else{
-								notify_info(\"Updated\");
+								notify_info(transport.responseJSON.message);
+								dojo.query('#json_conf').attr('value',transport.responseJSON.json_conf);
 							}
 						}
 					}
 				);
 			</script>";
-		print "<select name=\"addrecipe\">";
-	foreach($rm->getRecipes as $recipe){
-		print "<option>$recipe</option>";
-	}
-		print "</select>";
-		print "</form>";
+		print "<label for=\"addrecipe\">".__("Add recipe").": </label>";
+		print "<select dojoType=\"dijit.form.Select\" name=\"addrecipe\">";
+		foreach($rm->getRecipes() as $recipe){
+			print "<option value=\"$recipe\">$recipe</option>";
+		}
+		print "</select>&nbsp;";
+		print __("Save after adding config!")."<br />";
+		print "<button dojoType=\"dijit.form.Button\" type=\"submit\">".__("Add")."</button>";
+		print "</form><p />";
 		print "<form dojoType=\"dijit.form.Form\">";
 
 		print "<script type=\"dojo/method\" event=\"onSubmit\" args=\"evt\">
@@ -583,7 +592,7 @@ else {
 	});
 	</script>";
 
-		print "Save before you test!<br />";
+		print __("Save before you test!")."<br />";
 		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"op\" value=\"pluginhandler\">";
 		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"method\" value=\"test\">";
 		print "<input dojoType=\"dijit.form.TextBox\" style=\"display : none\" name=\"plugin\" value=\"feediron\">";
@@ -591,7 +600,7 @@ else {
 		print "<table width='100%'><tr><td>";
 		print "<input dojoType=\"dijit.form.TextBox\" name=\"test_url\" style=\"font-size: 12px; width: 99%;\" />";
 		print "</td></tr></table>";
-		print "<p><button dojoType=\"dijit.form.Button\" type=\"submit\">".__("Test")."</button> <input id=\"verbose\" dojoType=\"dijit.form.CheckBox\" name=\"verbose\" /><label for=\"verbose\">Show every step</label> </p>";
+		print "<p><button dojoType=\"dijit.form.Button\" type=\"submit\">".__("Test")."</button> <input id=\"verbose\" dojoType=\"dijit.form.CheckBox\" name=\"verbose\" /><label for=\"verbose\">".__("Show every step")."</label> </p>";
 		print "</form>";
 		print "<div data-dojo-type='dijit/layout/TabContainer' style='width: 100%;' doLayout='false'>";
 		print "<div data-dojo-type='dijit/layout/ContentPane' title='log' data-dojo-props='selected:true' id='test_log'></div>";
@@ -623,7 +632,30 @@ else {
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Configuration saved.');
 		$json_reply['json_conf'] = $this->formatjson($json_conf);
-		echo json_encode($json_reply); }
+		echo json_encode($json_reply); 
+	}
+
+	function add(){
+		$conf = $this->getConfig();
+		$recipe2add = $_POST['addrecipe'];
+		$this->_log(self::LOG_TTRSS, "recipe: ".$recipe2add);
+		$rm = new RecipeManager();
+		$recipe = $rm->getRecipe($recipe2add);
+		header('Content-Type: application/json');
+		if(!isset ($recipe['matchurl'])){
+			$json_reply['success'] = true;
+			$json_reply['errormessage'] = __('Github API message: ').$recipe['message'];
+			echo json_encode($json_reply); 
+		}
+		$conf[$recipe['matchurl']] = $recipe['conf'];
+		$this->_log(self::LOG_TTRSS, json_encode($conf['heise.de']));
+		$this->_log(self::LOG_TTRSS, json_encode($recipe));
+		
+		$json_reply['success'] = true;
+		$json_reply['message'] = __('Configuration updated.');
+		$json_reply['json_conf'] = $this->formatjson(json_encode($conf));
+		echo json_encode($json_reply); 
+	}
 
 	/*
 	 *  this function tests the rules using a given url
