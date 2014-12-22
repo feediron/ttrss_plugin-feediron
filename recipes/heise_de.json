@@ -1,0 +1,17 @@
+{
+	"name": "heise.de Ticker",
+	"url": "http://heise.de/newsticker/",
+	"matchurl": "heise.de",
+	"conf":{
+		"type": "xpath",
+		"xpath": "article",
+		"cleanup": [
+			"p[contains(@class,'news_datum')]",
+			"div[contains(@class,'readspeakerr')]",
+			"h1[contains(@class,'clear')]",
+			"noscript",
+			"comment()",
+			"script"
+		]
+	}
+}
