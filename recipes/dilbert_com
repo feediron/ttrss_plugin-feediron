@@ -1,0 +1,16 @@
+{
+	"name": "Dilbert Comic feed",
+	"url": "http://dilbert.com/",
+	"matchurl": "feed.dilbert.com",
+	"conf" {
+		"type": "xpath",
+		"xpath": "div[contains(@class,'STR_Image')]",
+		"modify": [
+			{
+				"type": "regex",
+				"pattern": "\/src=\"\\\/dyn\\\/str_strip\/",
+				"replace": "src=\"http:\/\/dilbert.com\/dyn\/str_strip"
+			}
+		]
+	}
+}

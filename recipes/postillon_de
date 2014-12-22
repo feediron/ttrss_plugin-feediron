@@ -1,0 +1,16 @@
+{
+	"name": "Der Postillon",
+	"url": "http://www.der-postillon.com",
+	"matchurl": "feedproxy.google.com\/~r\/blogspot\/rkEL\/~3",
+	"conf": {
+		"type": "split",
+		"xpath": "div[contains(@class,'entry-content')]",
+		"steps": [
+			{
+				"after": "\/itemprop='articleBody'>\/",
+				"before": "\/<divstyle='clear:both;'><\/"
+			}
+		],
+		"force_unicode": true
+	}
+}

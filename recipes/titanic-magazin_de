@@ -1,0 +1,19 @@
+{
+	"name": "Titanic - Das satire Magazin",
+	"url": "http://www.titanic-magazin.de",
+	"matchurl":    "titanic-magazin.de",
+	"conf": {
+		"type": "xpath",
+		"xpath": "div[contains(@class,'tt_news-bodytext')]",
+		"cleanup": [
+			"script",
+			"form",
+			"hr",
+			"a",
+			"ins",
+			"p[contains(@style,'7pt')]",
+			"table[contains(@class,'tt_news-prevnextarticlelinks')]",
+			"div"
+		]
+	}
+}
