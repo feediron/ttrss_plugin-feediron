@@ -178,6 +178,8 @@ or
 ## Todo
 * ~~Make a recipe base here~~
 * ~~Add a simple mechanism to add recipes to the configuration~~
+* spend some time on a nicer interface design
+* split init.php in multiple classes
 * Make test output collapsable
 
 
