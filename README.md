@@ -23,6 +23,8 @@ Configuration
 The configuration is done in JSON format. In the preferences, you'll find a new tab called *FeedIron*. Use the large field to enter/modify the configuration data and click the **Save** button to store it.
 You can enter an URL in the field below and click **Test** to get a preview what the result will be if the filter is applied to the url. *Note:* Save before you test :).
 
+You can also select from available predefined configurations. Just select one, click **Add** and save the configuration.
+
 A configuration looks like this:
 
 ```json
@@ -118,10 +120,12 @@ This option indicates that the article is split into two or more pages (eventual
 You have to specify a ```xpath``` which identifies the links (&lt;a&gt;) to the pages. If ```append``` is false, only the links are used and the original link is ignored else the links found using the xpath expression are added to the original page link.
 
 ### General options
-**debug** You can activate debugging informations.  (At the moment there are not that much debug informations to be activated)
-**force_charset** allows to override automatic charset detection. If it is omitted, the charset will be parsed from the HTTP headers or loadHTML() will decide on its own.  
-**reformat** is an array of formating rules for the **url** of the full article. The rules are applied before the full article is fetched. There are two possible types: **regex** and **replace**. **regex** takes a regex in an option called **pattern** and the replacement in **replace**. For details see [preg_replace](http://www.php.net/manual/de/function.preg-replace.php) in the PHP documentation. **replace** uses the PHP function str_replace, which takes either a string or an array as search and replace value.  
-**modify** is the same as described above but for the content. It is applied after the split/xpath selection.
+* **debug** You can activate debugging informations.  (At the moment there are not that much debug informations to be activated)
+* **force_charset** allows to override automatic charset detection. If it is omitted, the charset will be parsed from the HTTP headers or loadHTML() will decide on its own.  
+* **reformat** is an array of formating rules for the **url** of the full article. The rules are applied before the full article is fetched. There are two possible types: **regex** and **replace**. 
+  * **regex** takes a regex in an option called **pattern** and the replacement in **replace**. For details see [preg_replace](http://www.php.net/manual/de/function.preg-replace.php) in the PHP documentation. 
+  * **replace** uses the PHP function str_replace, which takes either a string or an array as search and replace value.  
+* **modify** is the same as described above but for the content. It is applied after the split/xpath selection.
 
 If you get an error about "Invalid JSON!", you can use [JSONLint](http://jsonlint.com/) to locate the erroneous part.
 
