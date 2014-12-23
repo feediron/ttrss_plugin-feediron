@@ -12,7 +12,6 @@ class Feediron extends Plugin implements IHandler
 	private $host;
 	private $charset;
 	private $json_error;
-	const plugindata_tag = 'feediron';
 
 	// Required API
 	function about()
@@ -68,29 +67,32 @@ class Feediron extends Plugin implements IHandler
 		Feediron_Logger::get()->set_log_level(0);
 		if (($config = $this->getConfigSection($article['link'])) !== FALSE)
 		{
-			$articleMarker = $this->getMarker($article, $config);
-			if (strpos($article['plugin_data'], $articleMarker) !== false)
-			{
-				return $article;
-			}
+			if (version_compare(VERSION, '1.14.0', '<=')){
+				if (strpos($article['plugin_data'], $articleMarker) !== false)
+				{
+					return $article;
+				}
 
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Article was not fetched yet: ".$article['link']);
+				Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Article was not fetched yet: ".$article['link']);
+				$article['plugin_data'] = $this->addArticleMarker($article, $articleMarker);
+			}
 			$link = $this->reformatUrl($article['link'], $config);
 			$article['content'] = $this->getNewContent($link, $config);
-			$article['plugin_data'] = $this->addArticleMarker($article, $articleMarker);
+			
 		}
 
 		return $article;
 	}
 	//Creates a marker for the article processed with specific config
 	function getMarker($article, $config){
-		$articleMarker = self::plugindata_tag.":".$article['owner_uid'].",".md5(print_r($config, true)).":";
+		$articleMarker = mb_strtolower(get_class($this));
+		$articleMarker .= ",".$article['owner_uid'].",".md5(print_r($config, true)).":";
 		return $articleMarker;
 	}
 
 	// Removes old marker and adds new one
 	function addArticleMarker($article, $marker){
-		return preg_replace('/'.self::plugindata_tag.':'.$article['owner_id'].',.*?:/','',$article['plugin_data']).$marker;
+		return $marker.preg_replace('/'.self::plugindata_tag.','.$article['owner_id'].',.*?:/','',$article['plugin_data']);
 	}
 
 	function getConfigSection($url)
