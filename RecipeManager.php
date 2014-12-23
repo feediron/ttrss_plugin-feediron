@@ -25,12 +25,16 @@ class RecipeManager{
 	}
 
 	public function getRecipe($recipename){
-		$content = fetch_file_contents (self::recipes_location.'/'.$recipename.self::recipes_branch);
+		$url = self::recipes_location.'/'.$recipename.self::recipes_branch;
+		$content = fetch_file_contents ($url);
+		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Recipe url: $url");
 		$filedata = json_decode($content, true);
 		
+		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Recipe content: $content");
 		if(isset ($filedata['message'])){
 			return $filedata;
 		}
-		return json_decode(base64_decode($filedata['content']),true);
+		$obj =  json_decode(base64_decode($filedata['content']),true);
+		return $obj;
 	}
 }
