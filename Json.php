@@ -11,16 +11,16 @@ class Feediron_Json{
 		$prevChar    = '';
 		$outOfQuotes = true;
 		$currentline = 0;
-	$possible_errors = array (
-		',]' => 'Additional comma before ] (%s)',
-		'""' => 'Missing seperator between after " (%s)',
-		',}' => 'Additional comma before } (%s)',
-		',:' => 'Comma before :(%s)',
-		']:' => '] before :(%s)',
-		'}:' => '} before :(%s)',
-		'[:' => '[ before :(%s)',
-		'{:' => '{ before :(%s)',
-	);
+		$possible_errors = array (
+			',]' => 'Additional comma before ] (%s)',
+			'""' => 'Missing seperator between after " (%s)',
+			',}' => 'Additional comma before } (%s)',
+			',:' => 'Comma before :(%s)',
+			']:' => '] before :(%s)',
+			'}:' => '} before :(%s)',
+			'[:' => '[ before :(%s)',
+			'{:' => '{ before :(%s)',
+		);
 
 		for ($i=0; $i<=$strLen; $i++) {
 

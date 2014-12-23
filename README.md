@@ -31,6 +31,8 @@ A configuration looks like this:
 {
 
 "heise.de": {
+	"name": "Heise Newsticker",
+	"url": "http://heise.de/ticker/",
     "type": "xpath",
     "xpath": "div[@class='meldung_wrapper']",
     "force_charset": "utf-8"
@@ -182,7 +184,8 @@ or
 ## Todo
 * ~~Make a recipe base here~~
 * ~~Add a simple mechanism to add recipes to the configuration~~
-* spend some time on a nicer interface design
+* ~~Add a simple mechanism to export recipes~~
+* ~~spend some time on a nicer interface design~~
 * split init.php in multiple classes
 * Make test output collapsable
 

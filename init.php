@@ -519,6 +519,28 @@ class Feediron extends Plugin implements IHandler
 		echo json_encode($json_reply); 
 	}
 
+	function export(){
+		$conf = $this->getConfig();
+		$recipe2export = $_POST['recipe'];
+		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "export recipe: ".$recipe2export);
+		header('Content-Type: application/json');
+		if(!isset ($conf[$recipe2export])){
+			$json_reply['success'] = false;
+			$json_reply['errormessage'] = __('Not found');
+			echo json_encode($json_reply); 
+			return false;
+		}
+		$json_reply['success'] = true;
+		$json_reply['message'] = __('Exported');
+		$data = array(
+			"name"=> (isset($conf[$recipe2export]['name'])?$conf[$recipe2export]['name']:$recipe2export), 
+			"url" => (isset($conf[$recipe2export]['url'])?$conf[$recipe2export]['url']:$recipe2export),
+			"matchurl" => $recipe2export,
+			"conf" => $conf[$recipe2export]
+		);
+		$json_reply['json_export'] = Feediron_Json::format(json_encode($data));
+		echo json_encode($json_reply); 
+	}
 	function add(){
 		$conf = $this->getConfig();
 		$recipe2add = $_POST['addrecipe'];

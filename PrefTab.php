@@ -6,16 +6,20 @@ class Feediron_PrefTab{
 		$rm = new RecipeManager();
 		$rm->loadAvailableRecipes();
 
-		$tab .= '<div data-dojo-type="dijit/layout/TabContainer" style="width: 100%;" doLayout="false">';
+		$tab .= '<div data-dojo-type="dijit/layout/TabContainer" style="width: 100%; height:100%">';
+		/* Config tab */
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="Configuration" data-dojo-props="selected:true" id="config">';
-		print self::get_form_start('save');
-		print self::get_script(' notify_info(transport.responseJSON.message); dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf); dojo.query("#json_error").attr("innerHTML", "").attr("class",""); ','dojo.query("#json_error").attr("innerHTML", transport.responseJSON.json_error).attr("class","error");');
+		$tab .= '<h3>Configuration</h3>';
+		$tab .= self::get_form_start('save');
+		$tab .= self::get_script(' notify_info(transport.responseJSON.message); dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf); dojo.query("#json_error").attr("innerHTML", "").attr("class",""); ','dojo.query("#json_error").attr("innerHTML", transport.responseJSON.json_error).attr("class","error");');
 
 		$tab .= '<textarea dojoType="dijit.form.SimpleTextarea" id="json_conf" name="json_conf" style="font-size: 12px; width: 99%; height: 400px;">'.$json_conf.'</textarea>';
 
 		$tab .= '<p /><button dojoType="dijit.form.Button" type="submit">'.__("Save").'</button>';
-
 		$tab .= '</form>';
+
+		
+		$tab .= '<h3>Add predefined rules</h3>';
 		$tab .= self::get_form_start('add');
 		$tab .= self::get_script('notify_info(transport.responseJSON.message); dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf); ');
 
@@ -26,9 +30,28 @@ class Feediron_PrefTab{
 		}
 		$tab .= '</select>&nbsp;';
 		$tab .= '<button dojoType="dijit.form.Button" type="submit">'.__("Add").'</button>';
-		$tab .= '</form><p /><div id="json_error"></div>';
+		$tab .= '</form><p /><div id="json_error"></div><br />';
 		$tab .= __("Save after adding config!").'<br />';
+
+		$tab .= '<h3>Export rules</h3>';
+		$tab .= self::get_form_start('export');
+		$tab .= self::get_script('notify_info(transport.responseJSON.message); console.log(transport); dojo.query("#json_export").attr("innerHTML",transport.responseJSON.json_export);
+		dojo.query("#json_export_wrapper").attr("class","notice"); ');
+
+		$tab .= '<label for="recipe">'.__("Export").': </label>';
+		$tab .= '<select dojoType="dijit.form.Select" name="recipe">';
+		foreach(json_decode($json_conf,true) as $key => $config){
+			if($key != 'debug'){
+				$tab .= '<option value="'.$key.'">'.(isset($config['name'])?$config['name']:$key).'</option>';
+			}
+		}
+		$tab .= '</select>&nbsp;';
+		$tab .= '<button dojoType="dijit.form.Button" type="submit">'.__("Export").'</button>';
+		$tab .= '</form><p />';
+		$tab .= '<div id="json_export_wrapper"><pre id="json_export"></pre></div>';
 		$tab .= '</div>';
+
+		/* Testing tab */
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="Testing" data-dojo-props="selected:true" id="testing">';
 		$tab .= self::get_form_start('test');
 
@@ -41,7 +64,7 @@ class Feediron_PrefTab{
 		$tab .= '</td></tr></table>';
 		$tab .= '<p><button dojoType="dijit.form.Button" type="submit">'.__("Test").'</button> <input id="verbose" dojoType="dijit.form.CheckBox" name="verbose" /><label for="verbose">'.__("Show every step").'</label> </p>';
 		$tab .= '</form>';
-		$tab .= '<div data-dojo-type="dijit/layout/TabContainer" style="width: 100%;" doLayout="false">';
+		$tab .= '<div data-dojo-type="dijit/layout/TabContainer" style="width: 100%; height: 90%">';
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="log" data-dojo-props="selected:true" id="test_log"></div>';
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="result" data-dojo-props="selected:true" id="test_result"></div>';
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="url" data-dojo-props="selected:true" id="test_url"></div>';
