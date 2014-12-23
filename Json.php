@@ -30,7 +30,7 @@ class Feediron_Json{
 				$currentline++;
 				continue;
 			}
-			if($char == ' '){
+			if($char == ' ' && $outOfQuotes){
 				continue;
 			}
 
