@@ -92,7 +92,7 @@ class Feediron extends Plugin implements IHandler
 
 	// Removes old marker and adds new one
 	function addArticleMarker($article, $marker){
-		return $marker.preg_replace('/'.self::plugindata_tag.','.$article['owner_id'].',.*?:/','',$article['plugin_data']);
+		return $marker.preg_replace('/'.get_class($this).','.$article['owner_id'].',.*?:/','',$article['plugin_data']);
 	}
 
 	function getConfigSection($url)
