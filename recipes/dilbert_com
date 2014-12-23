@@ -2,7 +2,7 @@
 	"name": "Dilbert Comic feed",
 	"url": "http://dilbert.com/",
 	"matchurl": "feed.dilbert.com",
-	"conf" {
+	"conf": {
 		"type": "xpath",
 		"xpath": "div[contains(@class,'STR_Image')]",
 		"modify": [
