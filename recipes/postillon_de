@@ -1,8 +1,10 @@
 {
 	"name": "Der Postillon",
 	"url": "http://www.der-postillon.com",
-	"matchurl": "feedproxy.google.com\/~r\/blogspot\/rkEL\/~3",
-	"conf": {
+	"match": "feedproxy.google.com\/~r\/blogspot\/rkEL\/~3",
+	"author": "Matthias Bilger",
+	"stamp": 1419361984,
+	"config": {
 		"type": "split",
 		"xpath": "div[contains(@class,'entry-content')]",
 		"steps": [

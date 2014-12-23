@@ -1,8 +1,10 @@
 {
 	"name": "Titanic - Das satire Magazin",
 	"url": "http://www.titanic-magazin.de",
-	"matchurl":    "titanic-magazin.de",
-	"conf": {
+	"match":    "titanic-magazin.de",
+	"author": "Matthias Bilger",
+	"stamp": 1419361984,
+	"config": {
 		"type": "xpath",
 		"xpath": "div[contains(@class,'tt_news-bodytext')]",
 		"cleanup": [

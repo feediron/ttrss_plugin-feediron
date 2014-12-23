@@ -1,8 +1,10 @@
 {
 	"name": "heise.de Ticker",
 	"url": "http://heise.de/newsticker/",
-	"matchurl": "heise.de",
-	"conf":{
+	"match": "heise.de",
+	"author": "Matthias Bilger",
+	"stamp": 1419361984,
+	"config":{
 		"type": "xpath",
 		"xpath": "article",
 		"cleanup": [

@@ -4,6 +4,7 @@ include "RecipeManager.php";
 include "Logger.php";
 include "Functions.php";
 include "Json.php";
+include "User.php";
 include "PrefTab.php";
 
 class Feediron extends Plugin implements IHandler
@@ -535,8 +536,10 @@ class Feediron extends Plugin implements IHandler
 		$data = array(
 			"name"=> (isset($conf[$recipe2export]['name'])?$conf[$recipe2export]['name']:$recipe2export), 
 			"url" => (isset($conf[$recipe2export]['url'])?$conf[$recipe2export]['url']:$recipe2export),
-			"matchurl" => $recipe2export,
-			"conf" => $conf[$recipe2export]
+			"stamp" => time(),
+			"author" => Feediron_User::get_full_name(),
+			"match" => $recipe2export,
+			"config" => $conf[$recipe2export]
 		);
 		$json_reply['json_export'] = Feediron_Json::format(json_encode($data));
 		echo json_encode($json_reply); 
@@ -548,17 +551,17 @@ class Feediron extends Plugin implements IHandler
 		$rm = new RecipeManager();
 		$recipe = $rm->getRecipe($recipe2add);
 		header('Content-Type: application/json');
-		if(!isset ($recipe['matchurl'])){
+		if(!isset ($recipe['match'])){
 			$json_reply['success'] = false;
 			$json_reply['errormessage'] = __('Github API message: ').$recipe['message'];
 			$json_reply['data'] = Feediron_Json::format(json_encode($recipe));
 			echo json_encode($json_reply); 
 			return false;
 		}
-		if(isset ($conf[$recipe['matchurl']])){
-			$conf[$recipe['matchurl'].'_orig'] = $conf[$recipe['matchurl']];
+		if(isset ($conf[$recipe['match']])){
+			$conf[$recipe['match'].'_orig'] = $conf[$recipe['match']];
 		}
-		$conf[$recipe['matchurl']] = $recipe['conf'];
+		$conf[$recipe['match']] = $recipe['config'];
 		
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Configuration updated.');

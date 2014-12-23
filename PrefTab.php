@@ -25,8 +25,8 @@ class Feediron_PrefTab{
 
 		$tab .= '<label for="addrecipe">'.__("Add recipe").': </label>';
 		$tab .= '<select dojoType="dijit.form.Select" name="addrecipe">';
-		foreach($rm->getRecipes() as $recipe){
-			$tab .= '<option value="'.$recipe.'">'.$recipe.'</option>';
+		foreach($rm->getRecipes() as $key => $recipe){
+			$tab .= '<option value="'.$recipe.'">'.$key.'</option>';
 		}
 		$tab .= '</select>&nbsp;';
 		$tab .= '<button dojoType="dijit.form.Button" type="submit">'.__("Add").'</button>';

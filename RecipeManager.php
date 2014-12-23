@@ -1,33 +1,35 @@
 <?php
 class RecipeManager{
 	private $recipes = array();
-	const recipes_location = "https://api.github.com/repos/m42e/ttrss_plugin-feediron/contents/recipes";
-	const recipes_branch = "?rev=master";
+	private $recipes_location = array(array("url"=>"https://api.github.com/repos/m42e/ttrss_plugin-feediron/contents/recipes", "branch"=>"master"), array("url"=>"https://api.github.com/repos/mbirth/ttrss_plugin-af_feedmod/contents/mods", "branch"=>"master"));
 
 	function __construct(){
 	#	$this->loadAvailableRecipes();
 	}
 
 	public function loadAvailableRecipes(){
-		$content = fetch_file_contents (self::recipes_location.self::recipes_branch);
-		$data = json_decode($content);
-		if(isset ($data['message'])){
-				$this->recipes[$data['message']] = ''; 
-		}else{
-			foreach ($data as $file){
-				$this->recipes[$file->name] = $file; 
+		foreach ($this->recipes_location as $rloc){
+			$content = fetch_file_contents ($rloc['url'].'?rev='.$rloc['branch']);
+
+		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "content: $content");
+			$data = json_decode($content, true);
+			if(isset ($data['message'])){
+					$this->recipes[$data['message']] = ''; 
+			}else{
+				foreach ($data as $file){
+					$this->recipes[$file['name']] = $file['url']; 
+				}
 			}
 		}
 	}
 
 	public function getRecipes(){
-		return array_keys($this->recipes);
+		return $this->recipes;
 	}
 
-	public function getRecipe($recipename){
-		$url = self::recipes_location.'/'.$recipename.self::recipes_branch;
-		$content = fetch_file_contents ($url);
-		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Recipe url: $url");
+	public function getRecipe($recipeurl){
+		$content = fetch_file_contents ($recipeurl);
+		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Recipe url: $recipeurl");
 		$filedata = json_decode($content, true);
 		
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Recipe content: $content");

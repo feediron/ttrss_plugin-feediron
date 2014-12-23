@@ -1,8 +1,10 @@
 {
 	"name": "golem.de Newsticker",
 	"url": "http://www.golem.de/ticker/",
-	"matchurl": "golem0Bde0C",
-	"conf":	{
+	"match": "golem0Bde0C",
+	"author": "Matthias Bilger",
+	"stamp": 1419361984,
+	"config":	{
 		"type": "xpath",
 		"xpath": "article",
 		"multipage": {
