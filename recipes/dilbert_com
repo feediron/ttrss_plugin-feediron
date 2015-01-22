@@ -6,13 +6,7 @@
 	"stamp": 1419361984,
 	"config": {
 		"type": "xpath",
-		"xpath": "div[contains(@class,'STR_Image')]",
-		"modify": [
-			{
-				"type": "regex",
-				"pattern": "\/src=\"\\\/dyn\\\/str_strip\/",
-				"replace": "src=\"http:\/\/dilbert.com\/dyn\/str_strip"
-			}
+		"xpath": "img[contains(@class,'img-comic')]/..",
 		]
 	}
 }
