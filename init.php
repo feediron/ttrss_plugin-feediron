@@ -425,7 +425,7 @@ class Feediron extends Plugin implements IHandler
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Extracted node", htmlentities($this->getHtmlNode($basenode)));
 		// remove nodes from cleanup configuration
 		$basenode = $this->cleanupNode($xpath, $basenode, $config);
-		$html = $this->getInnerHtml($basenode);
+		$html = $this->getHtmlNode($basenode);
 		return $html;
 	}
 	function getInnerHtml( $node ) {
