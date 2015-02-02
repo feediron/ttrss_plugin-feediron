@@ -410,23 +410,39 @@ class Feediron extends Plugin implements IHandler
 	{
 		$doc = $this->getDOM($html);
 		$basenode = false;
-		$xpath = new DOMXPath($doc);
-		$entries = $xpath->query('(//'.$config['xpath'].')');   // find main DIV according to config
+		$xpathdom = new DOMXPath($doc);
 
-		if ($entries->length > 0) {
-			$basenode = $entries->item(0);
-		}
+      if(!is_array($config['xpath']){
+         $xpaths = array($config['xpath']);
+      )else{
+         $xpaths = $config['xpath'];
+      }
 
-		if (!$basenode) {
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
-			return $html;
-		}
+      $htmlout = array();
 
-		Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Extracted node", htmlentities($this->getHtmlNode($basenode)));
-		// remove nodes from cleanup configuration
-		$basenode = $this->cleanupNode($xpath, $basenode, $config);
-		$html = $this->getInnerHtml($basenode);
-		return $html;
+      foreach($xpaths as $xpath){
+         $index = 0;
+         if(is_array($xpath) && array_key_exists('index', $xpath)){
+            $index = $xpath['index'];
+            $xpath = $xpath['xpath'];
+         }
+         $entries = $xpathdom->query('(//'.$xpath.')');   // find main DIV according to config
+
+         if ($entries->length > 0) {
+            $basenode = $entries->item($index);
+         }
+
+         if (!$basenode && count($xpaths) == 1) {
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
+            return $html;
+         }
+
+         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Extracted node", htmlentities($this->getHtmlNode($basenode)));
+         // remove nodes from cleanup configuration
+         $basenode = $this->cleanupNode($xpath, $basenode, $config);
+         array_push($htmlout, $this->getInnerHtml($basenode));
+      }
+		return join(array_key_exists('join_element', $config)?$config['join_element']:''), $htmlout);
 	}
 	function getInnerHtml( $node ) {
 		$innerHTML= '';
