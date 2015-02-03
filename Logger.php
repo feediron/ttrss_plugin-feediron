@@ -31,10 +31,10 @@ class Feediron_Logger{
 			return;
 		if($level == self::LOG_TTRSS){
 			trigger_error($msg, E_USER_WARNING);
-			array_push($this->testlog, "<h2>LOG:</h2><pre>$msg</pre>");
+			array_push($this->testlog, "<h2>LOG:</h2><pre>".htmlentities($msg)."</pre>");
 		}else{
 			array_push($this->testlog, "<h2>$msg</h2>");
-			array_push($this->testlog, "<pre>$details</pre>");
+			array_push($this->testlog, "<pre>".htmlentities($details)."</pre>");
 		}
 	}
 	public function log_json($level, $msg, $json){
