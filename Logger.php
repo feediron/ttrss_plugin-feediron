@@ -50,7 +50,7 @@ class Feediron_Logger{
 	public function log_html($level, $msg, $html){
 		if($level > $this->loglevel)
 			return;
-		$this->log($level, $msg, htmlentities($html));
+		$this->log($level, $msg, $html);
 	}
 	public function get_testlog(){
 		return $this->testlog;

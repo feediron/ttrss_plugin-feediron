@@ -42,8 +42,7 @@ A configuration looks like this:
     "xpath": "div[@class='bacontent']"
 },
 "n24.de": {
-    "type": "xpath",
-    "xpath": "div[@class='news']"
+    "type": "readability",
 },
 "golem0Bde0C": {
     "type": "xpath",
@@ -116,7 +115,7 @@ A configuration looks like this:
 
 The *array key* is part of the URL of the article links(!). You'll notice the `golem0Bde0C` in the last entry: That's because all their articles link to something like `http://rss.feedsportal.com/c/33374/f/578068/p/1/s/3f6db44e/l/0L0Sgolem0Bde0Cnews0Cthis0Eis0Ean0Eexample0A10Erss0Bhtml/story01.htm` and to have the plugin match that URL and not interfere with other feeds using *feedsportal.com*, I used the part `golem0Bde0C`.
 
-**type** has to be `xpath` or `split`.
+**type** has to be `xpath`, `split` or `readability`.
 
 ### xpath
 The **xpath** value is the actual Xpath-element to fetch from the linked page. Omit the leading `//` - they will get prepended automatically.
@@ -131,6 +130,9 @@ There are also `start_element` and `end_element` which are prepended to the conc
 The **steps** value is an array of actions performed in the given order. If **after** is given the content will be split using the value and the second half is used, if **before** the first half is used. preg_split is used for this action.
 
 There is an additional option **cleanup** available. Its an array of regex that are removed using preg_replace.
+
+### readability
+This option makes use of [php-readability]( https://github.com/j0k3r/php-readability ) which is a fork of the [original](http://code.fivefilters.org/php-readability). All the extraction is performed within this module.
 
 ## multipage
 This option indicates that the article is split into two or more pages (eventually). FeedIron can combine all the parts into the content of the article.

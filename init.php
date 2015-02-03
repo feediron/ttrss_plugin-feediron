@@ -169,9 +169,9 @@ class Feediron extends Plugin implements IHandler
 		foreach($links as $lnk)
 		{
 			$html = $this->getArticleContent($lnk, $config);
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Original Source ".$lnk.":", htmlentities($html));
-			$html = $this->processArticle($html, $config);
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Modified Source ".$lnk.":", htmlentities($html));
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Original Source ".$lnk.":", $html);
+			$html = $this->processArticle($html, $config, $lnk);
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Modified Source ".$lnk.":", $html);
 			$html_complete .= $html;
 		}
 		return $html_complete;
@@ -213,7 +213,7 @@ class Feediron extends Plugin implements IHandler
 		{
 			$html = iconv($this->charset, 'utf-8', $html);
 			$this->charset = 'utf-8';
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Changed charset to utf-8:", htmlentities($html));
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Changed charset to utf-8:", $html);
 		}
 		return $html;
 	}
@@ -279,7 +279,7 @@ class Feediron extends Plugin implements IHandler
 		}
 		if($this->loglevel == Feediron_Logger::LOG_VERBOSE){
 			$log_entries = array_map( array($this, 'getHtmlNode') , $entries);
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Found ".count($entries)." link elements:", htmlentities(join("\n", $log_entries)));
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Found ".count($entries)." link elements:", join("\n", $log_entries));
 		}
 		foreach($entries as $entry)
 		{
@@ -349,10 +349,14 @@ class Feediron extends Plugin implements IHandler
 		/* absolute URL is ready! */
 		return $scheme.'://'.$abs;
 	}
-	function processArticle($html, $config)
+	function processArticle($html, $config, $link)
 	{
 		switch ($config['type'])
 		{
+		case 'readability':
+			$html = $this->performReadability($html, $config, $link);
+			break;
+
 		case 'split':
 			$html = $this->performSplit($html, $config);
 			break;
@@ -372,6 +376,32 @@ class Feediron extends Plugin implements IHandler
 		return $html;
 	}
 
+	function performReadability($html, $config, $link){
+		Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Using Readability");
+
+		require_once 'php-readability/Readability.php';
+		require_once 'php-readability/JSLikeHTMLElement.php';
+		$readability = new Readability\Readability($html, $link);
+		$readability->debug = false;
+		$readability->convertLinksToFootnotes = true;
+		$result = $readability->init();
+		if (!$result) {
+			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability failed to find content");
+			return $html;
+		}
+		else{
+			$content = $readability->getContent()->innerHTML;
+			// if we've got Tidy, let's clean it up for output
+			if (function_exists('tidy_parse_string')) {
+				$tidy = tidy_parse_string($content, array('indent'=>true, 'show-body-only' => true), 'UTF8');
+				$tidy->cleanRepair();
+				$content = $tidy->value;
+			}
+			return $content;
+		}
+
+	}
+
 	function performSplit($html, $config){
 		$orig_html = $html;
 		foreach($config['steps'] as $step)
@@ -387,7 +417,7 @@ class Feediron extends Plugin implements IHandler
 				$result = preg_split ($step['before'], $html);
 				$html = $result[0];
 			}
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Step result", htmlentities($html));
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Step result", $html);
 		}
 		if(strlen($html) == 0)
 		{
@@ -400,7 +430,7 @@ class Feediron extends Plugin implements IHandler
 			{
 				Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Cleaning up", $cleanup);
 				$html = preg_replace($cleanup, '', $html);
-				Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "cleanup  result", htmlentities($html));
+				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "cleanup  result", $html);
 			}
 		}
 		return $html;
@@ -437,7 +467,7 @@ class Feediron extends Plugin implements IHandler
 				return $html;
 			}
 
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Extracted node", htmlentities($this->getHtmlNode($basenode)));
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Extracted node", $this->getHtmlNode($basenode));
 			// remove nodes from cleanup configuration
 			$basenode = $this->cleanupNode($xpathdom, $basenode, $config);
 			array_push($htmlout, $this->getInnerHtml($basenode));
@@ -483,7 +513,7 @@ class Feediron extends Plugin implements IHandler
 						$node->parentNode->removeChild($node);
 					}
 				}
-				Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Node after cleanup", htmlentities($this->getHtmlNode($basenode)));
+				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Node after cleanup", $this->getHtmlNode($basenode));
 			}
 		}
 		return $basenode;
