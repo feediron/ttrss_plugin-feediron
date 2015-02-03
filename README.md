@@ -198,7 +198,7 @@ or
 
 ##### Image tag
 ```html
-<a><img src='test.png' />></a>
+<a><img src='test.png' /></a>
 ```
 ```xslt
 img/..
