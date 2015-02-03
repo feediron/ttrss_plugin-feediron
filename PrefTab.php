@@ -10,6 +10,7 @@ class Feediron_PrefTab{
 		/* Config tab */
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="Configuration" data-dojo-props="selected:true" id="config">';
 		$tab .= '<h3>Configuration</h3>';
+		$tab .= '<a href="https://github.com/m42e/ttrss_plugin-feediron/blob/master/README.md">Configuration help</a>';
 		$tab .= self::get_form_start('save');
 		$tab .= self::get_script(' notify_info(transport.responseJSON.message); dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf); dojo.query("#json_error").attr("innerHTML", "").attr("class",""); ','dojo.query("#json_error").attr("innerHTML", transport.responseJSON.json_error).attr("class","error");');
 
