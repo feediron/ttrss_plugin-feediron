@@ -59,7 +59,6 @@ class Feediron_PrefTab{
 		$tab .= self::get_script('notify_info("Updated"); dojo.query("#test_url").attr("innerHTML", "<pre>"+transport.responseJSON.url+"</pre>"); dojo.query("#test_result").attr("innerHTML", transport.responseJSON.content); dojo.query("#test_log").attr("innerHTML", transport.responseJSON.log.join("\n")); dojo.query("#test_conf").attr("value", transport.responseJSON.config);');
 
 		$tab .= __("Save before you test!").'<br />';
-
 		$tab .= '<table width="100%">';
 		$tab .= '<tr><td>';
 		$tab .= 'URL:';
@@ -68,11 +67,16 @@ class Feediron_PrefTab{
 		$tab .= '<input dojoType="dijit.form.TextBox" name="test_url" style="font-size: 12px; width: 99%;" />';
 		$tab .= '</td></tr>';
 		$tab .= '<tr><td>';
-		$tab .= 'Config (optional, will override default configuration):';
+		$tab .= 'Config (optional, will override default configuration):<button dojoType="dijit.form.Button" type="button">'.__("Restore last config").'<script type="dojo/on" event="click" args="evt">
+			evt.preventDefault();
+			dojo.query("#test_conf").attr("value", '.json_encode($test_conf).');
+		</script>
+			</button>';
 		$tab .= '</td></tr>';
-		$tab .= '<tr><td><textarea dojoType="dijit.form.SimpleTextarea" id="test_conf" name="test_conf" style="font-size: 12px; width: 99%; height: 150px;">'.$test_conf.'</textarea>';
+		$tab .= '<tr><td><textarea dojoType="dijit.form.SimpleTextarea" id="test_conf" name="test_conf" style="font-size: 12px; width: 99%; height: 150px;"></textarea>';
 		$tab .= '</td></tr>';
 		$tab .= '</table>';
+
 		$tab .= '<p><button dojoType="dijit.form.Button" type="submit">'.__("Test").'</button> <input id="verbose" dojoType="dijit.form.CheckBox" name="verbose" /><label for="verbose">'.__("Show every step").'</label> </p>';
 		$tab .= '</form>';
 		$tab .= '<div data-dojo-type="dijit/layout/TabContainer" style="width: 100%; height: 75%">';
