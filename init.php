@@ -632,7 +632,11 @@ class Feediron extends Plugin implements IHandler
 		Feediron_Logger::get()->set_log_level($_POST['verbose']?Feediron_Logger::LOG_VERBOSE:Feediron_Logger::LOG_TEST);
 		$test_url = $_POST['test_url'];
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
-		$config = $this->getConfigSection($test_url);
+		if(isset($_POST['test_conf']) && trim($_POST['test_conf']) != ''){
+			$config = json_decode($_POST['test_conf'], true);
+		}else{
+			$config = $this->getConfigSection($test_url);
+		}
 		$test_url = $this->reformatUrl($test_url, $config);
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Url after reformat: $test_url");
 		header('Content-Type: application/json');
@@ -650,6 +654,7 @@ class Feediron extends Plugin implements IHandler
 			$reply['success'] = true;
 			$reply['url'] = $test_url;
 			$reply['content'] = $this->getNewContent($test_url, $config);
+			$reply['config'] = Feediron_Json::format(json_encode($config));
 			$reply['log'] = Feediron_Logger::get()->get_testlog();
 			echo json_encode($reply);
 		}
