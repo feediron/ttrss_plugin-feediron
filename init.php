@@ -634,8 +634,11 @@ class Feediron extends Plugin implements IHandler
 		$test_url = $_POST['test_url'];
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
 		if(isset($_POST['test_conf']) && trim($_POST['test_conf']) != ''){
+			$newconfig = json_decode($_POST['test_conf'], true);
+			if(count(array_diff_assoc($newconfig, $config))!= 0){
+				$this->host->set($this, 'test_conf', Feediron_Json::format(json_encode($config)));
+			}
 			$config = json_decode($_POST['test_conf'], true);
-			$this->host->set($this, 'test_conf', Feediron_Json::format(json_encode($config)));
 		}else{
 			$config = $this->getConfigSection($test_url);
 		}
