@@ -1,7 +1,7 @@
 <?php
 
 class Feediron_PrefTab{
-	public static function get_pref_tab($json_conf){
+	public static function get_pref_tab($json_conf, $test_conf){
 		$tab = '';
 		$rm = new RecipeManager();
 		$rm->loadAvailableRecipes();
@@ -70,12 +70,12 @@ class Feediron_PrefTab{
 		$tab .= '<tr><td>';
 		$tab .= 'Config (optional, will override default configuration):';
 		$tab .= '</td></tr>';
-		$tab .= '<tr><td><textarea dojoType="dijit.form.SimpleTextarea" id="test_conf" name="test_conf" style="font-size: 12px; width: 99%"></textarea>';
+		$tab .= '<tr><td><textarea dojoType="dijit.form.SimpleTextarea" id="test_conf" name="test_conf" style="font-size: 12px; width: 99%; height: 150px;">'.$test_conf.'</textarea>';
 		$tab .= '</td></tr>';
 		$tab .= '</table>';
 		$tab .= '<p><button dojoType="dijit.form.Button" type="submit">'.__("Test").'</button> <input id="verbose" dojoType="dijit.form.CheckBox" name="verbose" /><label for="verbose">'.__("Show every step").'</label> </p>';
 		$tab .= '</form>';
-		$tab .= '<div data-dojo-type="dijit/layout/TabContainer" style="width: 100%; height: 90%">';
+		$tab .= '<div data-dojo-type="dijit/layout/TabContainer" style="width: 100%; height: 75%">';
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="log" data-dojo-props="selected:true" id="test_log"></div>';
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="result" data-dojo-props="selected:true" id="test_result"></div>';
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="url" data-dojo-props="selected:true" id="test_url"></div>';
