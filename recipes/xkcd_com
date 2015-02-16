@@ -1,0 +1,15 @@
+{
+    "name": "xkcd.com",
+    "url": "xkcd.com",
+    "stamp": 1424070543,
+    "author": "Matthias Bilger",
+    "match": "xkcd.com",
+    "config": {
+        "type": "xpath",
+        "xpath": [
+            "div[contains(@id,'comic')]",
+            "div[contains(@id,'comic')]\/img\/@title"
+        ],
+        "join_element": "<p \/>"
+   }
+}
