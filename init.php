@@ -78,7 +78,7 @@ class Feediron extends Plugin implements IHandler
 			}
 			$link = $this->reformatUrl($article['link'], $config);
 			$article['content'] = $this->getNewContent($link, $config);
-			
+
 		}
 
 		return $article;
@@ -169,9 +169,9 @@ class Feediron extends Plugin implements IHandler
 		foreach($links as $lnk)
 		{
 			$html = $this->getArticleContent($lnk, $config);
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Original Source ".$lnk.":", htmlentities($html));
-			$html = $this->processArticle($html, $config);
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Modified Source ".$lnk.":", htmlentities($html));
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Original Source ".$lnk.":", $html);
+			$html = $this->processArticle($html, $config, $lnk);
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Modified Source ".$lnk.":", $html);
 			$html_complete .= $html;
 		}
 		return $html_complete;
@@ -213,7 +213,7 @@ class Feediron extends Plugin implements IHandler
 		{
 			$html = iconv($this->charset, 'utf-8', $html);
 			$this->charset = 'utf-8';
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Changed charset to utf-8:", htmlentities($html));
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Changed charset to utf-8:", $html);
 		}
 		return $html;
 	}
@@ -279,7 +279,7 @@ class Feediron extends Plugin implements IHandler
 		}
 		if($this->loglevel == Feediron_Logger::LOG_VERBOSE){
 			$log_entries = array_map( array($this, 'getHtmlNode') , $entries);
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Found ".count($entries)." link elements:", htmlentities(join("\n", $log_entries)));
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Found ".count($entries)." link elements:", join("\n", $log_entries));
 		}
 		foreach($entries as $entry)
 		{
@@ -292,7 +292,7 @@ class Feediron extends Plugin implements IHandler
 		$cloned = $node->cloneNode(TRUE);
 		$newdoc->appendChild($newdoc->importNode($cloned,TRUE));
 		return $newdoc->saveHTML();
-   	}
+	}
 	function getDOM($html){
 		$doc = new DOMDocument();
 		if ($this->charset) {
@@ -349,10 +349,14 @@ class Feediron extends Plugin implements IHandler
 		/* absolute URL is ready! */
 		return $scheme.'://'.$abs;
 	}
-	function processArticle($html, $config)
+	function processArticle($html, $config, $link)
 	{
 		switch ($config['type'])
 		{
+		case 'readability':
+			$html = $this->performReadability($html, $config, $link);
+			break;
+
 		case 'split':
 			$html = $this->performSplit($html, $config);
 			break;
@@ -372,6 +376,32 @@ class Feediron extends Plugin implements IHandler
 		return $html;
 	}
 
+	function performReadability($html, $config, $link){
+		Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Using Readability");
+
+		require_once 'php-readability/Readability.php';
+		require_once 'php-readability/JSLikeHTMLElement.php';
+		$readability = new Readability\Readability($html, $link);
+		$readability->debug = false;
+		$readability->convertLinksToFootnotes = true;
+		$result = $readability->init();
+		if (!$result) {
+			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability failed to find content");
+			return $html;
+		}
+		else{
+			$content = $readability->getContent()->innerHTML;
+			// if we've got Tidy, let's clean it up for output
+			if (function_exists('tidy_parse_string')) {
+				$tidy = tidy_parse_string($content, array('indent'=>true, 'show-body-only' => true), 'UTF8');
+				$tidy->cleanRepair();
+				$content = $tidy->value;
+			}
+			return $content;
+		}
+
+	}
+
 	function performSplit($html, $config){
 		$orig_html = $html;
 		foreach($config['steps'] as $step)
@@ -387,7 +417,7 @@ class Feediron extends Plugin implements IHandler
 				$result = preg_split ($step['before'], $html);
 				$html = $result[0];
 			}
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Step result", htmlentities($html));
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Step result", $html);
 		}
 		if(strlen($html) == 0)
 		{
@@ -400,7 +430,7 @@ class Feediron extends Plugin implements IHandler
 			{
 				Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Cleaning up", $cleanup);
 				$html = preg_replace($cleanup, '', $html);
-				Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "cleanup  result", htmlentities($html));
+				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "cleanup  result", $html);
 			}
 		}
 		return $html;
@@ -410,23 +440,46 @@ class Feediron extends Plugin implements IHandler
 	{
 		$doc = $this->getDOM($html);
 		$basenode = false;
-		$xpath = new DOMXPath($doc);
-		$entries = $xpath->query('(//'.$config['xpath'].')');   // find main DIV according to config
+		$xpathdom = new DOMXPath($doc);
 
-		if ($entries->length > 0) {
-			$basenode = $entries->item(0);
+		if(!is_array($config['xpath'])){
+			$xpaths = array($config['xpath']);
+		}else{
+			$xpaths = $config['xpath'];
 		}
 
-		if (!$basenode) {
-			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
-			return $html;
-		}
+		$htmlout = array();
 
-		Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Extracted node", htmlentities($this->getHtmlNode($basenode)));
-		// remove nodes from cleanup configuration
-		$basenode = $this->cleanupNode($xpath, $basenode, $config);
-		$html = $this->getInnerHtml($basenode);
-		return $html;
+		foreach($xpaths as $xpath){
+			$index = 0;
+			if(is_array($xpath) && array_key_exists('index', $xpath)){
+				$index = $xpath['index'];
+				$xpath = $xpath['xpath'];
+			}
+			$entries = $xpathdom->query('(//'.$xpath.')');   // find main DIV according to config
+
+			if ($entries->length > 0) {
+				$basenode = $entries->item($index);
+			}
+
+			if (!$basenode && count($xpaths) == 1) {
+				Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
+				return $html;
+			}
+
+			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Extracted node", $this->getHtmlNode($basenode));
+			// remove nodes from cleanup configuration
+			$basenode = $this->cleanupNode($xpathdom, $basenode, $config);
+			array_push($htmlout, $this->getInnerHtml($basenode));
+		}
+		$content = join((array_key_exists('join_element', $config)?$config['join_element']:''), $htmlout);
+		if(array_key_exists('start_element', $config)){
+			$content = $config['start_element'].$content;
+		}
+		if(array_key_exists('end_element', $config)){
+			$content = $content.$config['end_element'];
+		}
+		return $content;
 	}
 	function getInnerHtml( $node ) {
 		$innerHTML= '';
@@ -460,7 +513,7 @@ class Feediron extends Plugin implements IHandler
 						$node->parentNode->removeChild($node);
 					}
 				}
-				Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Node after cleanup", htmlentities($this->getHtmlNode($basenode)));
+				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Node after cleanup", $this->getHtmlNode($basenode));
 			}
 		}
 		return $basenode;
@@ -493,7 +546,8 @@ class Feediron extends Plugin implements IHandler
 	{
 		$pluginhost = PluginHost::getInstance();
 		$json_conf = $pluginhost->get($this, 'json_conf');
-		print Feediron_PrefTab::get_pref_tab($json_conf);
+		$test_conf = $pluginhost->get($this, 'test_conf');
+		print Feediron_PrefTab::get_pref_tab($json_conf, $test_conf);
 	}
 
 	/*
@@ -564,41 +618,76 @@ class Feediron extends Plugin implements IHandler
 			$conf[$recipe['match'].'_orig'] = $conf[$recipe['match']];
 		}
 		$conf[$recipe['match']] = $recipe['config'];
-		
+
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Configuration updated.');
 		$json_reply['json_conf'] = Feediron_Json::format(json_encode($conf));
 		echo json_encode($json_reply); 
 	}
+	function arrayRecursiveDiff($aArray1, $aArray2) {
+		$aReturn = array();
 
+		foreach ($aArray1 as $mKey => $mValue) {
+			if (array_key_exists($mKey, $aArray2)) {
+				if (is_array($mValue)) {
+					$aRecursiveDiff = $this->arrayRecursiveDiff($mValue, $aArray2[$mKey]);
+					if (count($aRecursiveDiff)) { $aReturn[$mKey] = $aRecursiveDiff; }
+				} else {
+					if ($mValue != $aArray2[$mKey]) {
+						$aReturn[$mKey] = $mValue;
+					}
+				}
+			} else {
+				$aReturn[$mKey] = $mValue;
+			}
+		}
+		return $aReturn;
+	} 
 	/*
 	 *  this function tests the rules using a given url
 	 */
 	function test()
 	{
-	   Feediron_Logger::get()->set_log_level($_POST['verbose']?Feediron_Logger::LOG_VERBOSE:Feediron_Logger::LOG_TEST);
-	   $test_url = $_POST['test_url'];
-	   Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
-	   $config = $this->getConfigSection($test_url);
-	   $test_url = $this->reformatUrl($test_url, $config);
-	   Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Url after reformat: $test_url");
-	   header('Content-Type: application/json');
-	   $reply = array();
-	   if($config === FALSE)
-	   {
-		   $reply['success'] = false;
-		   $reply['errormessage'] = "URL did not match";
-		   $reply['log'] = Feediron_Logger::get()->get_testlog();
-		   echo json_encode($reply);
-		   return false;
-	   }
-	   else
-	   {
-		   $reply['success'] = true;
-		   $reply['url'] = $test_url;
-		   $reply['content'] = $this->getNewContent($test_url, $config);
-		   $reply['log'] = Feediron_Logger::get()->get_testlog();
-		   echo json_encode($reply);
+		Feediron_Logger::get()->set_log_level($_POST['verbose']?Feediron_Logger::LOG_VERBOSE:Feediron_Logger::LOG_TEST);
+		$test_url = $_POST['test_url'];
+		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
+		if(isset($_POST['test_conf']) && trim($_POST['test_conf']) != ''){
+			$config = $this->getConfigSection($test_url);
+			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config found: ", $config);
+			$newconfig = json_decode($_POST['test_conf'], true);
+			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config posted: ", $newconfig);
+			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config diff", $this->arrayRecursiveDiff($config, $newconfig));
+			if(count($this->arrayRecursiveDiff($newconfig, $config))!= 0){
+				Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Save test config");
+				$this->host->set($this, 'test_conf', Feediron_Json::format(json_encode($config)));
+			}
+			$config = json_decode($_POST['test_conf'], true);
+		}else{
+			$config = $this->getConfigSection($test_url);
+		}
+		$test_url = $this->reformatUrl($test_url, $config);
+		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Url after reformat: $test_url");
+		header('Content-Type: application/json');
+		$reply = array();
+		if($config === FALSE)
+		{
+			$reply['success'] = false;
+			$reply['errormessage'] = "URL did not match";
+			$reply['log'] = Feediron_Logger::get()->get_testlog();
+			echo json_encode($reply);
+			return false;
+		}
+		else
+		{
+			$reply['success'] = true;
+			$reply['url'] = $test_url;
+			$reply['content'] = $this->getNewContent($test_url, $config);
+			$reply['config'] = Feediron_Json::format(json_encode($config));
+			if($reply['config'] == null){
+				$reply['config'] = $_POST['test_conf'];
+			}
+			$reply['log'] = Feediron_Logger::get()->get_testlog();
+			echo json_encode($reply);
 		}
 	}
 }

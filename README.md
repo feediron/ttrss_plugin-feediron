@@ -42,8 +42,7 @@ A configuration looks like this:
     "xpath": "div[@class='bacontent']"
 },
 "n24.de": {
-    "type": "xpath",
-    "xpath": "div[@class='news']"
+    "type": "readability",
 },
 "golem0Bde0C": {
     "type": "xpath",
@@ -84,6 +83,17 @@ A configuration looks like this:
     "xpath": "div[@class='entry-content']",
     "cleanup": [ "header", "footer" ]
 },
+"sueddeutsche.de": {
+    "type": "xpath",
+    "xpath": [
+        "h2/strong",
+        "section[contains(@class,'authors')]"
+    ],
+    "join_element": "<p>",
+    "cleanup": [
+        "script"
+    ]
+},
 "www.spiegel.de": {
     "type": "split",
     "steps": [
@@ -105,31 +115,38 @@ A configuration looks like this:
 
 The *array key* is part of the URL of the article links(!). You'll notice the `golem0Bde0C` in the last entry: That's because all their articles link to something like `http://rss.feedsportal.com/c/33374/f/578068/p/1/s/3f6db44e/l/0L0Sgolem0Bde0Cnews0Cthis0Eis0Ean0Eexample0A10Erss0Bhtml/story01.htm` and to have the plugin match that URL and not interfere with other feeds using *feedsportal.com*, I used the part `golem0Bde0C`.
 
-**type** has to be `xpath` or `split`.
+**type** has to be `xpath`, `split` or `readability`.
 
 ### xpath
 The **xpath** value is the actual Xpath-element to fetch from the linked page. Omit the leading `//` - they will get prepended automatically.
+Every xpath can also be an object consisting of an `xpath` element and an `index` element. So you can get the third div by specify: `{ "xpath":"div", "index":3 }`.
 
 There is an additional option **cleanup** available. Its an array of Xpath-elements (relative to the fetched node) to remove from the fetched node. Omit the leading `//` - they will get prepended automatically.
+
+You can also specify multiple xpaths, they are evaluated in the order they are given in the array. They are simply put together. if you specify a `join_element` this is placed between the elements.
+There are also `start_element` and `end_element` which are prepended to the concatenated parts.
 
 ### split
 The **steps** value is an array of actions performed in the given order. If **after** is given the content will be split using the value and the second half is used, if **before** the first half is used. preg_split is used for this action.
 
 There is an additional option **cleanup** available. Its an array of regex that are removed using preg_replace.
 
+### readability
+This option makes use of [php-readability]( https://github.com/j0k3r/php-readability ) which is a fork of the [original](http://code.fivefilters.org/php-readability). All the extraction is performed within this module.
+
 ## multipage
 This option indicates that the article is split into two or more pages (eventually). FeedIron can combine all the parts into the content of the article.
 You have to specify a ```xpath``` which identifies the links (&lt;a&gt;) to the pages. If ```append``` is false, only the links are used and the original link is ignored else the links found using the xpath expression are added to the original page link.
 
 ### General options
-* **debug** You can activate debugging informations.  (At the moment there are not that much debug informations to be activated)
+* **debug** You can activate debugging informations.  (At the moment there are not that much debug informations to be activated), this option must be places at the same level as the site configs.
 * **force_charset** allows to override automatic charset detection. If it is omitted, the charset will be parsed from the HTTP headers or loadHTML() will decide on its own.  
 * **reformat** is an array of formating rules for the **url** of the full article. The rules are applied before the full article is fetched. There are two possible types: **regex** and **replace**. 
   * **regex** takes a regex in an option called **pattern** and the replacement in **replace**. For details see [preg_replace](http://www.php.net/manual/de/function.preg-replace.php) in the PHP documentation. 
   * **replace** uses the PHP function str_replace, which takes either a string or an array as search and replace value.  
 * **modify** is the same as described above but for the content. It is applied after the split/xpath selection.
 
-If you get an error about "Invalid JSON!", you can use [JSONLint](http://jsonlint.com/) to locate the erroneous part.
+If you get an error about "Invalid JSON!", you can use [JSONLint](http://jsonlint.com/) to locate the erroneous part. There is a basic error detection implemented.
 
 XPath
 -----
@@ -179,6 +196,14 @@ Some XPath expressions you could need (the `//` is automatically prepended and m
 or
 ```xslt
 //div[contains(@class, 'entry-content')]
+```
+
+##### Image tag
+```html
+<a><img src='test.png' /></a>
+```
+```xslt
+img/..
 ```
 
 ## Todo
