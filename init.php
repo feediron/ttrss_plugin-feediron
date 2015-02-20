@@ -624,7 +624,25 @@ class Feediron extends Plugin implements IHandler
 		$json_reply['json_conf'] = Feediron_Json::format(json_encode($conf));
 		echo json_encode($json_reply); 
 	}
+	function arrayRecursiveDiff($aArray1, $aArray2) {
+		$aReturn = array();
 
+		foreach ($aArray1 as $mKey => $mValue) {
+			if (array_key_exists($mKey, $aArray2)) {
+				if (is_array($mValue)) {
+					$aRecursiveDiff = $this->arrayRecursiveDiff($mValue, $aArray2[$mKey]);
+					if (count($aRecursiveDiff)) { $aReturn[$mKey] = $aRecursiveDiff; }
+				} else {
+					if ($mValue != $aArray2[$mKey]) {
+						$aReturn[$mKey] = $mValue;
+					}
+				}
+			} else {
+				$aReturn[$mKey] = $mValue;
+			}
+		}
+		return $aReturn;
+	} 
 	/*
 	 *  this function tests the rules using a given url
 	 */
@@ -634,8 +652,13 @@ class Feediron extends Plugin implements IHandler
 		$test_url = $_POST['test_url'];
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
 		if(isset($_POST['test_conf']) && trim($_POST['test_conf']) != ''){
+			$config = $this->getConfigSection($test_url);
+			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config found: ", $config);
 			$newconfig = json_decode($_POST['test_conf'], true);
-			if(count(array_diff_assoc($newconfig, $config))!= 0){
+			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config posted: ", $newconfig);
+			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config diff", $this->arrayRecursiveDiff($config, $newconfig));
+			if(count($this->arrayRecursiveDiff($newconfig, $config))!= 0){
+				Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Save test config");
 				$this->host->set($this, 'test_conf', Feediron_Json::format(json_encode($config)));
 			}
 			$config = json_decode($_POST['test_conf'], true);
