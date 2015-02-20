@@ -252,8 +252,9 @@ class Feediron extends Plugin implements IHandler
 		}
 		return array( $html,  $content_type);
 	}
-	function fetch_links($link, $config)
+	function fetch_links($link, $config, $seenlinks = array())
 	{
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "fetching links from :".$lnk);
 		$html = $this->getArticleContent($link, $config);
 		$links = $this->extractlinks($html, $config);
 		if (count($links) == 0)
@@ -261,12 +262,17 @@ class Feediron extends Plugin implements IHandler
 			return array($link);
 		}
 		$links = $this->fixlinks($link, $links);
+		if (count(array_intersect($seenlinks, $links)) != 0)
+		{
+			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Break infinite loop for recursive multipage, link intersection",array_intersect($seenlinks, $links));
+			return array();
+		}
 		foreach ($links as $lnk)
 		{
 			Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "link:".$lnk);
 			if(isset($config['multipage']['recursive']) && $config['multipage']['recursive'])
 			{
-				$links = array_merge($links, $this->fetch_links($lnk, $config));
+				$links = array_merge($links, $this->fetch_links($lnk, $config, array($links, $link)));
 			}
 		}
 		if(isset($config['multipage']['append']) && $config['multipage']['append'])
@@ -653,6 +659,7 @@ class Feediron extends Plugin implements IHandler
 		}else{
 			$config = $this->getConfigSection($test_url);
 		}
+      Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "Using config", $config);
 		$test_url = $this->reformatUrl($test_url, $config);
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Url after reformat: $test_url");
 		header('Content-Type: application/json');

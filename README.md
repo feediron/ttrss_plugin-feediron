@@ -44,6 +44,15 @@ A configuration looks like this:
 "n24.de": {
     "type": "readability",
 },
+"www.dorkly.com": {
+    "type": "xpath",
+    "multipage": {
+        "xpath": "a[contains(@data-ga-category,'Pagination') and text() = 'Next']",
+        "append": true,
+        "recursive": true
+    },
+    "xpath": "div[contains(@class,'post-content')]"
+},
 "golem0Bde0C": {
     "type": "xpath",
     "xpath": "article",
@@ -137,6 +146,8 @@ This option makes use of [php-readability]( https://github.com/j0k3r/php-readabi
 ## multipage
 This option indicates that the article is split into two or more pages (eventually). FeedIron can combine all the parts into the content of the article.
 You have to specify a ```xpath``` which identifies the links (&lt;a&gt;) to the pages. If ```append``` is false, only the links are used and the original link is ignored else the links found using the xpath expression are added to the original page link.
+You can also specify the ```recursive``` option to parse every following page for more links. To avoid infinite loops
+the fetching stops if an url is added twice.
 
 ### General options
 * **debug** You can activate debugging informations.  (At the moment there are not that much debug informations to be activated), this option must be places at the same level as the site configs.
