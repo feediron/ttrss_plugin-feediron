@@ -660,6 +660,9 @@ class Feediron extends Plugin implements IHandler
 			$reply['url'] = $test_url;
 			$reply['content'] = $this->getNewContent($test_url, $config);
 			$reply['config'] = Feediron_Json::format(json_encode($config));
+			if($reply['config'] == null){
+				$reply['config'] = $_POST['test_conf'];
+			}
 			$reply['log'] = Feediron_Logger::get()->get_testlog();
 			echo json_encode($reply);
 		}
