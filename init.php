@@ -257,6 +257,10 @@ class Feediron extends Plugin implements IHandler
 		foreach ($links as $lnk)
 		{
 			Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "link:".$lnk);
+			if(isset($config['multipage']['recursive']) && $config['multipage']['recursive'])
+			{
+				array_merge($links, $this->fetch_links($lnk, $config));
+			}
 		}
 		if(isset($config['multipage']['append']) && $config['multipage']['append'])
 		{
