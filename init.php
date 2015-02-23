@@ -468,9 +468,16 @@ class Feediron extends Plugin implements IHandler
 			}
 
 			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Extracted node", $this->getHtmlNode($basenode));
-			// remove nodes from cleanup configuration
-			$basenode = $this->cleanupNode($xpathdom, $basenode, $config);
-			array_push($htmlout, $this->getInnerHtml($basenode));
+                        // remove nodes from cleanup configuration
+                        $basenode = $this->cleanupNode($xpathdom, $basenode, $config);
+                        
+                        //render nested nodes to html
+                        $inner_html = $this->getInnerHtml($basenode);
+                        if (!$inner_html){
+                            //if there's no nested nodes, render the node itself
+                            $inner_html = $basenode->ownerDocument->saveXML($basenode);
+                        }
+                        array_push($htmlout, $inner_html);
 		}
 		$content = join((array_key_exists('join_element', $config)?$config['join_element']:''), $htmlout);
 		if(array_key_exists('start_element', $config)){
