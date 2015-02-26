@@ -12,6 +12,7 @@ class Feediron extends Plugin implements IHandler
 	private $host;
 	private $charset;
 	private $json_error;
+	private $cache;
 
 	// Required API
 	function about()
@@ -191,6 +192,10 @@ class Feediron extends Plugin implements IHandler
 	}
 	function getArticleContent($link, $config)
 	{
+      if(array_key_exists($link, $this->cache)){
+         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Fetching from cache");
+         return $this->cache[$link];
+      }
 		list($html, $content_type) = $this->get_content($link);
 
 		$this->charset = false;
@@ -215,6 +220,8 @@ class Feediron extends Plugin implements IHandler
 			$this->charset = 'utf-8';
 			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Changed charset to utf-8:", $html);
 		}
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Writing into cache");
+      $this->cache[$link] = $html;
 		return $html;
 	}
 	function get_content($link)
@@ -245,8 +252,9 @@ class Feediron extends Plugin implements IHandler
 		}
 		return array( $html,  $content_type);
 	}
-	function fetch_links($link, $config)
+	function fetch_links($link, $config, $seenlinks = array())
 	{
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "fetching links from :".$lnk);
 		$html = $this->getArticleContent($link, $config);
 		$links = $this->extractlinks($html, $config);
 		if (count($links) == 0)
@@ -254,9 +262,18 @@ class Feediron extends Plugin implements IHandler
 			return array($link);
 		}
 		$links = $this->fixlinks($link, $links);
+		if (count(array_intersect($seenlinks, $links)) != 0)
+		{
+			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Break infinite loop for recursive multipage, link intersection",array_intersect($seenlinks, $links));
+			return array();
+		}
 		foreach ($links as $lnk)
 		{
 			Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "link:".$lnk);
+			if(isset($config['multipage']['recursive']) && $config['multipage']['recursive'])
+			{
+				$links =  $this->fetch_links($lnk, $config, array($links, $link));
+			}
 		}
 		if(isset($config['multipage']['append']) && $config['multipage']['append'])
 		{
@@ -672,6 +689,7 @@ class Feediron extends Plugin implements IHandler
 		}else{
 			$config = $this->getConfigSection($test_url);
 		}
+      Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "Using config", $config);
 		$test_url = $this->reformatUrl($test_url, $config);
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Url after reformat: $test_url");
 		header('Content-Type: application/json');
