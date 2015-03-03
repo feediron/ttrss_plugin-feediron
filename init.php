@@ -270,6 +270,7 @@ class Feediron extends Plugin implements IHandler
 		foreach ($links as $lnk)
 		{
 			Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "link:".$lnk);
+			/* If recursive mode is active fetch links from newly fetched link */
 			if(isset($config['multipage']['recursive']) && $config['multipage']['recursive'])
 			{
 				$links =  $this->fetch_links($lnk, $config, array($links, $link));
@@ -279,6 +280,8 @@ class Feediron extends Plugin implements IHandler
 		{
 			array_unshift($links, $link);
 		}
+		/* Avoid link dupplication */
+		$links = array_unique($links);
 		return $links;
 
 	}
@@ -288,8 +291,8 @@ class Feediron extends Plugin implements IHandler
 		$links = array();
 
 		$xpath = new DOMXPath($doc);
-		$entries = $xpath->query('(//'.$config['multipage']['xpath'].')');   // find main DIV according to config
-
+		/* Extract the links based on xpath */
+		$entries = $xpath->query('(//'.$config['multipage']['xpath'].')');
 
 		if ($entries->length < 1){
 			return array();
@@ -304,7 +307,7 @@ class Feediron extends Plugin implements IHandler
 		}
 		return $links;
 	}
-	function getHtmlNode($node){ 
+	function getHtmlNode($node){
 		$newdoc = new DOMDocument();
 		$cloned = $node->cloneNode(TRUE);
 		$newdoc->appendChild($newdoc->importNode($cloned,TRUE));
@@ -487,7 +490,7 @@ class Feediron extends Plugin implements IHandler
 			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Extracted node", $this->getHtmlNode($basenode));
                         // remove nodes from cleanup configuration
                         $basenode = $this->cleanupNode($xpathdom, $basenode, $config);
-                        
+
                         //render nested nodes to html
                         $inner_html = $this->getInnerHtml($basenode);
                         if (!$inner_html){
@@ -513,7 +516,7 @@ class Feediron extends Plugin implements IHandler
 		}
 
 		return $innerHTML;
-	} 
+	}
 	function cleanupNode($xpath, $basenode, $config)
 	{
 		if(($cconfig = $this->getCleanupConfig($config))!== FALSE)
@@ -597,7 +600,7 @@ class Feediron extends Plugin implements IHandler
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Configuration saved.');
 		$json_reply['json_conf'] = Feediron_Json::format($json_conf);
-		echo json_encode($json_reply); 
+		echo json_encode($json_reply);
 	}
 
 	function export(){
@@ -608,13 +611,13 @@ class Feediron extends Plugin implements IHandler
 		if(!isset ($conf[$recipe2export])){
 			$json_reply['success'] = false;
 			$json_reply['errormessage'] = __('Not found');
-			echo json_encode($json_reply); 
+			echo json_encode($json_reply);
 			return false;
 		}
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Exported');
 		$data = array(
-			"name"=> (isset($conf[$recipe2export]['name'])?$conf[$recipe2export]['name']:$recipe2export), 
+			"name"=> (isset($conf[$recipe2export]['name'])?$conf[$recipe2export]['name']:$recipe2export),
 			"url" => (isset($conf[$recipe2export]['url'])?$conf[$recipe2export]['url']:$recipe2export),
 			"stamp" => time(),
 			"author" => Feediron_User::get_full_name(),
@@ -622,7 +625,7 @@ class Feediron extends Plugin implements IHandler
 			"config" => $conf[$recipe2export]
 		);
 		$json_reply['json_export'] = Feediron_Json::format(json_encode($data));
-		echo json_encode($json_reply); 
+		echo json_encode($json_reply);
 	}
 	function add(){
 		$conf = $this->getConfig();
@@ -635,7 +638,7 @@ class Feediron extends Plugin implements IHandler
 			$json_reply['success'] = false;
 			$json_reply['errormessage'] = __('Github API message: ').$recipe['message'];
 			$json_reply['data'] = Feediron_Json::format(json_encode($recipe));
-			echo json_encode($json_reply); 
+			echo json_encode($json_reply);
 			return false;
 		}
 		if(isset ($conf[$recipe['match']])){
@@ -646,7 +649,7 @@ class Feediron extends Plugin implements IHandler
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Configuration updated.');
 		$json_reply['json_conf'] = Feediron_Json::format(json_encode($conf));
-		echo json_encode($json_reply); 
+		echo json_encode($json_reply);
 	}
 	function arrayRecursiveDiff($aArray1, $aArray2) {
 		$aReturn = array();
@@ -666,7 +669,7 @@ class Feediron extends Plugin implements IHandler
 			}
 		}
 		return $aReturn;
-	} 
+	}
 	/*
 	 *  this function tests the rules using a given url
 	 */
