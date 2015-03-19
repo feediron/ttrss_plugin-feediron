@@ -308,10 +308,14 @@ class Feediron extends Plugin implements IHandler
 		return $links;
 	}
 	function getHtmlNode($node){
-		$newdoc = new DOMDocument();
-		$cloned = $node->cloneNode(TRUE);
-		$newdoc->appendChild($newdoc->importNode($cloned,TRUE));
-		return $newdoc->saveHTML();
+		if (is_object($node)){
+			$newdoc = new DOMDocument();
+			$cloned = $node->cloneNode(TRUE);
+			$newdoc->appendChild($newdoc->importNode($cloned,TRUE));
+			return $newdoc->saveHTML();
+		}else{
+			return $node;
+		}
 	}
 	function getDOM($html){
 		$doc = new DOMDocument();
