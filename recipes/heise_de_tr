@@ -1,0 +1,22 @@
+{
+    "name": "heise.de\/tr",
+    "url": "heise.de\/tr",
+    "stamp": 1426875509,
+    "author": "radlerandi",
+    "match": "heise.de\/tr",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@id='mitte_links']",
+        "multipage": {
+            "xpath": "a[contains(@class, 'seite_weiter')]",
+            "append": true
+        },
+        "cleanup": [
+            "ul[@class='optionen_beitrag']",
+            "p[@class='ausgabe']",
+            "p[@class='printversion']",
+            "p[@class='permalink']",
+            "nav[@class='pagenavi']"
+        ]
+    }
+}
