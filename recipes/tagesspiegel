@@ -1,0 +1,47 @@
+{
+    "name": "tagesspiegel",
+    "url": "tagesspiegel",
+    "stamp": 1426874822,
+    "author": "radlerandi",
+    "match": "tagesspiegel",
+    "config": {
+        "type": "xpath",
+        "xpath": "article",
+        "multipage": {
+            "xpath": "a[contains(@class, 'hcf-forward')]",
+            "append": true
+        },
+        "reformat": [
+            {
+                "type": "regex",
+                "pattern": "\/(?:[a-z0-9A-Z\\\/.\\:]*?)tagesspiegel0Bde0C(.*)\\\/ia1.htm\/",
+                "replace": "http:\/\/www.tagesspiegel.de\/$1"
+            },
+            {
+                "type": "replace",
+                "search": [
+                    "0A",
+                    "0C",
+                    "0B",
+                    "0E"
+                ],
+                "replace": [
+                    "0",
+                    "\/",
+                    ".",
+                    "-"
+                ]
+            }
+        ],
+        "cleanup": [
+            "div[contains(@class, 'hcf-inline-right')]",
+            "div[contains(@class, 'hcf-links')]",
+            "div[contains(@class, 'hcf-inline-gallery')]",
+            "div[contains(@class, 'hcf-hidden')]",
+            "span[contains(@class, 'date')]",
+            "span[@class='hcf-author author']",
+            "div[@class='hcf-subpage-titles']",
+            "div[@class='hcf-checkpoint-wrapper']"
+        ]
+    }
+}
