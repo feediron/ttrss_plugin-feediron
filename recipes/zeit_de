@@ -1,0 +1,31 @@
+{
+    "name": "www.zeit.de",
+    "url": "www.zeit.de",
+    "stamp": 1426875674,
+    "author": "radlerandi",
+    "match": "www.zeit.de",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@class='article']",
+        "reformat": [
+            {
+                "type": "regex",
+                "pattern": "\/(.*)zeit.de(.*)\/",
+                "replace": "http:\/\/www.zeit.de$2\/komplettansicht"
+            }
+        ],
+        "cleanup": [
+            "div[@id='relatedArticles']",
+            "span[@class='anzeige']",
+            "div[@class='commentform']",
+            "div[@class='home-button-article']",
+            "div[@class='inline pic']",
+            "div[@class='articlemeta']",
+            "div[@class='articlefooter af']",
+            "div[@class='reaktion']",
+            "div[@class='recommandations']",
+            "div[contains(@class, 'portrait')]",
+            "div[contains(@class, 'infobox')]"
+        ]
+    }
+}
