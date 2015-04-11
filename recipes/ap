@@ -1,6 +1,6 @@
 {
     "name": "Associated Press",
-    "url": "http://www.hosted.ap.org.",
+    "url": "http://www.hosted.ap.org",
     "match": "ap.org",
     "author": "cwmke",
     "config": {
