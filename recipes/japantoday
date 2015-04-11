@@ -1,6 +1,6 @@
 {
     "name": "Japan Today",
-    "url": "http://www.japantoday.com.",
+    "url": "http://www.japantoday.com",
     "match": "japantoday.com",
     "author": "cwmke",
     "config": {
