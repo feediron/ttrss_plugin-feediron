@@ -1,4 +1,9 @@
-    "thestandard.com.hk": {
+{
+    "name": "The Standard",
+    "url": "http://www.thestandard.com.hk",
+    "match": "thestandard.com.hk",
+    "author": "cwmke",
+    "config": {
         "type": "xpath",
         "xpath": "table\/tr\/td\/span[contains(@class, 'bodyCopy')]\/..\/..\/..",
         "cleanup": [
@@ -13,3 +18,4 @@
             "table"
         ]
     }
+}

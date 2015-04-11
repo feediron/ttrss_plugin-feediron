@@ -1,0 +1,20 @@
+{
+    "name": "The Japan Times",
+    "url": "http://www.japantimes.co.jp",
+    "match": "japantimes.co.jp",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "article[@role='main']",
+        "cleanup": [
+            "script",
+            "div[contains(@class, 'meta')]",
+            "header",
+            "div[@class='clearfix']",
+            "div[@class='OUTBRAIN']",
+            "ul[@id='content_footer_menu']",
+            "div[@class='article_footer_ad']",
+            "div[@id='disqus_thread']"
+        ]
+    } 
+}

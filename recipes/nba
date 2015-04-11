@@ -1,0 +1,14 @@
+{
+    "name": "NBA",
+    "url": "http://www.nba.com",
+    "match": "nba.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "section[@id='nbaArticleContent']",
+        "cleanup": [
+            "div[@id='nbaArticleSocialWrapper_bot']",
+            "h5"
+        ]
+    }
+}

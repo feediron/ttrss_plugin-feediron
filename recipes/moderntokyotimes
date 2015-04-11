@@ -1,0 +1,41 @@
+{
+    "name": "Modern Tokyo Times",
+    "url": "http://moderntokyotimes.com",
+    "match": "moderntokyotimes.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[contains(@class, 'entry-content')]",
+        "modify": [
+            {
+                "type": "replace",
+                "search": [
+                    "Modern Tokyo News is part of the Modern Tokyo Times group",
+                    "Modern Tokyo Times \u2013 International News and Japan News",
+                    "Modern Tokyo Times \u2013 Fashion",
+                    "Modern Tokyo News \u2013 Tokyo News and International News",
+                    "Global Security News \u2013 Geopolitics and Terrorism",
+                    "PLEASE JOIN ON TWITTER",
+                    "Modern Tokyo Times",
+                    "PLEASE JOIN ON FACEBOOK"
+                ],
+                "replace": [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        ],
+        "cleanup": [
+            "a[@target='_parent']",
+            "a[@href='http:\/\/moderntokyotimes.com\/wp-content\/uploads\/2014\/07\/mtt3.png']",
+            "a[@href='https:\/\/twitter.com\/MTT_News']",
+            "a[@href='https:\/\/www.facebook.com\/moderntokyotimes']"
+        ]
+    }
+}

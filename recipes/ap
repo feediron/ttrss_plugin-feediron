@@ -1,0 +1,13 @@
+{
+    "name": "Associated Press",
+    "url": "http://www.hosted.ap.org.",
+    "match": "ap.org",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": [
+            "img[contains(@src, 'jpg')]",
+            "span[@class='entry-content']"
+        ]
+    }
+}

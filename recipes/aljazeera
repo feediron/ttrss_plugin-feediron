@@ -1,0 +1,16 @@
+{
+    "name": "Al Jazeera",
+    "url": "http://www.aljazeera.com.",
+    "match": "aljazeera.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@id='article-body']",
+        "cleanup": [
+            "h1",
+            "h3",
+            "ul",
+            "div"
+        ]
+    }
+}
