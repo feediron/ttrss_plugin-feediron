@@ -1,0 +1,20 @@
+{
+    "name": "The Milwaukee Journal Sentinal",
+    "url": "http://www.jsonline.com",
+    "match": "jsonline.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@id='mainContent']",
+        "cleanup": [
+            "div[@class='overlineUpper']",
+            "div[@class='updated']",
+            "div[@class='columnist_link']",
+            "div[@class='credit']",
+            "h1",
+            "h2",
+            "h4",
+            "ul"
+        ]
+    }
+}
