@@ -1,0 +1,24 @@
+{
+    "name": "Sound & Vision",
+    "url": "http://www.soundandvision.com",
+    "match": "soundandvision.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "multipage": {
+            "xpath": "a[contains(@title,'Next Page')]",
+            "append": true,
+            "recursive": true
+        },
+        "xpath": "div[@id='left']",
+        "cleanup": [
+            "div[@class='meta']",
+            "h1",
+            "h2",
+            "addthis",
+            "comment-links",
+            "div[@class='book-navigation']",
+            "div[@class='comment-links']"
+            ]
+        }
+}
