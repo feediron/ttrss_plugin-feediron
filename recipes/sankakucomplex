@@ -1,0 +1,23 @@
+{
+    "name": "sankakucomplex.com",
+    "url": "sankakucomplex.com",
+    "stamp": 1429730463,
+    "author": "",
+    "match": "sankakucomplex.com",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@id='posts']",
+        "force_charset": "utf-8",
+        "modify": [
+            {
+                "type": "replace",
+                "search": [
+                    "\"\/\/"
+                ],
+                "replace": [
+                    "\"http:\/\/"
+                ]
+            }
+        ]
+    }
+}
