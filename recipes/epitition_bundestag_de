@@ -1,0 +1,17 @@
+{
+    "name": "epetitionen.bundestag.de",
+    "url": "epetitionen.bundestag.de",
+    "stamp": 1431452118,
+    "author": "GoodSoulGermany",
+    "match": "epetitionen.bundestag.de",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@class='detail']",
+        "cleanup": [
+            "div[contains(@class,'backbutton')]",
+            "h2",
+            "div[contains(@class,'spacer')]",
+            "p[contains(@class,'linkbutton')]"
+        ]
+    }
+}
