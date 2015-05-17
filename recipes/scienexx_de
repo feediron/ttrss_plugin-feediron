@@ -1,0 +1,22 @@
+{
+    "name": "scinexx.de",
+    "url": "scinexx.de",
+    "stamp": 1431452510,
+    "author": "GoodSoulGermany",
+    "match": "scinexx.de",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@class='standard_news']",
+        "cleanup": [
+            "h2",
+            "iframe",
+            "script",
+            "div[@class='g-plusone']",
+            "a[@class='twitter-share-button']",
+            "p[@class='copyright']",
+            "div[@class='print_link']",
+            "div[contains(@style,'clear:both')]",
+            "div[contains(@class,'wide_teaser_box')]"
+        ]
+    }
+}

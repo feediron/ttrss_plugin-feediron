@@ -1,0 +1,14 @@
+{
+    "name": "merkur",
+    "url": "merkur",
+    "stamp": 1431452406,
+    "author": "GoodSoulGermany",
+    "match": "merkur",
+    "config": {
+        "type": "xpath",
+        "xpath": "article",
+        "cleanup": [
+            "div[@class='id-Article-dateActionboxCombo']"
+        ]
+    }
+}

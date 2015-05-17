@@ -1,0 +1,12 @@
+{
+    "name": "der-postillon.com",
+    "url": "der-postillon.com",
+    "stamp": 1431452460,
+    "author": "GoodSoulGermany",
+    "match": "der-postillon.com",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[contains(@class,'entry-content')]",
+        "force_unicode": true
+    }
+}

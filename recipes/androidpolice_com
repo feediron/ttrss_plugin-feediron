@@ -1,0 +1,18 @@
+{
+    "name": "androidpolice.com",
+    "url": "androidpolice.com",
+    "stamp": 1431452386,
+    "author": "GoodSoulGermany",
+    "match": "androidpolice.com",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@class='post-content']",
+        "cleanup": [
+            "toc",
+            "div[contains(@class,'gallery-slider')]",
+            "li[contains(@class,'red-bg')]",
+            "li[contains(@class,'black-bg')]",
+            "ul[contains(@class,'horizontal-boxes-tags')]"
+        ]
+    }
+}

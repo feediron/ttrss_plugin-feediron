@@ -1,0 +1,20 @@
+{
+    "name": "sz.de",
+    "url": "sz.de",
+    "stamp": 1431452330,
+    "author": "GoodSoulGermany",
+    "match": "sz.de",
+    "config": {
+        "type": "xpath",
+        "multipage": {
+            "xpath": "a[contains(@class,'arrow') and text() = 'n\u00e4chste Seite']",
+            "append": true,
+            "recursive": true
+        },
+        "xpath": "section[contains(@class,'body')]",
+        "cleanup": [
+            "div[@class='iqad']",
+            "span[@class='imagelabel']"
+        ]
+    }
+}
