@@ -1,0 +1,15 @@
+{
+    "name": "managewp.org",
+    "url": "managewp.org",
+    "stamp": 1434612232,
+    "author": "Nguyễn Đình Quân - NARGA.NET",
+    "match": "managewp.org",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@class='content']",
+        "cleanup": [
+            "div[@class='details']",
+            "ul[@class='articleinfo']"
+        ]
+    }
+}
