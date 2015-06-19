@@ -682,7 +682,22 @@ class Feediron extends Plugin implements IHandler
 		Feediron_Logger::get()->set_log_level($_POST['verbose']?Feediron_Logger::LOG_VERBOSE:Feediron_Logger::LOG_TEST);
 		$test_url = $_POST['test_url'];
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
+		
 		if(isset($_POST['test_conf']) && trim($_POST['test_conf']) != ''){
+			
+			$json_conf = $_POST['test_conf'];
+			$json_reply = array();
+			Feediron_Json::format($json_conf);
+			header('Content-Type: application/json');
+			if (is_null(json_decode($json_conf)))
+			{
+				$json_reply['success'] = false;
+				$json_reply['errormessage'] = __('Invalid JSON! ').json_last_error_msg();
+				$json_reply['json_error'] = Feediron_Json::get_error();
+				echo json_encode($json_reply);
+				return false;
+			}
+			
 			$config = $this->getConfigSection($test_url);
 			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config found: ", $config);
 			$newconfig = json_decode($_POST['test_conf'], true);
