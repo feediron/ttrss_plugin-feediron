@@ -1,0 +1,23 @@
+{
+	"name": "heise.de Telepolis",
+	"url": "http://www.heise.de/tp/",
+	"match": "heise.de\/tp",
+	"author": "phbaer",
+	"config":{
+		"type": "xpath",
+		"xpath": "div[contains(@class, 'artikel')]",
+		"multipage": {
+			"xpath": "a[@rel='next' and text()='N\u00e4chste Seite']",
+			"append": true,
+			"recursive": true
+		},
+		"cleanup": [
+			"div[@id='theodor']",
+			"p[contains(@class, 'np')]",
+			"div[@id='tp-bottomleiste-nt']",
+			"p[@class='vp-top']",
+			"p[@class='vp-bottom']",
+			"h4[@class='hnp']"
+		]
+	}
+}
