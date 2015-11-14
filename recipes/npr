@@ -1,0 +1,19 @@
+{
+    "name": "npr",
+    "url": "http://www.npr.org",
+    "match": "npr.org",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@id='storytext']",
+        "cleanup": [
+            "div[@class='credit-caption']",
+            "div[@class='enlarge_html']",
+            "div[contains(@id, 'pullquote')]",
+            "div[contains(@class, 'bucketwrap')]",
+            "div[contains(@class, 'video')]",
+            "div\/div\/a",
+            "div[@class='simplenodate']"
+        ]
+    }
+}

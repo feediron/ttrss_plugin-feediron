@@ -1,0 +1,18 @@
+{
+    "name": "SecurityFocus",
+    "url": "http://www.securityfocus.com",
+    "match": "securityfocus.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "multipage": {
+            "xpath": "div[@align='right']\/a",
+            "append": true,
+            "recursive": false
+        },
+        "xpath": "span[@class='body']",
+        "cleanup": [
+            "div[@align='right']"
+        ]
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "name": "re/code",
+    "url": "http://recode.net",
+    "match": "recode.net",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": [
+            "img[contains(@class, 'attachment-large')]",
+            "div[contains(@class, 'postarea')]"
+        ],
+        "cleanup": [
+            "script",
+            "div[contains(@class, 'sharedaddy')]",
+            "div[contains(@class, 'inner-related-article')]",
+            "div[@class='post-send-off']",
+            "div[@class='large-12 columns']"
+        ]
+    }
+}

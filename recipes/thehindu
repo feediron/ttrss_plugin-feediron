@@ -6,11 +6,10 @@
     "config": {
         "type": "xpath",
         "xpath": [
-            "span[@class='upper']",
-            "[p\/img[@class='main-image']\/..",
-            "div[@class='article-text']"
+            "div[@class='article-text']",
+            "div[@id='pic']",
+            "div[@id='article-new-carousel']"
         ],
-        "join_element": "<p>",
         "cleanup": [
             "script",
             "div[@class='related-column']",

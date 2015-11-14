@@ -7,7 +7,7 @@
         "type": "xpath",
         "xpath": "article[@role='main']",
         "cleanup": [
-            "script",
+            "scripts",
             "div[contains(@class, 'meta')]",
             "header",
             "div[@class='clearfix']",

@@ -5,10 +5,18 @@
     "author": "cwmke",
     "config": {
         "type": "xpath",
-        "xpath": "section[@id='nbaArticleContent']",
+        "xpath": [
+            "article",
+            "div[@data-js='gallerySlides']"
+        ],
         "cleanup": [
-            "div[@id='nbaArticleSocialWrapper_bot']",
-            "h5"
+            "a[contains(@class='visually-hidden')]",
+            "ul[contains(@class, 'metadata')]",
+            "div[@data-js='slideCount']",
+            "div[@data-slide-number='_endslate']",
+            "div[@id='related']",
+            "img[contains(@src, '1x1')]",
+            "a[@href='#start-of-content']"
         ]
     }
 }

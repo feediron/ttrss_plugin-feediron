@@ -1,0 +1,19 @@
+{
+    "name": "The Moscow Times",
+    "url": "http://www.themoscowtimes.com",
+    "match": "themoscowtimes.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": [
+            "div[@class='article_main_img']",
+            "div[@class='article_text']"
+        ],
+        "cleanup": [
+            "div[@class='articlebottom']",
+            "p\/b",
+            "p\/a[contains(@href, '\/article.php?id=')]",
+            "div[@class='disqus_wrap']"
+        ] 
+    }
+}

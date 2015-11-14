@@ -5,31 +5,20 @@
     "author": "cwmke",
     "config": {
        "type": "xpath",
-        "xpath": [
-            "a[@rel='author']",
-            "div[@class='storyBody']"
-        ],
-        "modify": [
-            {
-                "type": "replace",
-                "search": [
-                    "|"
-                ],
-                "replace": [
-                    ""
-                ]
-            }
+       "xpath": [
+            "p[@class='summary']",
+            "div[contains(@class,'storyBody')]"
         ],
         "cleanup": [
+            "*[contains(@class,'ad-')]",
+            "p\/span",
             "script",
             "p[@class='summary']",
             "div[contains(@class, 'relatedContent')]",
-            "a[contains(@href, 'zdnet.com')]",
-            "strong",
-            "a[contains(@href, 'zdnet.com')]",
             "div[contains(@class, 'loader')]",
             "p[@class='photoDetails']",
-            "div[@class='thumbnailSlider']"
+            "div[@class='thumbnailSlider']",
+            "div[@class='shortcodeGalleryWrapper']"
         ]
     }
 }

@@ -1,0 +1,16 @@
+{
+    "name": "NETWORKWORLD",
+    "url": "http://www.networkworld.com",
+    "match": "networkworld.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": [
+            "div[@itemprop='articleBody']",
+            "figure[@class='hero-img']"
+        ],
+        "cleanup": [
+            "aside"
+        ]
+    }
+}

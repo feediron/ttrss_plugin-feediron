@@ -1,0 +1,11 @@
+{
+    "name": "The Korea Herald",
+    "url": "http://www.koreaherald.com",
+    "match": "koreaherald.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@class='content_view']",
+        "force_charset": "utf-8"
+    }
+}
