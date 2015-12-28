@@ -6,16 +6,8 @@
     "config": {
         "type": "xpath",
         "xpath": [
-            "div[@class='img']",
-            "div[@class='st_text_c']"
-        ],
-        "cleanup": [
-            "div[@align='center']",
-            "div[@class='ad_slot']",
-            "div[@class='st_embed']",
-            "div[contains(@style, 'font-size:')]",
-            "ul",
-            "style[@type='text\/css']"
+            "div\/article[@itemprop='articleBody']",
+            "div[@class='img']"
         ]
     }
 }

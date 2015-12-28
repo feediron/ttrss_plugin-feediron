@@ -1,0 +1,20 @@
+{
+    "name": "The Atlantic",
+    "url": "http://www.theatlantic.com",
+    "match": "theatlantic.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "article[@id='article']",
+        "cleanup": [
+            "div[contains(@id, 'ad-')]",
+            "h1",
+            "div[contains(@class, 'ad-')]",
+            "div[contains(@class, 'article-cover-extra-wrapper')]",
+            "aside[@class='callout']",
+            "span[@class='credit']",
+            "aside[contains(@class,'partner-box')]",
+            "div[contains(@class, 'article-tools')]"
+        ]
+    }
+}

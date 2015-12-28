@@ -1,0 +1,16 @@
+{
+    "name": "Discover",
+    "url": "http://discovermagazine.com",
+    "match": "discovermagazine.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@class='entry']",
+        "cleanup": [
+            "h1",
+            "div[@class='meta']",
+            "div[@class='shareIcons']",
+            "div[@class='navigation']"
+        ]
+    }
+}

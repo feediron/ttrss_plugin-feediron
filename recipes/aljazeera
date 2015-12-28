@@ -5,12 +5,16 @@
     "author": "cwmke",
     "config": {
         "type": "xpath",
-        "xpath": "div[@id='article-body']",
+        "xpath": [
+            "article[@id='main-story']"
+        ],
         "cleanup": [
-            "h1",
-            "h3",
+            "header",
             "ul",
-            "div"
+            "a[@target='_self']",
+            "table[contains(@class, 'in-article-item')]",
+            "div[@data-embed-type='Brightcove']",
+            "div[@class='QuoteContainer']"
         ]
     }
 }

@@ -1,0 +1,51 @@
+{
+    "name": "c|net",
+    "url": "http://www.cnet.com",
+    "match": "cnet",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "multipage": {
+            "xpath": "span[@section='nextpage']\/a",
+            "append": true,
+            "recursive": true
+        },
+        "xpath": "body",
+        "cleanup": [
+            "header",
+            "div[@class='articleHead']\/h1",
+            "nav",
+            "div[contains(@class, 'ad-')]",
+            "ul[@class='breadcrumb']",
+            "div[contains(@class, 'article-byline')]",
+            "span[@class='productSpan']",
+            "div[contains(@class, 'related')]",
+            "div[contains(@class, 'productList')]",
+            "div[contains(@data-component, 'Ad')]",
+            "span[@section='relatedFullReview']",
+            "section[@class='dontMissRight']",
+            "div[@class='metaData']",
+            "div[contains(@class, 'controls')]",
+            "div[@class='wrapper']",
+            "li[contains(@class, 'videoSlide')]",
+            "div[@id='loadingCircle']",
+            "div[@class='popControls']",
+            "div[@class='autoplayControls']",
+            "div[@section='reviewSideNav']",
+            "div[@data-update-area='breadcrumb']",
+            "span[@class='credit']",
+            "div[@section='lwrcomparable']",
+            "div[@data-update-area='pagination']",
+            "div[contains(@class, 'latestNews')]",
+            "div[contains(@class, 'livefyreWrapper')]",
+            "div[@section='author']",
+            "div[contains(@class, 'Ad')]",
+            "script",
+            "a[@class='clickToEnlarge']",
+            "div[@section='topSharebar']",
+            "div[contains(@class, 'related')]",
+            "div[@section='shortcodeGallery']",
+            "footer"
+        ]
+    }
+}

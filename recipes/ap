@@ -5,9 +5,13 @@
     "author": "cwmke",
     "config": {
         "type": "xpath",
-        "xpath": [
-            "img[contains(@src, 'jpg')]",
-            "span[@class='entry-content']"
+		"xpath": "table[contains(@class, 'hentry')]",
+        "cleanup": [
+            "script",
+            "div[@class='span-body']",
+            "span[contains(@class, 'byline')]",
+            "table[@class='ap-htmltable-table']",
+            "table[@class='ap-mediabox-table']"
         ]
     }
 }

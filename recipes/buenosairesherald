@@ -1,0 +1,10 @@
+{
+    "name": "Buenos Aires Herald",
+    "url": "http://buenosairesherald.com",
+    "match": "buenosairesherald.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@style='float:none']"
+    }
+}

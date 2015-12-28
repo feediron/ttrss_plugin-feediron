@@ -7,6 +7,7 @@
         "type": "xpath",
         "xpath": "div[@id='mainContent']",
         "cleanup": [
+            "img[@class='floatLeft']",
             "div[@class='overlineUpper']",
             "div[@class='updated']",
             "div[@class='columnist_link']",
