@@ -192,7 +192,7 @@ class Feediron extends Plugin implements IHandler
 	}
 	function getArticleContent($link, $config)
 	{
-      if(array_key_exists($link, $this->cache)){
+      if(is_array($this->cache) && array_key_exists($link, $this->cache)){
          Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Fetching from cache");
          return $this->cache[$link];
       }
