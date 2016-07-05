@@ -652,7 +652,7 @@ class Feediron extends Plugin implements IHandler
 
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Configuration updated.');
-		$json_reply['json_conf'] = Feediron_Json::format(json_encode($conf));
+		$json_reply['json_conf'] = Feediron_Json::format(json_encode($conf, JSON_UNESCAPED_SLASHES));
 		echo json_encode($json_reply);
 	}
 	function arrayRecursiveDiff($aArray1, $aArray2) {
