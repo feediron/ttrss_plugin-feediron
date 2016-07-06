@@ -39,7 +39,7 @@ class RecipeManager{
 		$data = preg_replace('/\n/', '', $filedata['content']);
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Recipe content: $data");
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, base64_decode($data));
-		$data = preg_replace('/\\\./', '.', base64_decode($data));
+		$data = preg_replace(preg_quote('/\\./'), '.', base64_decode($data));
 		$obj =  json_decode(($data),true);
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, 'last error: '.json_last_error());
 		return $obj;
