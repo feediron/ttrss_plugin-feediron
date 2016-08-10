@@ -192,7 +192,7 @@ class Feediron extends Plugin implements IHandler
 	}
 	function getArticleContent($link, $config)
 	{
-      if(array_key_exists($link, $this->cache)){
+      if(is_array($this->cache) && array_key_exists($link, $this->cache)){
          Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Fetching from cache");
          return $this->cache[$link];
       }
@@ -652,7 +652,7 @@ class Feediron extends Plugin implements IHandler
 
 		$json_reply['success'] = true;
 		$json_reply['message'] = __('Configuration updated.');
-		$json_reply['json_conf'] = Feediron_Json::format(json_encode($conf));
+		$json_reply['json_conf'] = Feediron_Json::format(json_encode($conf, JSON_UNESCAPED_SLASHES));
 		echo json_encode($json_reply);
 	}
 	function arrayRecursiveDiff($aArray1, $aArray2) {
