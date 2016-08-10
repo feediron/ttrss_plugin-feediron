@@ -1,11 +1,13 @@
 {
-    "name": "The Milwaukee Journal Sentinal",
-    "url": "http://www.jsonline.com",
+    "name": "jsonline.com",
+    "url": "jsonline.com",
+    "stamp": 1470847312,
     "match": "jsonline.com",
-    "author": "cwmke",
     "config": {
         "type": "xpath",
-        "xpath": "div[@id='main']",
+        "xpath": [
+            "div[@class='main']"
+        ],
         "cleanup": [
             "script",
             "div[contains(@class, 'header')]",
@@ -16,7 +18,8 @@
             "div[@class='story--rightcol']",
             "div[contains(@class, 'footer')]",
             "div[contains(@class, 'rightcol--')]",
-            "div[contains(@class, 'author')]"
+            "div[contains(@class, 'author')]",
+            "div[@id='columnArchive']"
         ]
     }
 }

@@ -1,20 +1,23 @@
 {
-    "name": "re/code",
-    "url": "http://recode.net",
+    "name": "recode.net",
+    "url": "recode.net",
+    "stamp": 1470847254,
     "match": "recode.net",
-    "author": "cwmke",
     "config": {
         "type": "xpath",
-        "xpath": [
-            "img[contains(@class, 'attachment-large')]",
-            "div[contains(@class, 'postarea')]"
-        ],
+        "xpath": "div[@class='l-col__main']",
         "cleanup": [
             "script",
-            "div[contains(@class, 'sharedaddy')]",
+            "cite",
+            "h4[@class='marker ']",
+            "div[contains(@class, 'article-meta')]",
+            "div[contains(@class, 'share')]",
             "div[contains(@class, 'inner-related-article')]",
             "div[@class='post-send-off']",
-            "div[@class='large-12 columns']"
+            "div[@class='large-12 columns']",
+            "div[@class='section-title']",
+            "div[@class='top-story row']",
+            "div[@class='entry-meta']"
         ]
     }
 }

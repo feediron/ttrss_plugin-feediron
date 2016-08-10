@@ -1,0 +1,14 @@
+{
+    "name": "\/releases\/tag\/",
+    "url": "\/releases\/tag\/",
+    "stamp": 1470847530,
+    "author": "cwmke",
+    "match": "\/releases\/tag\/",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[contains(@class, 'release-body')]",
+        "cleanup": [
+            "h1"
+        ]
+    }
+}
