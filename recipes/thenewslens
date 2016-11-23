@@ -1,0 +1,18 @@
+{
+    "name": "thenewslens.com",
+    "url": "thenewslens.com",
+    "stamp": 1470847649,
+    "author": "cwmke",
+    "match": "thenewslens.com",
+    "config": {
+        "type": "xpath",
+        "xpath": [
+            "div[@id='en-content']"
+        ],
+        "cleanup": [
+            "script",
+            "p\/span",
+            "aside"
+        ]
+    }
+}

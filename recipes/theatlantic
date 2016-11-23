@@ -1,20 +1,35 @@
 {
-    "name": "The Atlantic",
-    "url": "http://www.theatlantic.com",
-    "match": "theatlantic.com",
+    "name": "TheAtlantic",
+    "url": "TheAtlantic",
+    "stamp": 1470847749,
     "author": "cwmke",
+    "match": "TheAtlantic",
     "config": {
         "type": "xpath",
-        "xpath": "article[@id='article']",
+        "xpath": "div[@id='site']",
         "cleanup": [
-            "div[contains(@id, 'ad-')]",
+            "div[@id='notes-branding']",
+            "script",
+            "gpt-ad",
+            "header",
             "h1",
+            "div[@class='byline-wrapper']",
+            "div[@itemprop='headline']",
+            "div[contains(@id, 'ad-')]",
             "div[contains(@class, 'ad-')]",
+            "div[contains(@class, 'share')]",
             "div[contains(@class, 'article-cover-extra-wrapper')]",
             "aside[@class='callout']",
             "span[@class='credit']",
             "aside[contains(@class,'partner-box')]",
-            "div[contains(@class, 'article-tools')]"
+            "div[contains(@class, 'bottom')]",
+            "div[contains(@id, 'bottom')]",
+            "div[@class='right-rail-wrapper']",
+            "div[contains(@id, 'popular')]",
+            "div[contains(@class, 'article-tools')]",
+            "div[@id='article-comments']",
+            "footer",
+            "div[@class='nav-article-wrapper']"
         ]
     }
 }

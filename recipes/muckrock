@@ -1,0 +1,16 @@
+{
+    "name": "Muckrock",
+    "url": "http://www.muckrock.com",
+    "stamp": 1459198579,
+    "match": "muckrock.com",
+    "author": "cwmke",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[@class='content']",
+        "cleanup": [
+            "h1",
+            "div[@class='secondary']",
+            "aside"
+        ]
+    }
+}
