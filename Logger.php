@@ -15,7 +15,7 @@ class Feediron_Logger{
 		return self::$logger;
 	}
 
-	private $loglevel = LOG_NONE;
+	private $loglevel = self::LOG_NONE;
 	private $testlog = array();
 	private $time_measure = false;
 
