@@ -34,7 +34,7 @@ class Feediron_Logger{
 			array_push($this->testlog, "<h2>LOG:</h2><pre>".htmlentities($msg)."</pre>");
 		}else{
 			array_push($this->testlog, "<h2>$msg</h2>");
-			array_push($this->testlog, "<pre>".htmlentities($details)."</pre>");
+			array_push($this->testlog, "<details><pre>".htmlentities($details)."</pre></details>");
 		}
 	}
 	public function log_json($level, $msg, $json){
