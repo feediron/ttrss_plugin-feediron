@@ -1,0 +1,5 @@
+{
+    "require": {
+        "andreskrey/readability.php": "^1.1"
+    }
+}

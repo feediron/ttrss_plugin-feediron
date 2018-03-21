@@ -1,11 +1,9 @@
-ttrss_plugin-feediron
-=======================
+# ttrss_plugin-feediron
 
 This is a plugin for Tiny Tiny RSS (tt-rss). It allows you to replace an article's contents by the contents of an element on the linked URL's page, i.e. create a "full feed".
 
 
-Installation
-------------
+## Installation
 
 Checkout the directory into your plugins folder like this (from tt-RSS root directory):
 
@@ -16,9 +14,17 @@ $ git clone git://github.com/m42e/ttrss_plugin-feediron.git plugins/feediron
 
 Then enable the plugin in preferences.
 
+### Optional
 
-Configuration
--------------
+Install [Readability.php](https://github.com/andreskrey/readability.php) using [composer](https://getcomposer.org/). Assuming composer is installed, navigate to the feeiron plugin folder with `composer.json` present and run:
+
+```
+$ composer install
+```
+
+___
+
+## Configuration
 
 The configuration is done in JSON format. In the preferences, you'll find a new tab called *FeedIron*. Use the large field to enter/modify the configuration data and click the **Save** button to store it.
 You can enter an URL in the field below and click **Test** to get a preview what the result will be if the filter is applied to the url. *Note:* Save before you test :).
@@ -140,8 +146,96 @@ The **steps** value is an array of actions performed in the given order. If **af
 
 There is an additional option **cleanup** available. Its an array of regex that are removed using preg_replace.
 
-### readability
-This option makes use of [php-readability]( https://github.com/j0k3r/php-readability ) which is a fork of the [original](http://code.fivefilters.org/php-readability). All the extraction is performed within this module.
+### Readability
+The Readability modules are a automated method that attempts to isolate the relevant article text and images.
+
+<details>
+<summary>Basic Usage</summary>
+
+```
+{
+	"type":"readability"
+}
+```
+</details>
+
+#### PHP-Readability
+In built default, This option makes use of [php-readability]( https://github.com/j0k3r/php-readability ) which is a fork of the [original](http://code.fivefilters.org/php-readability). All the extraction is performed within this module and has no configuration options
+
+#### Readability.php
+Optionally installed via composer [Readability.php](https://github.com/andreskrey/readability.php) is a PHP port of Mozilla's Readability.js. All the extraction is performed within this module.
+
+<details>
+<summary>Advanced Usage</summary>
+
+#### Fix Relative URLS
+Convert relative URLs to absolute. Like `/test` to `http://host/test`
+```
+{
+	"type":"readability",
+	"relativeurl":"http:\/\/example.com\/"
+}
+```
+
+#### Remove ByLine from Article
+```
+{
+	"type":"readability",
+	"removebyline":true
+}
+```
+
+#### Normalize Page
+Default value `false`, converts UTF-8 characters to its HTML Entity equivalent. Useful to parse HTML with mixed encoding.
+```
+{
+	"type":"readability",
+	"normalize":true
+}
+```
+</details>
+
+<details>
+<summary>Advanced Usage: Article Images</summary>
+
+#### Prepened Main Image
+Default value `false`, returns the main image of the article Prepended before the article.
+```
+{
+	"type":"readability",
+	"prependimage":true
+}
+```
+
+#### Main Image Only
+Default value `false`, returns the main image of the article.
+```
+{
+	"type":"readability",
+	"mainimage":true
+}
+```
+
+#### Append All Images
+Default value `false`, returns all images in article appended after the article.
+```
+{
+	"type":"readability",
+	"appendimages":true
+}
+```
+
+#### All Images Only
+Default value `false`, returns all images in article without the article.
+```
+{
+	"type":"readability",
+	"allimages":true
+}
+```
+
+
+</details>
 
 ## multipage
 This option indicates that the article is split into two or more pages (eventually). FeedIron can combine all the parts into the content of the article.
@@ -152,8 +246,8 @@ the fetching stops if an url is added twice.
 ### General options
 * **debug** You can activate debugging informations.  (At the moment there are not that much debug informations to be activated), this option must be places at the same level as the site configs.
 * **force_charset** allows to override automatic charset detection. If it is omitted, the charset will be parsed from the HTTP headers or loadHTML() will decide on its own.  
-* **reformat** is an array of formating rules for the **url** of the full article. The rules are applied before the full article is fetched. There are two possible types: **regex** and **replace**. 
-  * **regex** takes a regex in an option called **pattern** and the replacement in **replace**. For details see [preg_replace](http://www.php.net/manual/de/function.preg-replace.php) in the PHP documentation. 
+* **reformat** is an array of formating rules for the **url** of the full article. The rules are applied before the full article is fetched. There are two possible types: **regex** and **replace**.
+  * **regex** takes a regex in an option called **pattern** and the replacement in **replace**. For details see [preg_replace](http://www.php.net/manual/de/function.preg-replace.php) in the PHP documentation.
   * **replace** uses the PHP function str_replace, which takes either a string or an array as search and replace value.  
 * **modify** is the same as described above but for the content. It is applied after the split/xpath selection.
 
