@@ -107,16 +107,29 @@ class Feediron extends Plugin implements IHandler
 	{
 		$data = $this->getConfig();
 		if(is_array($data)){
-			foreach ($data as $urlpart=>$config) {
-				if (strpos($url, $urlpart) === false){
-					continue;   // skip this config if URL not matching
+
+			foreach ($data as $urlpart=>$config) { // Check for multiple URL's
+				if (strpos($urlpart, "|") !== false){
+					$urlparts = explode("|", $urlpart);
+					foreach ($urlparts as $suburl){
+						if (strpos($url, $suburl) !== false){
+							Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "Config found for $suburl", $config);
+							return $config; // Return config if any url matched
+						}
+					}
+
+				} else {
+					if (strpos($url, $urlpart) === false){
+						continue;   // skip this config if URL not matching
+					}
+					Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "Config found", $config);
+					return $config;
 				}
-				Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "Config found", $config);
-				return $config;
 			}
 		}
 		return FALSE;
 	}
+
 
 	// Load config
 	function getConfig()
