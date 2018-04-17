@@ -45,7 +45,7 @@ Additionally you can load predefined rules submitted by the community or export 
 
 ## Usage
 
-There are three (3) types of [Filters](#filters), three (3) [general options](#general-options) and one (1) [global option](#global-options). Note: The rule `type` Must be defined and has to be one of the following: `xpath`, `split` or `readability`.
+There are three (3) types of [Filters](#filters), four (4) [general options](#general-options) and one (1) [global option](#global-options). Note: The rule `type` Must be defined and has to be one of the following: `xpath`, `split` or `readability`.
 
 The best way to understand Feediron is to read the [Full configuration example](#full-configuration-example)
 
@@ -387,6 +387,7 @@ Returns all images in article without the article.
 		* [search](#search---typesearch-str---array-of-search-str-) - `"type":"search str" / [ "array of search str" ]`
 		* [replace](#replace---replacestr---array-of-str-) - `"replace":"str"`
 * [force_charset](#force_charset---force_charsetcharset) - `"force_charset":"charset"`
+* [force_unicode](#force_unicode---force_unicodebool) - `"force_unicode":bool`
 
 ## reformat / modify - `"reformat":[array of options]` `"modify":[array of options]`
 
@@ -483,6 +484,18 @@ force_charset allows to override automatic charset detection. If it is omitted, 
   "type": "xpath",
   "xpath": "article",
   "force_charset": "utf-8"
+}
+```
+
+### force_unicode - `"force_unicode":bool`
+
+force_unicode performs a UTF-8 character set conversion on the html via [iconv](http://php.net/manual/en/function.iconv.php).
+
+```json
+"example.tld":{
+  "type": "xpath",
+  "xpath": "article",
+  "force_unicode": true
 }
 ```
 ---
