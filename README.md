@@ -2,7 +2,7 @@
 
 About |Table Of Contents
  :---- | --------
-This is a plugin for [Tiny Tiny RSS (tt-rss)](https://tt-rss.org/).<br>It allows you to replace an article's contents by the contents of an element on the linked URL's page<br><br>i.e. create a "full feed". |<ul><li>[Installation](#installation)</li><li>[Configuration tab](#configuration-tab)</li><ul><li>[Usage](#usage)</li><li>[Filters](#filters)</li><li>[General Options](#general-options)</li><li>[Global Options](#global-options)</li></ul><li>[Testing Tab](#testing-tab)</li><li>[Full configuration example](#full-configuration-example)</li><li>[Xpath General Information](#xpath-general-information)</li></ul>
+This is a plugin for [Tiny Tiny RSS (tt-rss)](https://tt-rss.org/).<br>It allows you to replace an article's contents by the contents of an element on the linked URL's page<br><br>i.e. create a "full feed".<br><br>Keep up to date by subscribing to the [Release Feed](https://github.com/feediron/ttrss_plugin-feediron/releases.atom)|<ul><li>[Installation](#installation)</li><li>[Configuration tab](#configuration-tab)</li><ul><li>[Usage](#usage)</li><li>[Filters](#filters)</li><li>[General Options](#general-options)</li><li>[Global Options](#global-options)</li></ul><li>[Testing Tab](#testing-tab)</li><li>[Full configuration example](#full-configuration-example)</li><li>[Xpath General Information](#xpath-general-information)</li></ul>
 
 ## Todo
 * ~~Make a recipe base here~~
@@ -54,6 +54,7 @@ The best way to understand Feediron is to read the [Full configuration example](
 A Basic Configuration must define:
 
 1. The site string. e.g. `example.com`
+	* Use the same configuration for multiple URL's by seperating them with the `|` Delimiter. e.g. `"example.com|example.net"`
 2. The Filter type. e.g. `"type":"xpath"`
 3. The Filter config. e.g. `"xpath":"div[@id='content']"` or the array `"xpath": [ "div[@id='article']", "div[@id='footer']"]`
 
