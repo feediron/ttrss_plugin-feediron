@@ -566,7 +566,7 @@ class Feediron extends Plugin implements IHandler
 
 		$htmlout = array();
 
-		foreach($xpaths as $xpath){
+		foreach($xpaths as $key=>$xpath){
 			$index = 0;
 			if(is_array($xpath) && array_key_exists('index', $xpath)){
 				$index = $xpath['index'];
@@ -578,9 +578,11 @@ class Feediron extends Plugin implements IHandler
 					$basenode = $entries->item($index);
 				}
 
-				if (!$basenode && count($xpaths) == 1) {
+				if (!$basenode && count($xpaths) == ( $key + 1 )) {
 					Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
 					return $html;
+				} elseif (!$basenode && count($xpaths) > 1){
+					continue;
 				}
 
 				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Extracted node", $this->getHtmlNode($basenode));
