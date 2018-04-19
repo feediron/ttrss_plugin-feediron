@@ -145,8 +145,12 @@ Selecting the 3rd Div in a page:
 ```json
 "example.com":{
 	"type":"xpath",
-	"xpath":"div",
-	"index":3
+	"xpath":[
+		{
+			"xpath":"div",
+			"index":3
+		}
+	]
 }
 ```
 
