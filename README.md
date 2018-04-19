@@ -45,7 +45,7 @@ Additionally you can load predefined rules submitted by the community or export 
 
 ## Usage
 
-There are three (3) types of [Filters](#filters), four (4) [general options](#general-options) and one (1) [global option](#global-options). Note: The rule `type` Must be defined and has to be one of the following: `xpath`, `split` or `readability`.
+There are three (3) types of [Filters](#filters), five (5) [general options](#general-options) and one (1) [global option](#global-options). Note: The rule `type` Must be defined and has to be one of the following: `xpath`, `split` or `readability`.
 
 The best way to understand Feediron is to read the [Full configuration example](#full-configuration-example)
 
@@ -392,6 +392,7 @@ Returns all images in article without the article.
 		* [replace](#replace---replacestr---array-of-str-) - `"replace":"str"`
 * [force_charset](#force_charset---force_charsetcharset) - `"force_charset":"charset"`
 * [force_unicode](#force_unicode---force_unicodebool) - `"force_unicode":bool`
+* [tidy](#tidy---tidybool) - `"tidy":bool`
 
 ## reformat / modify - `"reformat":[array of options]` `"modify":[array of options]`
 
@@ -502,6 +503,13 @@ force_unicode performs a UTF-8 character set conversion on the html via [iconv](
   "force_unicode": true
 }
 ```
+
+### tidy - `"tidy":bool`
+
+Optionally install php-tidy. Default - `true`
+
+Use [tidy::cleanrepair](https://secure.php.net/manual/en/tidy.cleanrepair.php) to attempt to fix fetched article, useful for unclosed tags such as iframes.
+
 ---
 
 # Global options
