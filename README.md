@@ -510,11 +510,15 @@ Optionally installed php-tidy. Default - `false`
 
 Use [tidy::cleanrepair](https://secure.php.net/manual/en/tidy.cleanrepair.php) to attempt to fix fetched article source, useful for improperly closed tags interfering with xpath queries.
 
+Note: If Character set of page cannot be detected tidy will not be executed. In this case usage of [force_charset](#force_charset---force_charsetcharset) would be required.
+
 ### tidy - `"tidy":bool`
 
 Optionally installed php-tidy. Default - `true`
 
 Use [tidy::cleanrepair](https://secure.php.net/manual/en/tidy.cleanrepair.php) to attempt to fix modified article, useful for unclosed tags such as iframes.
+
+Note: If Character set of page cannot be detected tidy will not be executed. In this case usage of [force_charset](#force_charset---force_charsetcharset) would be required.
 
 ---
 
