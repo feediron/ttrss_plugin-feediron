@@ -242,8 +242,18 @@ class Feediron extends Plugin implements IHandler
 			$this->charset = 'utf-8';
 			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Changed charset to utf-8:", $html);
 		}
+
+		// Use PHP tidy to fix source page if option tidy-source called
+		if (function_exists('tidy_parse_string') && $config['tidy-source'] == true){
+			// Use forced or discovered charset of page
+			$tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
+			$tidy->cleanRepair();
+			$html = $tidy->value;
+		}
+
 		Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Writing into cache");
 		$this->cache[$link] = $html;
+
 		return $html;
 	}
 
@@ -428,7 +438,7 @@ class Feediron extends Plugin implements IHandler
 		}
 		// if we've got Tidy, let's clean it up for output
 		if (function_exists('tidy_parse_string') && $config['tidy'] !== false) {
-			$tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), 'UTF8');
+			$tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
 			$tidy->cleanRepair();
 			$html = $tidy->value;
 		}
