@@ -392,6 +392,7 @@ Returns all images in article without the article.
 		* [replace](#replace---replacestr---array-of-str-) - `"replace":"str"`
 * [force_charset](#force_charset---force_charsetcharset) - `"force_charset":"charset"`
 * [force_unicode](#force_unicode---force_unicodebool) - `"force_unicode":bool`
+* [tidy-source](#tidysource---tidysourcebool) - `"tidy-source":bool`
 * [tidy](#tidy---tidybool) - `"tidy":bool`
 
 ## reformat / modify - `"reformat":[array of options]` `"modify":[array of options]`
@@ -503,12 +504,17 @@ force_unicode performs a UTF-8 character set conversion on the html via [iconv](
   "force_unicode": true
 }
 ```
+### tidy-source - `"tidy-source":bool`
+
+Optionally installed php-tidy. Default - `false`
+
+Use [tidy::cleanrepair](https://secure.php.net/manual/en/tidy.cleanrepair.php) to attempt to fix fetched article source, useful for improperly closed tags interfering with xpath queries.
 
 ### tidy - `"tidy":bool`
 
-Optionally install php-tidy. Default - `true`
+Optionally installed php-tidy. Default - `true`
 
-Use [tidy::cleanrepair](https://secure.php.net/manual/en/tidy.cleanrepair.php) to attempt to fix fetched article, useful for unclosed tags such as iframes.
+Use [tidy::cleanrepair](https://secure.php.net/manual/en/tidy.cleanrepair.php) to attempt to fix modified article, useful for unclosed tags such as iframes.
 
 ---
 
