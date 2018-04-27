@@ -88,7 +88,8 @@ class Feediron extends Plugin implements IHandler
 			$NewContent = $this->getNewContent($link, $config);
 			if( isset( $NewContent['tags'] ) )
 			{
-				$article['tags'] .= $NewContent['tags']
+				$taglist = array_unshift($NewContent['tags'], $article['tags']
+				$article['tags'] = implode(",", $taglist);
 			}
 			$article['content'] = $NewContent['content']
 		}
@@ -284,9 +285,8 @@ class Feediron extends Plugin implements IHandler
 		$tags[$key] .= $this->performXpath($html, $xpath);
 		Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Tag found: $tags[$key]");
 	}
-	$taglist = implode(",", $tags);
 
-	return $taglist;
+	return $tags;
 	}
 
 	function get_content($link)
