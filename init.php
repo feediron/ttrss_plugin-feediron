@@ -198,7 +198,6 @@ class Feediron extends Plugin implements IHandler
 			if( isset( $config['tag-xpath'] ) )
 			{
 				$NewContent['tags'] = $this->getArticleTags($html, $config);
-				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "New Tags ".$NewContent['tags']);
 			}
 			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Original Source ".$lnk.":", $html);
 			$html = $this->processArticle($html, $config, $lnk);
@@ -271,19 +270,19 @@ class Feediron extends Plugin implements IHandler
 
 	function getArticleTags($html, $config)
 	{
-		$xpaths['xpath'] = $config['tag-xpath'];
 
-		if(!is_array($xpaths['xpath'])){
-			$xpaths = array($xpaths['xpath']);
+		if(!is_array($config['tag-xpath'])){
+			$xpaths = array($config['tag-xpath']);
 		}else{
-			$xpaths = $xpaths['xpath'];
+			$xpaths = $config['tag-xpath'];
 		}
 
 	foreach( $xpaths as $key=>$xpath )
 	{
-		Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Tag xpath: $xpath");
-		$tags[$key] .= $this->performXpath($html, $xpath);
-		Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Tag found: $tags[$key]");
+		$tagpath['xpath'] = $xpath;
+		Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag xpath: $xpath");
+		$tags[$key] .= trim( preg_replace('/\s+/', ' ', strip_tags( nl2br( $this->performXpath( $html, $tagpath ) ) ) ) );
+		Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag found: $tags[$key]");
 	}
 
 	return $tags;
@@ -870,7 +869,7 @@ class Feediron extends Plugin implements IHandler
 			$reply['success'] = true;
 			$reply['url'] = $test_url;
 			$NewContent = $this->getNewContent($test_url, $config);
-			$reply['content'] = $NewContent['content']
+			$reply['content'] = $NewContent['content'];
 			$reply['config'] = Feediron_Json::format(json_encode($config));
 			if($reply['config'] == null){
 				$reply['config'] = $_POST['test_conf'];
