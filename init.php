@@ -88,10 +88,10 @@ class Feediron extends Plugin implements IHandler
 			$NewContent = $this->getNewContent($link, $config);
 			if( isset( $NewContent['tags'] ) )
 			{
-				$taglist = array_unshift($NewContent['tags'], $article['tags']
+				$taglist = array_unshift($NewContent['tags'], $article['tags']);
 				$article['tags'] = implode(",", $taglist);
 			}
-			$article['content'] = $NewContent['content']
+			$article['content'] = $NewContent['content'];
 		}
 
 		return $article;
