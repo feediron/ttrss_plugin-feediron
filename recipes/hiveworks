@@ -1,0 +1,16 @@
+{
+    "name": "tech@thehiveworks.com",
+    "url": "tech@thehiveworks.com",
+    "stamp": 1532615549,
+    "author": "",
+    "match": "tech@thehiveworks.com",
+    "config": {
+        "type": "xpath",
+        "xpath": [
+            "img[@id='cc-comic']",
+            "img[@id='cc-comic']\/@title",
+            "div[@class='cc-newsbody']"
+        ],
+        "join_element": "<br\/>"
+    }
+}

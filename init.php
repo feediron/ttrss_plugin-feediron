@@ -73,7 +73,15 @@ class Feediron extends Plugin implements IHandler
 	function hook_article_filter($article)
 	{
 		Feediron_Logger::get()->set_log_level(0);
-		if (($config = $this->getConfigSection($article['link'])) !== FALSE)
+		$link = $article["link"];
+		if ($link === null) {
+			return $article;
+		};
+		$config = $this->getConfigSection($link);
+		if ($config === FALSE) {
+			$config = $this->getConfigSection($article['author']);
+		}
+		if ($config !== FALSE)
 		{
 			if (version_compare(VERSION, '1.14.0', '<=')){
 				if (strpos($article['plugin_data'], $articleMarker) !== false)
@@ -81,11 +89,11 @@ class Feediron extends Plugin implements IHandler
 					return $article;
 				}
 
-				Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Article was not fetched yet: ".$article['link']);
+				Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Article was not fetched yet: ".$link);
 				$article['plugin_data'] = $this->addArticleMarker($article, $articleMarker);
 			}
-			$link = $this->reformatUrl($article['link'], $config);
-			$article['content'] = $this->getNewContent($link, $config);
+			$newlink = $this->reformatUrl($link, $config);
+			$article['content'] = $this->getNewContent($newlink, $config);
 
 		}
 
@@ -106,6 +114,7 @@ class Feediron extends Plugin implements IHandler
 
 	function getConfigSection($url)
 	{
+		if ($url === null) { return FALSE; };
 		$data = $this->getConfig();
 		if(is_array($data)){
 
