@@ -55,6 +55,7 @@ A Basic Configuration must define:
 
 1. The site string. e.g. `example.com`
 	* Use the same configuration for multiple URL's by seperating them with the `|` Delimiter. e.g. `"example.com|example.net"`
+	* The attached config will be applied when the site string matches the `<link>` or `<author>` tag of the feed item.
 2. The Filter type. e.g. `"type":"xpath"`
 3. The Filter config. e.g. `"xpath":"div[@id='content']"` or the array `"xpath": [ "div[@id='article']", "div[@id='footer']"]`
 
