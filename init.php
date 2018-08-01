@@ -282,7 +282,7 @@ class Feediron extends Plugin implements IHandler
 		$tagpath['xpath'] = $xpath;
 		Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag xpath: $xpath");
 		$rawtag = $this->performXpath( $html, $tagpath );
-		if( $rawtag != $html ){
+		if( $rawtag !== $html ){
 			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "No Tag found");
 			continue;
 		}
