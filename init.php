@@ -1,11 +1,11 @@
 <?php
 
-include "RecipeManager.php";
-include "Logger.php";
-include "Functions.php";
-include "Json.php";
-include "User.php";
-include "PrefTab.php";
+require_once "RecipeManager.php";
+require_once "Logger.php";
+require_once "Functions.php";
+require_once "Json.php";
+require_once "User.php";
+require_once "PrefTab.php";
 
 //Load Composer autoloader hiding errors
 @include('vendor/autoload.php');
