@@ -227,7 +227,7 @@ class Feediron extends Plugin implements IHandler
 			{
 				preg_match('/charset=(\S+)/', $content_type, $matches);
 				if (isset($matches[1]) && !empty($matches[1])) {
-					$this->charset = $matches[1];
+					$this->charset = str_replace('"', "", html_entity_decode($matches[1]));
 				}
 			}
 		} elseif ( isset( $config['force_charset'] ) ) {
