@@ -356,10 +356,16 @@ class Feediron extends Plugin implements IHandler
 	function getHtmlNode($node){
 		if (is_object($node)){
 			$newdoc = new DOMDocument();
-			$cloned = $node->cloneNode(TRUE);
-			$newdoc->appendChild($newdoc->importNode($cloned,TRUE));
+			if ($node->nodeType == XML_ATTRIBUTE_NODE) {
+				// appendChild will fail, so make it a text node
+				$imported = $newdoc->createTextNode($node->value);
+			} else {
+				$cloned = $node->cloneNode(TRUE);
+				$imported = $newdoc->importNode($cloned,TRUE);
+			}
+			$newdoc->appendChild($imported);
 			return $newdoc->saveHTML();
-		}else{
+		} else {
 			return $node;
 		}
 	}
