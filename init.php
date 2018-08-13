@@ -26,7 +26,7 @@ class Feediron extends Plugin implements IHandler
 	{
 		return array(
 			1.0,   // version
-			'Irons a feeds content to your needs',   // description
+			'Reforge your feeds',   // description
 			'm42e',   // author
 			false,   // is_system
 		);
