@@ -11,7 +11,9 @@
         ],
         "cleanup": [
             "div[@id='inread_player_top']",
-            "div[@class='related-carousel with-fb-or-tw news'"
+            "div[@class='related-carousel with-fb-or-tw news']",
+            "div[@class='rotator bdrcc']",
+            "div[@class='fb']"
         ]
     }
 }
