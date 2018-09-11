@@ -30,7 +30,7 @@ class Feediron_Logger{
 		if($level > $this->loglevel)
 			return;
 		if($level == self::LOG_TTRSS){
-			trigger_error($msg, E_USER_WARNING);
+			trigger_error($msg, E_USER_NOTICE);
 			array_push($this->testlog, "<h2>LOG:</h2><pre>".htmlentities($msg)."</pre>");
 		}else{
 			array_push($this->testlog, "<h2>$msg</h2>");
