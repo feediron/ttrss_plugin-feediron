@@ -495,7 +495,7 @@ class Feediron extends Plugin implements IHandler
 
 			default:
 			Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
-			continue;
+			break;
 		}
 		if(is_array($config['modify']))
 		{
