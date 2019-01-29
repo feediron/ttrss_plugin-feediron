@@ -12,16 +12,7 @@ class Feediron_PrefTab{
 		$tab .= '<h3>Configuration</h3>';
 		$tab .= '<a href="https://github.com/m42e/ttrss_plugin-feediron/blob/master/README.md">Configuration help</a>';
 		$tab .= self::get_form_start('save');
-		$tab .= self::get_script('try{
-																	Notify.info(transport.responseJSON.message); dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf);
-																	dojo.query("#json_error").attr("innerHTML", "").attr("class","");
-																	','dojo.query("#json_error").attr("innerHTML", transport.responseJSON.json_error).attr("class","error");
-																}
-																catch(err) {
-																	notify_info(transport.responseJSON.message); dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf);
-																	dojo.query("#json_error").attr("innerHTML", "").attr("class","");
-																	','dojo.query("#json_error").attr("innerHTML", transport.responseJSON.json_error).attr("class","error");
-																}');
+		$tab .= self::get_script('transport.responseJSON.message','dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf); dojo.query("#json_error").attr("innerHTML", "").attr("class",""); ','dojo.query("#json_error").attr("innerHTML", transport.responseJSON.json_error).attr("class","error");');
 
 		$tab .= '<textarea dojoType="dijit.form.SimpleTextarea" class="dijitTextBox dijitTextArea" id="json_conf" name="json_conf" style="font-size: 12px; width: 99%; height: 400px;">'.$json_conf.'</textarea>';
 
@@ -31,12 +22,7 @@ class Feediron_PrefTab{
 
 		$tab .= '<h3>Add predefined rules</h3>';
 		$tab .= self::get_form_start('add');
-		$tab .= self::get_script('try{
-																	notify_info(transport.responseJSON.message); dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf);
-																}
-																catch(err) {
-																	Notify.info(transport.responseJSON.message); dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf);
-																}');
+		$tab .= self::get_script('transport.responseJSON.message','dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf); ');
 
 		$tab .= '<label for="addrecipe">'.__("Add recipe").': </label>';
 		$tab .= '<select dojoType="dijit.form.Select" class="dijit dijitReset dijitInline dijitLeft dijitDownArrowButton dijitSelect dijitValidationTextBox" name="addrecipe">';
@@ -50,14 +36,8 @@ class Feediron_PrefTab{
 
 		$tab .= '<h3>Export rules</h3>';
 		$tab .= self::get_form_start('export');
-		$tab .= self::get_script('try{
-																	notify_info(transport.responseJSON.message); console.log(transport); dojo.query("#json_export").attr("innerHTML",transport.responseJSON.json_export);
-																	dojo.query("#json_export_wrapper").attr("class","notice");
-																	}
-																	catch(err) {
-																		Notify.info(transport.responseJSON.message); console.log(transport); dojo.query("#json_export").attr("innerHTML",transport.responseJSON.json_export);
-																		dojo.query("#json_export_wrapper").attr("class","notice");
-																	}');
+		$tab .= self::get_script('transport.responseJSON.message','console.log(transport); dojo.query("#json_export").attr("innerHTML",transport.responseJSON.json_export);
+		dojo.query("#json_export_wrapper").attr("class","notice");');
 
 		$tab .= '<label for="recipe">'.__("Export").': </label>';
 		$tab .= '<select dojoType="dijit.form.Select" class="dijit dijitReset dijitInline dijitLeft dijitDownArrowButton dijitSelect dijitValidationTextBox" name="recipe">';
@@ -76,12 +56,7 @@ class Feediron_PrefTab{
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="Testing" data-dojo-props="selected:true" id="testing">';
 		$tab .= self::get_form_start('test');
 
-		$tab .= self::get_script('try{
-																	notify_info("Updated"); dojo.query("#test_url").attr("innerHTML", "<pre>"+transport.responseJSON.url+"</pre>"); dojo.query("#test_result").attr("innerHTML", transport.responseJSON.content); dojo.query("#test_log").attr("innerHTML", transport.responseJSON.log.join("\n")); dojo.query("#test_conf").attr("value", transport.responseJSON.config);
-																	}
-															catch(err) {
-																	Notify.info("Updated"); dojo.query("#test_url").attr("innerHTML", "<pre>"+transport.responseJSON.url+"</pre>"); dojo.query("#test_result").attr("innerHTML", transport.responseJSON.content); dojo.query("#test_log").attr("innerHTML", transport.responseJSON.log.join("\n")); dojo.query("#test_conf").attr("value", transport.responseJSON.config);
-																	}');
+		$tab .= self::get_script('Updated','dojo.query("#test_url").attr("innerHTML", "<pre>"+transport.responseJSON.url+"</pre>"); dojo.query("#test_result").attr("innerHTML", transport.responseJSON.content); dojo.query("#test_log").attr("innerHTML", transport.responseJSON.log.join("\n")); dojo.query("#test_conf").attr("value", transport.responseJSON.config);');
 
 		$tab .= __("Save before you test!").'<br />';
 		$tab .= '<table width="100%">';
@@ -113,7 +88,7 @@ class Feediron_PrefTab{
 		$tab .= '</div>';
 		return $tab;
 	}
-	private static function get_script($successaction,$failaction=''){
+	private static function get_script($notification, $successaction,$failaction=''){
 		$script = '<script type="dojo/method" event="onSubmit" args="evt">
 			evt.preventDefault();
 			dojo.query("#test_result").attr("innerHTML", "");
@@ -123,13 +98,16 @@ class Feediron_PrefTab{
 						if (transport.responseJSON.success == false){
 							try {
 								notify_error(transport.responseJSON.errormessage);
-								'.$failaction.'
-							}
-							catch(err) {
+							} catch(err) {
 								Notify.error(transport.responseJSON.errormessage);
-								'.$failaction.'
 							}
+							'.$failaction.'
 						}else{
+							try {
+								notify_info('.$notification.');
+							} catch(err) {
+								Notify.info('.$notification.');
+							}
 							'.$successaction.'
 						}
 					}
