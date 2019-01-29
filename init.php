@@ -587,10 +587,25 @@ class Feediron extends Plugin implements IHandler
 			}
 			else {
 				$content = $readability->getContent()->innerHTML;
+				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Readability modified Source ".$lnk.":", $html);
 			}
 		}
-		return $content;
-
+		// Perform xpath on readability output
+		if (isset($config['xpath'])){
+			$html = $this->performXpath($content, $config);
+		// If no xpath for readability output perform simple cleanup
+		} elseif(($cconfig = $this->getCleanupConfig($config))!== FALSE) {
+			$html = $content;
+			foreach($cconfig as $cleanup){
+				Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Cleaning up", $cleanup);
+				$html = preg_replace($cleanup, '', $html);
+				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "cleanup  result", $html);
+			}
+		} else {
+			// If no extra config just return the content
+			$html = $content;
+		}
+		return $html;
 	}
 
 	function performSplit($html, $config){
@@ -615,9 +630,9 @@ class Feediron extends Plugin implements IHandler
 			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
 			return $orig_html;
 		}
-		if(isset($config['cleanup']))
+		if(($cconfig = $this->getCleanupConfig($config))!== FALSE)
 		{
-			foreach($config['cleanup'] as $cleanup)
+			foreach($cconfig as $cleanup)
 			{
 				Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Cleaning up", $cleanup);
 				$html = preg_replace($cleanup, '', $html);
@@ -641,7 +656,9 @@ class Feediron extends Plugin implements IHandler
 
 		$htmlout = array();
 
-		foreach($xpaths as $key=>$xpath){
+		//foreach($xpaths as $key=>$xpath){
+		foreach($xpaths as $xpath){
+			Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Perfoming xpath", $xpath);
 			$index = 0;
 			if(is_array($xpath) && array_key_exists('index', $xpath)){
 				$index = $xpath['index'];
@@ -672,13 +689,18 @@ class Feediron extends Plugin implements IHandler
 				}
 				array_push($htmlout, $inner_html);
 			}
+
 			$content = join((array_key_exists('join_element', $config)?$config['join_element']:''), $htmlout);
 			if(array_key_exists('start_element', $config)){
+				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Adding start element", $config['start_element']);
 				$content = $config['start_element'].$content;
 			}
+
 			if(array_key_exists('end_element', $config)){
+				Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Adding end element", $config['end_element']);
 				$content = $content.$config['end_element'];
 			}
+
 			return $content;
 		}
 
@@ -873,13 +895,15 @@ class Feediron extends Plugin implements IHandler
 			}
 
 			$config = $this->getConfigSection($test_url);
-			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config found: ", $config);
 			$newconfig = json_decode($_POST['test_conf'], true);
 			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config posted: ", $newconfig);
-			Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config diff", $this->arrayRecursiveDiff($config, $newconfig));
-			if(count($this->arrayRecursiveDiff($newconfig, $config))!= 0){
-				Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Save test config");
-				$this->host->set($this, 'test_conf', Feediron_Json::format(json_encode($config)));
+			if($config != False){
+				Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config found: ", $config);
+				Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config diff", $this->arrayRecursiveDiff($config, $newconfig));
+				if(count($this->arrayRecursiveDiff($newconfig, $config))!= 0){
+					Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Save test config");
+					$this->host->set($this, 'test_conf', Feediron_Json::format(json_encode($config)));
+				}
 			}
 			$config = json_decode($_POST['test_conf'], true);
 		}else{

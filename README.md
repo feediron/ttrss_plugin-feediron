@@ -92,8 +92,8 @@ Example:
 	* [steps](#steps---steps-array-of-steps-) - `"steps":[ array of steps ]`
       * after - `"after":"str"`
       * before - `"before":"str"`
-	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup":[ "array of regex" ]`
-* [readability](#readability)
+	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup":"/regex str/" / [ "/array of regex str/" ]`
+* [readability](#readability) - Note: Also accepts all [Xpath type](#xpath-filter) options
 	1. [PHP-Readability](#php-readability)
 	2. [Readability.php](#readabilityphp) (Optionally installed)
 		* [relativeurl](#relativeurl---relativeurlstr) - `"relativeurl":"str"`
@@ -103,6 +103,7 @@ Example:
 		* [mainimage](#mainimage---mainimagebool) - `"mainimage":bool`
 		* [appendimages](#appendimages---appendimagesbool) - `"appendimages":bool`
 		* [allimages](#allimages---allimagesbool) - `"allimages":bool`
+	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
 
 ## Xpath Filter
 The **xpath** value is the actual Xpath-element to fetch from the linked page. Omit the leading `//` - they will get prepended automatically.
@@ -127,7 +128,7 @@ Array of xpath strings:
   "xpath":[
     "div[@id='footer']",
     "div[@class='content']",
-    "div[@class='header']",		
+    "div[@class='header']",
   ]
 }
 ```
@@ -211,7 +212,7 @@ String - Appends string to the end of content
 "example.com":{
 	"type":"xpath",
 	"xpath":[
-		"div[@class='header']"		
+		"div[@class='header']"
 	],
 	"end_element":"< The Header was"
 }
@@ -227,7 +228,7 @@ Result: `<p>Header Text</p>< The Header was`
 	"xpath":[
 		"div[@id='footer']",
 		"div[@class='content']",
-		"div[@class='header']"		
+		"div[@class='header']"
 	],
 	"start_element":"The Footer is >",
 	"join_element":"<br><br>",
