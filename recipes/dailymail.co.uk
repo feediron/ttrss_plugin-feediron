@@ -1,0 +1,19 @@
+
+{
+    "name": "dailymail.co.uk",
+    "url": "http://www.dailymail.co.uk",
+    "match": "dailymail.co.uk",
+    "author": "jreming85",
+    "config": {
+        "type": "xpath",
+        "xpath": [
+            "div[@itemprop='articleBody']"
+        ],
+        "cleanup": [
+            "div[@id='inread_player_top']",
+            "div[@class='related-carousel with-fb-or-tw news']",
+            "div[@class='rotator bdrcc']",
+            "div[@class='fb']"
+        ]
+    }
+}

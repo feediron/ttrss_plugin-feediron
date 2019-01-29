@@ -1,16 +1,9 @@
 # Feediron TT-RSS Plugin <img src="icon.svg" width="80" align="left">
+Reforge your feeds
 
 About |Table Of Contents
  :---- | --------
 This is a plugin for [Tiny Tiny RSS (tt-rss)](https://tt-rss.org/).<br>It allows you to replace an article's contents by the contents of an element on the linked URL's page<br><br>i.e. create a "full feed".<br><br>Keep up to date by subscribing to the [Release Feed](https://github.com/feediron/ttrss_plugin-feediron/releases.atom)|<ul><li>[Installation](#installation)</li><li>[Configuration tab](#configuration-tab)</li><ul><li>[Usage](#usage)</li><li>[Filters](#filters)</li><li>[General Options](#general-options)</li><li>[Global Options](#global-options)</li></ul><li>[Testing Tab](#testing-tab)</li><li>[Full configuration example](#full-configuration-example)</li><li>[Xpath General Information](#xpath-general-information)</li></ul>
-
-## Todo
-* ~~Make a recipe base here~~
-* ~~Add a simple mechanism to add recipes to the configuration~~
-* ~~Add a simple mechanism to export recipes~~
-* ~~spend some time on a nicer interface design~~
-* split init.php in multiple classes
-* Make test output collapsable
 
 ## Installation
 
@@ -55,6 +48,9 @@ A Basic Configuration must define:
 
 1. The site string. e.g. `example.com`
 	* Use the same configuration for multiple URL's by seperating them with the `|` Delimiter. e.g. `"example.com|example.net"`
+	* The configuration will be applied when the site string matches the `<link>` or `<author>` tag of the RSS feed item.
+		* The `<link>` takes precedence over the `<author>`
+		* `<author>` based configurations will **NOT** automatically show in the Testing Tab
 2. The Filter type. e.g. `"type":"xpath"`
 3. The Filter config. e.g. `"xpath":"div[@id='content']"` or the array `"xpath": [ "div[@id='article']", "div[@id='footer']"]`
 
@@ -96,8 +92,8 @@ Example:
 	* [steps](#steps---steps-array-of-steps-) - `"steps":[ array of steps ]`
       * after - `"after":"str"`
       * before - `"before":"str"`
-	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup":[ "array of regex" ]`
-* [readability](#readability)
+	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup":"/regex str/" / [ "/array of regex str/" ]`
+* [readability](#readability) - Note: Also accepts all [Xpath type](#xpath-filter) options
 	1. [PHP-Readability](#php-readability)
 	2. [Readability.php](#readabilityphp) (Optionally installed)
 		* [relativeurl](#relativeurl---relativeurlstr) - `"relativeurl":"str"`
@@ -107,6 +103,7 @@ Example:
 		* [mainimage](#mainimage---mainimagebool) - `"mainimage":bool`
 		* [appendimages](#appendimages---appendimagesbool) - `"appendimages":bool`
 		* [allimages](#allimages---allimagesbool) - `"allimages":bool`
+	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
 
 ## Xpath Filter
 The **xpath** value is the actual Xpath-element to fetch from the linked page. Omit the leading `//` - they will get prepended automatically.
@@ -131,7 +128,7 @@ Array of xpath strings:
   "xpath":[
     "div[@id='footer']",
     "div[@class='content']",
-    "div[@class='header']",		
+    "div[@class='header']",
   ]
 }
 ```
@@ -215,7 +212,7 @@ String - Appends string to the end of content
 "example.com":{
 	"type":"xpath",
 	"xpath":[
-		"div[@class='header']"		
+		"div[@class='header']"
 	],
 	"end_element":"< The Header was"
 }
@@ -231,7 +228,7 @@ Result: `<p>Header Text</p>< The Header was`
 	"xpath":[
 		"div[@id='footer']",
 		"div[@class='content']",
-		"div[@class='header']"		
+		"div[@class='header']"
 	],
 	"start_element":"The Footer is >",
 	"join_element":"<br><br>",

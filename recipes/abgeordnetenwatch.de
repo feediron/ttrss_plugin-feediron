@@ -1,11 +1,11 @@
 {
     "name": "abgeordnetenwatch.de",
     "url": "abgeordnetenwatch.de",
-    "stamp": 1431452292,
-    "author": "GoodSoulGermany",
+    "author": "jreming85",
     "match": "abgeordnetenwatch.de",
     "config": {
         "type": "xpath",
-        "xpath": "div[@class='managed-content']"
+        "xpath": "div[@class='blog__content__inner']",
+        "cleanup": "div[@class='well well--tabs']"
     }
 }

@@ -5,7 +5,7 @@
     "author": "cwmke",
  	   "config": {
         "type": "xpath",
-        "xpath": "article\/div[@class='articleContents']",
+        "xpath": "div[@class='articleContents']",
         "cleanup": [
             "div[@class='text-size']",
             "div[@class='relate-story']",
