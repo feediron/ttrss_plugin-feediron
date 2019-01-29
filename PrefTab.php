@@ -23,7 +23,7 @@ class Feediron_PrefTab{
 																	','dojo.query("#json_error").attr("innerHTML", transport.responseJSON.json_error).attr("class","error");
 																}');
 
-		$tab .= '<textarea dojoType="dijit.form.SimpleTextarea" id="json_conf" name="json_conf" style="font-size: 12px; width: 99%; height: 400px;">'.$json_conf.'</textarea>';
+		$tab .= '<textarea dojoType="dijit.form.SimpleTextarea" class="dijitTextBox dijitTextArea" id="json_conf" name="json_conf" style="font-size: 12px; width: 99%; height: 400px;">'.$json_conf.'</textarea>';
 
 		$tab .= '<p /><button dojoType="dijit.form.Button" type="submit">'.__("Save").'</button>';
 		$tab .= '</form>';
@@ -39,7 +39,7 @@ class Feediron_PrefTab{
 																}');
 
 		$tab .= '<label for="addrecipe">'.__("Add recipe").': </label>';
-		$tab .= '<select dojoType="dijit.form.Select" name="addrecipe">';
+		$tab .= '<select dojoType="dijit.form.Select" class="dijit dijitReset dijitInline dijitLeft dijitDownArrowButton dijitSelect dijitValidationTextBox" name="addrecipe">';
 		foreach($rm->getRecipes() as $key => $recipe){
 			$tab .= '<option value="'.$recipe.'">'.$key.'</option>';
 		}
@@ -60,7 +60,7 @@ class Feediron_PrefTab{
 																	}');
 
 		$tab .= '<label for="recipe">'.__("Export").': </label>';
-		$tab .= '<select dojoType="dijit.form.Select" name="recipe">';
+		$tab .= '<select dojoType="dijit.form.Select" class="dijit dijitReset dijitInline dijitLeft dijitDownArrowButton dijitSelect dijitValidationTextBox" name="recipe">';
 		foreach(json_decode($json_conf,true) as $key => $config){
 			if($key != 'debug'){
 				$tab .= '<option value="'.$key.'">'.(isset($config['name'])?$config['name']:$key).'</option>';
