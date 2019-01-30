@@ -56,7 +56,7 @@ class Feediron_PrefTab{
 		$tab .= '<div data-dojo-type="dijit/layout/ContentPane" title="Testing" data-dojo-props="selected:true" id="testing">';
 		$tab .= self::get_form_start('test');
 
-		$tab .= self::get_script('Updated','dojo.query("#test_url").attr("innerHTML", "<pre>"+transport.responseJSON.url+"</pre>"); dojo.query("#test_result").attr("innerHTML", transport.responseJSON.content); dojo.query("#test_log").attr("innerHTML", transport.responseJSON.log.join("\n")); dojo.query("#test_conf").attr("value", transport.responseJSON.config);');
+		$tab .= self::get_script('"Updated"','dojo.query("#test_url").attr("innerHTML", "<pre>"+transport.responseJSON.url+"</pre>"); dojo.query("#test_result").attr("innerHTML", transport.responseJSON.content); dojo.query("#test_log").attr("innerHTML", transport.responseJSON.log.join("\n")); dojo.query("#test_conf").attr("value", transport.responseJSON.config);');
 
 		$tab .= __("Save before you test!").'<br />';
 		$tab .= '<table width="100%">';
