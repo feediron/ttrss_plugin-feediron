@@ -103,7 +103,7 @@ class Feediron extends Plugin implements IHandler
 				$article['tags'] = $taglist;
 
 			// If xpath tags are to be prepended to existing tags
-			} elseif isset( $NewContent['tags'] ) {
+		} elseif ( isset( $NewContent['tags'] ) ) {
 
 				$taglist = implode(",", array_unshift($article['tags'], $NewContent['tags']) );
 				$article['tags'] = $taglist;
@@ -301,12 +301,12 @@ class Feediron extends Plugin implements IHandler
 		$tagpath['xpath'] = $xpath;
 		Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag xpath: $xpath");
 		$rawtag = $this->performXpath( $html, $tagpath );
-		if( $rawtag !== $html ){
+		if( !$rawtag || $rawtag == $html ){
 			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "No Tag found");
 			continue;
 		}
 		$tags[$key] .= trim( preg_replace('/\s+/', ' ', strip_tags( $rawtag ) ) );
-		Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag found: $tags[$key]");
+		Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag found: ".$tags[$key]);
 	}
 
 	return $tags;
