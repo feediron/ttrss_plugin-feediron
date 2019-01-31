@@ -217,6 +217,9 @@ class Feediron extends Plugin implements IHandler
 			if( isset( $config['tag-xpath'] ) )
 			{
 				$NewContent['tags'] = $this->getArticleTags($html, $config);
+				if( isset( $NewContent['tags'] ) || isset( $config['replace-tags'] ) ){
+					$NewContent['replace-tags'] = true;
+				}
 			}
 			Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Original Source ".$lnk.":", $html);
 			$html = $this->processArticle($html, $config, $lnk);
