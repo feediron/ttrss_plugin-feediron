@@ -93,13 +93,21 @@ class Feediron extends Plugin implements IHandler
 				$article['plugin_data'] = $this->addArticleMarker($article, $articleMarker);
 			}
 			$link = $this->reformatUrl($article['link'], $config);
+
 			$NewContent = $this->getNewContent($link, $config);
-			if( isset( $NewContent['tags'] ) )
-			{
-				if( isset( $article['tags'] ) ){
-					$taglist = array_unshift($NewContent['tags'], $article['tags']);
-				}
-				$article['tags'] = implode(",", $taglist);
+
+			// If xpath tags are to replaced tags completely
+			if( isset( $NewContent['tags'] ) || $NewContent['replace-tags'] ){
+
+				$taglist = implode(",", $NewContent['tags'] );
+				$article['tags'] = $taglist;
+
+			// If xpath tags are to be prepended to existing tags
+			} elseif isset( $NewContent['tags'] ) {
+
+				$taglist = implode(",", array_unshift($article['tags'], $NewContent['tags']) );
+				$article['tags'] = $taglist;
+
 			}
 			$article['content'] = $NewContent['content'];
 		}
