@@ -47,7 +47,7 @@ class Feediron_Logger{
 			return;
 		$this->log_json($level, $msg, json_encode($obj));
 	}
-	public function log_html($level, $msg, $html){
+	public function log_html($level, $msg, $html=''){
 		if($level > $this->loglevel)
 			return;
 		$this->log($level, $msg, $html);

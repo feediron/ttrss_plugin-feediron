@@ -310,10 +310,10 @@ class Feediron extends Plugin implements IHandler
     {
       // set xpath in config
       $tagconf['xpath'] = $xpath;
-      Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag xpath: $xpath");
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Tag xpath: $xpath");
       $rawtag = $this->performXpath( $html, $tagconf );
       if( !$rawtag || $rawtag == $html ){
-        Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "No Tag found");
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "No Tag found");
         continue;
       }
       $tags[$key] .= trim( preg_replace('/\s+/', ' ', strip_tags( $rawtag ) ) );
