@@ -711,8 +711,7 @@ class Feediron extends Plugin implements IHandler
 
       $htmlout = array();
 
-      //foreach($xpaths as $key=>$xpath){
-      foreach($xpaths as $xpath){
+      foreach($xpaths as $key=>$xpath){
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Perfoming xpath", $xpath);
         $index = 0;
         if(is_array($xpath) && array_key_exists('index', $xpath)){
