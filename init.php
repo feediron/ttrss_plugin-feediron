@@ -97,7 +97,7 @@ class Feediron extends Plugin implements IHandler
       $NewContent = $this->getNewContent($link, $config);
 
       // If xpath tags are to replaced tags completely
-      if( $NewContent['tags'] || $NewContent['replace-tags'] ){
+      if( $NewContent['tags'] && $NewContent['replace-tags'] ){
         Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Replacing Tags");
         $article['tags'] = $NewContent['tags'];
         // If xpath tags are to be prepended to existing tags
