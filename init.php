@@ -292,6 +292,7 @@ class Feediron extends Plugin implements IHandler
     {
       case 'xpath':
         $tags = $this->perform_tag_xpath($html, $config);
+        break;
 
       default:
         Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
@@ -339,10 +340,14 @@ class Feediron extends Plugin implements IHandler
     foreach( $xpaths as $key=>$xpath )
     {
       // set xpath in config
-      $tagconf['xpath'] = $xpath;
-      Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag xpath: $xpath");
-      $tags[$key] .= $this->performXpath( $html, $tagconf );
-      Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Tag found: ".$tags[$key]);
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag xpath: ", $xpath);
+      $newtag = $this->performXpath( $html, $config );
+
+      // Filter bad tags
+      if( $newtag && $newtag !== $html ){
+        $tags[$key] .= $newtag;
+        Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag data found", $tags[$key]);
+      }
     }
     return $tags;
   }
@@ -979,7 +984,6 @@ class Feediron extends Plugin implements IHandler
             Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config found: ", $config);
             Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config diff", $this->arrayRecursiveDiff($config, $newconfig));
             if(count($this->arrayRecursiveDiff($newconfig, $config))!= 0){
-              Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Save test config");
               $this->host->set($this, 'test_conf', Feediron_Json::format(json_encode($config)));
             }
           }
