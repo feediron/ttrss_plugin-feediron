@@ -212,9 +212,9 @@ class Feediron extends Plugin implements IHandler
     foreach($links as $lnk)
     {
       $html = $this->getArticleContent($lnk, $config);
-      if( isset( $config['tag-xpath'] ) )
+      if( isset( $config['tags'] ) )
       {
-        $NewContent['tags'] = $this->getArticleTags($html, $config);
+        $NewContent['tags'] = $this->getArticleTags($html, $config['tags']);
       }
       Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Original Source ".$lnk.":", $html);
       $html = $this->processArticle($html, $config, $lnk);
@@ -288,16 +288,51 @@ class Feediron extends Plugin implements IHandler
   function getArticleTags($html, $config)
   {
 
+    switch ($config['type'])
+    {
+      case 'xpath':
+        $tags = $this->perform_tag_xpath($html, $config);
 
-    if(!is_array($config['tag-xpath'])){
-      $xpaths = array($config['tag-xpath']);
-    }else{
-      $xpaths = $config['tag-xpath'];
+      default:
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
+        break;
     }
 
-    // set tag-cleanup to cleanup for xpath processing
-    if(isset($config['tag-cleanup'])){
-      $tagconf['cleanup'] = $config['tag-cleanup'];
+    // Split tags
+    if( isset( $config['split'] ) )
+    {
+      $split_tags = array();
+      foreach( $tags as $key=>$tag )
+      {
+        $split_tags = array_merge($split_tags, explode( $config['split'], $tag ) );
+      }
+      $tags =	$split_tags;
+    }
+
+    // Loop through tags indivdually
+    foreach( $tags as $key=>$tag )
+    {
+      // If set perform modify
+      if(is_array($config['modify']))
+      {
+        $tag = $this->reformat($tag, $config['modify']);
+      }
+      // Strip tags of html and ensure plain text
+      $tags[$key] = trim( preg_replace('/\s+/', ' ', strip_tags( $tag ) ) );
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Tag saved: ".$tags[$key]);
+    }
+
+    // ensure no empty tags are returned
+    $tags = array_filter( $tags );
+    return $tags;
+  }
+
+  function perform_tag_xpath($html, $config)
+  {
+    if(!is_array($config['xpath'])){
+      $xpaths = array($config['xpath']);
+    }else{
+      $xpaths = $config['xpath'];
     }
 
     // loop through xpath array
@@ -305,20 +340,10 @@ class Feediron extends Plugin implements IHandler
     {
       // set xpath in config
       $tagconf['xpath'] = $xpath;
-      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Tag xpath: $xpath");
-      $rawtag = $this->performXpath( $html, $tagconf );
-      if( !$rawtag || $rawtag == $html ){
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "No Tag found");
-        continue;
-      }
-      if(is_array($config['modify-tags']))
-      {
-        $rawtag = $this->reformat($rawtag, $config['modify-tags']);
-      }
-      $tags[$key] .= trim( preg_replace('/\s+/', ' ', strip_tags( $rawtag ) ) );
-      Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag found: ".$tags[$key]);
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag xpath: $xpath");
+      $tags[$key] .= $this->performXpath( $html, $tagconf );
+      Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Tag found: ".$tags[$key]);
     }
-
     return $tags;
   }
 
