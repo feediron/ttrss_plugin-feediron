@@ -103,13 +103,9 @@ Example:
 		* [appendimages](#appendimages---appendimagesbool) - `"appendimages":bool`
 		* [allimages](#allimages---allimagesbool) - `"allimages":bool`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
-* [tags](#tags-filter) - `"tags":"{ Options }"`
+* [tags](#tags-filter) - `"tags":"{options}"`
 	* [xpath](#xpath---xpathxpath-str---array-of-xpath-str-)  - `"xpath":"xpath str" / [ "array of xpath str" ]`
 	* [replace-tags](#replace-tags---replace-tagsbool) - `"replace-tags":bool`
-	* [index](#index---index-int) - `"index":int`
-	* [start_element](#start_element---start_elementstr) - `"start_element":"str"`
-	* [join_element](#join_element---join_elementstr) - `"join_element":"str"`
-	* [end_element](#end_element----end_elementstr) - `"end_element":"str"`
 	* [cleanup](#cleanup---cleanupxpath-str---array-of-xpath-str-) - `"cleanup":"xpath str" / [ "array of xpath str" ]`
 	* [split](#split---splitstr) - `"split":"str"`
 
