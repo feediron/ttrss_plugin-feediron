@@ -97,13 +97,13 @@ class Feediron extends Plugin implements IHandler
       $NewContent = $this->getNewContent($link, $config);
 
       // If xpath tags are to replaced tags completely
-      if( $NewContent['tags'] && $NewContent['replace-tags'] ){
+      if( !empty( $NewContent['tags'] ) AND $NewContent['replace-tags'] ){
         Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Replacing Tags");
         $article['tags'] = $NewContent['tags'];
         // If xpath tags are to be prepended to existing tags
-      } elseif ( $NewContent['tags'] ) {
-        $taglist = array_unshift($article['tags'], $NewContent['tags']);
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Merging Tags: ".$taglist);
+      } elseif ( !empty( $NewContent['tags'] ) ) {
+        $taglist = array_merge($NewContent['tags'], $article['tags']);
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Merging Tags: ".implode( ", ", $taglist));
         $article['tags'] = $taglist;
       }
       $article['content'] = $NewContent['content'];
@@ -208,15 +208,13 @@ class Feediron extends Plugin implements IHandler
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Fetching ".count($links)." links");
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Fetching ".count($links)." links", join("\n", $links));
     $NewContent['content'] = "";
+    $NewContent['replace-tags'] = $config['replace-tags'];
     foreach($links as $lnk)
     {
       $html = $this->getArticleContent($lnk, $config);
       if( isset( $config['tag-xpath'] ) )
       {
         $NewContent['tags'] = $this->getArticleTags($html, $config);
-        if( isset( $NewContent['tags'] ) || isset( $config['replace-tags'] ) ){
-          $NewContent['replace-tags'] = true;
-        }
       }
       Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Original Source ".$lnk.":", $html);
       $html = $this->processArticle($html, $config, $lnk);
@@ -986,6 +984,6 @@ class Feediron extends Plugin implements IHandler
           $reply['log'] = Feediron_Logger::get()->get_testlog();
           echo json_encode($reply);
 
+        }
+      }
     }
-  }
-}
