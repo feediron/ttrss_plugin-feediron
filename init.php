@@ -311,9 +311,9 @@ class Feediron extends Plugin implements IHandler
         Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "No Tag found");
         continue;
       }
-      if(is_array($config['tag-modify']))
+      if(is_array($config['modify-tags']))
       {
-        $rawtag = $this->reformat($rawtag, $config['tag-modify']);
+        $rawtag = $this->reformat($rawtag, $config['modify-tags']);
       }
       $tags[$key] .= trim( preg_replace('/\s+/', ' ', strip_tags( $rawtag ) ) );
       Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag found: ".$tags[$key]);
