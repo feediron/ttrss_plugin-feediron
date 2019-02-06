@@ -1,4 +1,4 @@
-# Feediron TT-RSS Plugin <img src="icon.svg" width="80" align="left">
+default# Feediron TT-RSS Plugin <img src="icon.svg" width="80" align="left">
 Reforge your feeds
 
 About |Table Of Contents
@@ -76,7 +76,6 @@ Example:
 ---
 
 # Filters:
-
 * [xpath](#xpath-filter) - `"type":"xpath"`
 	* [xpath](#xpath---xpathxpath-str---array-of-xpath-str-)  - `"xpath":"xpath str" / [ "array of xpath str" ]`
 	* [index](#index---index-int) - `"index":int`
@@ -104,6 +103,15 @@ Example:
 		* [appendimages](#appendimages---appendimagesbool) - `"appendimages":bool`
 		* [allimages](#allimages---allimagesbool) - `"allimages":bool`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
+* [tags](#tags-filter) - `"tags":"{ Options }"`
+	* [xpath](#xpath---xpathxpath-str---array-of-xpath-str-)  - `"xpath":"xpath str" / [ "array of xpath str" ]`
+	* [replace-tags](replace-tags---replace-tagsbool) - `"replace-tags":bool`
+	* [index](#index---index-int) - `"index":int`
+	* [start_element](#start_element---start_elementstr) - `"start_element":"str"`
+	* [join_element](#join_element---join_elementstr) - `"join_element":"str"`
+	* [end_element](#end_element----end_elementstr) - `"end_element":"str"`
+	* [cleanup](#cleanup---cleanupxpath-str---array-of-xpath-str-) - `"cleanup":"xpath str" / [ "array of xpath str" ]`
+	* [split](#split---tags-split) - `"split":"str"`
 
 ## Xpath Filter
 The **xpath** value is the actual Xpath-element to fetch from the linked page. Omit the leading `//` - they will get prepended automatically.
@@ -291,7 +299,7 @@ Optional - An array of regex that are removed using preg_replace.
 The Readability modules are a automated method that attempts to isolate the relevant article text and images.
 
 Basic Usage:
-```
+```json
 "example.com":{
 	"type":"readability"
 }
@@ -375,6 +383,64 @@ Returns all images in article without the article.
 	"allimages":true
 }
 ```
+## Tags Filter
+FeedIron can fetch text from a page and save them as article tags. This can be used to improve the filtering options found in TT-RSS. Note: The Tag filter can use all the options available to the xpath filter and the modify option.
+
+The order of execution for tags is:
+
+ 1. Fetch Tag HTML.
+ 2. Perform Cleanup tags individually.
+ 3. Split Tags.
+ 4. Modify Tags individually.
+ 5. Strip any remaining HTML from Tags.
+
+Basic Usage:
+```json
+"tags":{
+	"type":"xpath",
+  "xpath":"p[@class='topics']"
+}
+```
+
+Advanced Usage:
+```json
+"tags": {
+    "type": "xpath",
+    "replace-tags":true,
+    "xpath": [
+        "p[@class='topics']"
+    ],
+    "split":",",
+    "cleanup": [
+        "strong"
+    ],
+    "modify":[
+      {
+        "type": "replace",
+        "search": "-",
+        "replace": " "
+      }
+    ]
+}
+```
+
+## replace-tags - `"replace-tags":bool`
+Default value `false`
+
+Replace the article tags with fetched ones. By default tags are merged.
+
+## split - `"split":"str"`
+String - Splits tags using a delimiter
+```json
+"tags":{
+	"type":"xpath",
+  "xpath":"p[@class='topics']",
+  "split":"-"
+}
+```
+Input: `Tag1-Tag2-Tag3`
+
+Result: `Tag1, Tag2, Tag3`
 
 ---
 
