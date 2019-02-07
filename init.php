@@ -99,12 +99,15 @@ class Feediron extends Plugin implements IHandler
       // If xpath tags are to replaced tags completely
       if( !empty( $NewContent['tags'] ) AND $NewContent['replace-tags'] ){
         Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Replacing Tags");
-        $article['tags'] = $NewContent['tags'];
+        // Overwrite Article tags, Also ensure no empty tags are returned
+        $article['tags'] = array_filter( $NewContent['tags'] );
         // If xpath tags are to be prepended to existing tags
       } elseif ( !empty( $NewContent['tags'] ) ) {
+        // Merge with in front of Article tags to avoid empty array issues
         $taglist = array_merge($NewContent['tags'], $article['tags']);
         Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Merging Tags: ".implode( ", ", $taglist));
-        $article['tags'] = $taglist;
+        // Ensure no empty tags are returned
+        $article['tags'] = array_filter( $taglist );
       }
       $article['content'] = $NewContent['content'];
     }
@@ -323,8 +326,6 @@ class Feediron extends Plugin implements IHandler
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Tag saved: ".$tags[$key]);
     }
 
-    // ensure no empty tags are returned
-    $tags = array_filter( $tags );
     return $tags;
   }
 
