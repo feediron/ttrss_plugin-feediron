@@ -367,7 +367,7 @@ class Feediron extends Plugin implements IHandler
     }
 
     if( count($patterns) != count($matches) ){
-      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Number of Patterns ".count($patterns)." doesn't equal number of Matches ".count($matches);
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Number of Patterns ".count($patterns)." doesn't equal number of Matches ".count($matches));
       return;
     }
 
