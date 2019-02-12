@@ -345,9 +345,16 @@ class Feediron extends Plugin implements IHandler
       $patterns = $config['pattern'];
     }
 
+    if( !isset( $config['index'] ) ){
+      $index = 1;
+    } else {
+      $index = $config['index'];
+    }
+
     // loop through regex pattern array
     foreach( $patterns as $key=>$pattern ){
-      preg_match($pattern, $html, $tags[$key]);
+      preg_match($pattern, $html, $match);
+      $tags[$key] = $match[$index]
     }
     return $tags;
   }
