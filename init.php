@@ -346,7 +346,7 @@ class Feediron extends Plugin implements IHandler
     }
 
     if( !isset( $config['index'] ) ){
-      $index = 1;
+      $index = 0;
     } else {
       $index = $config['index'];
     }
@@ -354,7 +354,7 @@ class Feediron extends Plugin implements IHandler
     // loop through regex pattern array
     foreach( $patterns as $key=>$pattern ){
       preg_match($pattern, $html, $match);
-      $tags[$key] = $match[$index]
+      $tags[$key] = $match[$index];
     }
     return $tags;
   }
