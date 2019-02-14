@@ -310,6 +310,12 @@ class Feediron extends Plugin implements IHandler
         break;
     }
 
+    $tags = array_filter($tags);
+
+    if(!$tags){
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "No tags saved");
+      return;
+    }
     // Split tags
     if( isset( $config['split'] ) )
     {
@@ -385,7 +391,7 @@ class Feediron extends Plugin implements IHandler
       if( preg_match($pattern, $html) && substr( $match, 0, 1 ) != "!" ){
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag search match", $pattern);
         $tags[$pattern] .= $match;
-      } else if(substr( $match, 0, 1 ) == "!") {
+      } else if( !preg_match($pattern, $html) && substr( $match, 0, 1 ) == "!" ) {
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag inverted search match", $pattern);
         $tags[$pattern] .= substr( $match, 1 );
       }
