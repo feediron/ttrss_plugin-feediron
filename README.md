@@ -390,15 +390,7 @@ The order of execution for tags is:
  4. Modify Tags individually.
  5. Strip any remaining HTML from Tags.
 
-Basic Usage:
-```json
-"tags":{
-	"type":"xpath",
-  "xpath":"p[@class='topics']"
-}
-```
-
-Advanced Usage:
+Usage Example:
 ```json
 "tags": {
     "type": "xpath",
@@ -419,11 +411,41 @@ Advanced Usage:
     ]
 }
 ```
+### tags type xpath - `"type": "xpath"`
 
-## replace-tags - `"replace-tags":bool`
+#### tags xpath - `"xpath":"xpath str" / [ "array of xpath str" ]`
+
+```json
+"tags":{
+	"type":"xpath",
+  "xpath":"p[@class='topics']"
+}
+```
+
+### tags type regex - `"type": "regex"`
+
+#### tags regex pattern - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
+
+#### tags regex index - `"index":int`
+
+### tags type search - `"type": "search"`
+
+#### tags search pattern - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
+
+#### tags search match - `"match": "str" / [ "array of str" ]`
+
+### replace-tags - `"replace-tags":bool`
 Default value `false`
 
 Replace the article tags with fetched ones. By default tags are merged.
+
+```json
+"tags":{
+	"type":"xpath",
+  "xpath":"p[@class='topics']",
+  "replace-tags": true
+}
+```
 
 ## split - `"split":"str"`
 String - Splits tags using a delimiter
