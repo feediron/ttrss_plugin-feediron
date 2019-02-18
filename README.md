@@ -104,7 +104,14 @@ Example:
 		* [allimages](#allimages---allimagesbool) - `"allimages":bool`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
 * [tags](#tags-filter) - `"tags":"{options}"`
-	* [xpath](#xpath---xpathxpath-str---array-of-xpath-str-)  - `"xpath":"xpath str" / [ "array of xpath str" ]`
+	* [xpath](#tags-type-xpath---type-xpath-) - `"type": "xpath"`
+		* [xpath](#tags-xpath---xpathxpath-str---array-of-xpath-str-) - `"xpath":"xpath str" / [ "array of xpath str" ]`
+	* [regex](#tags-type-regex---type-regex) - `"type": "regex"`
+		* [pattern](#tags-regex-pattern---pattern-regex-str---array-of-regex-str-) - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
+		* [index](#tags-regex-index---indexint) - `"index":int`
+	* [search](#tags-type-search---type-search) - `"type": "search"`
+		* [pattern](#tags-search-pattern---pattern-regex-str---array-of-regex-str-) - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
+		* [match](#tags-search-match---match-str---array-of-str-) - `"match": "str" / [ "array of str" ]`
 	* [replace-tags](#replace-tags---replace-tagsbool) - `"replace-tags":bool`
 	* [cleanup](#cleanup---cleanupxpath-str---array-of-xpath-str-) - `"cleanup":"xpath str" / [ "array of xpath str" ]`
 	* [split](#split---splitstr) - `"split":"str"`
