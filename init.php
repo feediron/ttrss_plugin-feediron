@@ -310,12 +310,11 @@ class Feediron extends Plugin implements IHandler
         break;
     }
 
-    $tags = array_filter($tags);
-
     if(!$tags){
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "No tags saved");
       return;
     }
+
     // Split tags
     if( isset( $config['split'] ) )
     {
@@ -339,6 +338,8 @@ class Feediron extends Plugin implements IHandler
       $tags[$key] = trim( preg_replace('/\s+/', ' ', strip_tags( $tag ) ) );
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Tag saved: ".$tags[$key]);
     }
+
+    $tags = array_filter($tags);
 
     return $tags;
   }
