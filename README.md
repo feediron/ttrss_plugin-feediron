@@ -1,4 +1,4 @@
-default# Feediron TT-RSS Plugin <img src="icon.svg" width="80" align="left">
+# FeedIron TT-RSS Plugin <img src="icon.svg" width="80" align="left">
 Reforge your feeds
 
 About |Table Of Contents
@@ -104,7 +104,7 @@ Example:
 		* [allimages](#allimages---allimagesbool) - `"allimages":bool`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
 * [tags](#tags-filter) - `"tags":"{options}"`
-	* [xpath](#tags-type-xpath---type-xpath-) - `"type": "xpath"`
+	* [xpath](#tags-type-xpath---type-xpath) - `"type": "xpath"`
 		* [xpath](#tags-xpath---xpathxpath-str---array-of-xpath-str-) - `"xpath":"xpath str" / [ "array of xpath str" ]`
 	* [regex](#tags-type-regex---type-regex) - `"type": "regex"`
 		* [pattern](#tags-regex-pattern---pattern-regex-str---array-of-regex-str-) - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
@@ -431,15 +431,67 @@ Usage Example:
 
 ### tags type regex - `"type": "regex"`
 
+Uses PHP preg_match() in order to find and return a string from the article. Requires at least on pattern.
+
 #### tags regex pattern - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
+
+```json
+"tags":{
+	"type":"regex",
+  "pattern": "/The quick.*fox jumped/"
+}
 
 #### tags regex index - `"index":int`
 
+Specifies the number of the entry in article to return.
+Default value `1`
+
+```json
+"tags":{
+	"type":"regex",
+  "pattern": "/The quick.*fox jumped/",
+  "index": 2
+}
+
 ### tags type search - `"type": "search"`
+
+Search article using regex, if found it returns a pre-defined matching tag.
+
+```json
+"tags":{
+	"type":"search",
+  "pattern": [
+    "/feediron/",
+    "/ttrss/"
+  ],
+  "match": [
+    "FeedIron is here",
+    "TT-RSS is here"
+  ]
+}
+```
 
 #### tags search pattern - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
 
+Must have corresponding match entries
+
 #### tags search match - `"match": "str" / [ "array of str" ]`
+
+Must have corresponding pattern entries. This can be inverted using the `!` symbol at the beginning of the match entry to return if **NO** match is found
+
+```json
+"tags":{
+	"type":"search",
+  "pattern": [
+    "/feediron/",
+    "/ttrss/"
+  ],
+  "match": [
+    "!FeedIron is not here",
+    "TT-RSS is here"
+  ]
+}
+```
 
 ### replace-tags - `"replace-tags":bool`
 Default value `false`
