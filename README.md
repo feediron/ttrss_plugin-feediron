@@ -1,4 +1,4 @@
-# Feediron TT-RSS Plugin <img src="icon.svg" width="80" align="left">
+# FeedIron TT-RSS Plugin <img src="icon.svg" width="80" align="left">
 Reforge your feeds
 
 About |Table Of Contents
@@ -76,7 +76,6 @@ Example:
 ---
 
 # Filters:
-
 * [xpath](#xpath-filter) - `"type":"xpath"`
 	* [xpath](#xpath---xpathxpath-str---array-of-xpath-str-)  - `"xpath":"xpath str" / [ "array of xpath str" ]`
 	* [index](#index---index-int) - `"index":int`
@@ -104,6 +103,18 @@ Example:
 		* [appendimages](#appendimages---appendimagesbool) - `"appendimages":bool`
 		* [allimages](#allimages---allimagesbool) - `"allimages":bool`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
+* [tags](#tags-filter) - `"tags":"{options}"`
+	* [xpath](#tags-type-xpath---type-xpath) - `"type": "xpath"`
+		* [xpath](#tags-xpath---xpathxpath-str---array-of-xpath-str-) - `"xpath":"xpath str" / [ "array of xpath str" ]`
+	* [regex](#tags-type-regex---type-regex) - `"type": "regex"`
+		* [pattern](#tags-regex-pattern---pattern-regex-str---array-of-regex-str-) - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
+		* [index](#tags-regex-index---indexint) - `"index":int`
+	* [search](#tags-type-search---type-search) - `"type": "search"`
+		* [pattern](#tags-search-pattern---pattern-regex-str---array-of-regex-str-) - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
+		* [match](#tags-search-match---match-str---array-of-str-) - `"match": "str" / [ "array of str" ]`
+	* [replace-tags](#replace-tags---replace-tagsbool) - `"replace-tags":bool`
+	* [cleanup](#cleanup---cleanupxpath-str---array-of-xpath-str-) - `"cleanup":"xpath str" / [ "array of xpath str" ]`
+	* [split](#split---splitstr) - `"split":"str"`
 
 ## Xpath Filter
 The **xpath** value is the actual Xpath-element to fetch from the linked page. Omit the leading `//` - they will get prepended automatically.
@@ -291,7 +302,7 @@ Optional - An array of regex that are removed using preg_replace.
 The Readability modules are a automated method that attempts to isolate the relevant article text and images.
 
 Basic Usage:
-```
+```json
 "example.com":{
 	"type":"readability"
 }
@@ -375,6 +386,138 @@ Returns all images in article without the article.
 	"allimages":true
 }
 ```
+## Tags Filter
+FeedIron can fetch text from a page and save them as article tags. This can be used to improve the filtering options found in TT-RSS. Note: The Tag filter can use all the options available to the xpath filter and the modify option.
+
+The order of execution for tags is:
+
+ 1. Fetch Tag HTML.
+ 2. Perform Cleanup tags individually.
+ 3. Split Tags.
+ 4. Modify Tags individually.
+ 5. Strip any remaining HTML from Tags.
+
+Usage Example:
+```json
+"tags": {
+    "type": "xpath",
+    "replace-tags":true,
+    "xpath": [
+        "p[@class='topics']"
+    ],
+    "split":",",
+    "cleanup": [
+        "strong"
+    ],
+    "modify":[
+      {
+        "type": "replace",
+        "search": "-",
+        "replace": " "
+      }
+    ]
+}
+```
+### tags type xpath - `"type": "xpath"`
+
+#### tags xpath - `"xpath":"xpath str" / [ "array of xpath str" ]`
+
+```json
+"tags":{
+	"type":"xpath",
+  "xpath":"p[@class='topics']"
+}
+```
+
+### tags type regex - `"type": "regex"`
+
+Uses PHP preg_match() in order to find and return a string from the article. Requires at least on pattern.
+
+#### tags regex pattern - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
+
+```json
+"tags":{
+	"type":"regex",
+  "pattern": "/The quick.*fox jumped/"
+}
+
+#### tags regex index - `"index":int`
+
+Specifies the number of the entry in article to return.
+Default value `1`
+
+```json
+"tags":{
+	"type":"regex",
+  "pattern": "/The quick.*fox jumped/",
+  "index": 2
+}
+
+### tags type search - `"type": "search"`
+
+Search article using regex, if found it returns a pre-defined matching tag.
+
+```json
+"tags":{
+	"type":"search",
+  "pattern": [
+    "/feediron/",
+    "/ttrss/"
+  ],
+  "match": [
+    "FeedIron is here",
+    "TT-RSS is here"
+  ]
+}
+```
+
+#### tags search pattern - `"pattern": "/regex str/" / [ "/array of regex str/" ]`
+
+Must have corresponding match entries
+
+#### tags search match - `"match": "str" / [ "array of str" ]`
+
+Must have corresponding pattern entries. This can be inverted using the `!` symbol at the beginning of the match entry to return if **NO** match is found
+
+```json
+"tags":{
+	"type":"search",
+  "pattern": [
+    "/feediron/",
+    "/ttrss/"
+  ],
+  "match": [
+    "!FeedIron is not here",
+    "TT-RSS is here"
+  ]
+}
+```
+
+### replace-tags - `"replace-tags":bool`
+Default value `false`
+
+Replace the article tags with fetched ones. By default tags are merged.
+
+```json
+"tags":{
+	"type":"xpath",
+  "xpath":"p[@class='topics']",
+  "replace-tags": true
+}
+```
+
+## split - `"split":"str"`
+String - Splits tags using a delimiter
+```json
+"tags":{
+	"type":"xpath",
+  "xpath":"p[@class='topics']",
+  "split":"-"
+}
+```
+Input: `Tag1-Tag2-Tag3`
+
+Result: `Tag1, Tag2, Tag3`
 
 ---
 
