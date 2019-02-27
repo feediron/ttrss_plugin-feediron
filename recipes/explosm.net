@@ -1,0 +1,9 @@
+{
+    "name": "explosm.net",
+    "url": "explosm.net",
+    "match": "explosm.net",
+    "config": {
+        "type": "xpath",
+        "xpath": "div[contains(@id,'comic-wrap')]"
+    }
+}
