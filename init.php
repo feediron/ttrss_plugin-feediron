@@ -7,6 +7,14 @@ require_once "Json.php";
 require_once "User.php";
 require_once "PrefTab.php";
 
+//Load Filter modules
+require_once "modules/mod_xpath.php";
+
+//Load Tag Filter modules
+require_once "modules/mod_tags_regex.php";
+require_once "modules/mod_tags_search.php";
+require_once "modules/mod_tags_xpath.php";
+
 //Load Composer autoloader hiding errors
 @include('vendor/autoload.php');
 
@@ -17,9 +25,10 @@ use andreskrey\Readability\Configuration as ReadabilityPHPConf;
 class Feediron extends Plugin implements IHandler
 {
   private $host;
-  private $charset;
+  protected $charset;
   private $json_error;
   private $cache;
+  protected $debug;
 
   // Required API
   function about()
@@ -160,8 +169,11 @@ class Feediron extends Plugin implements IHandler
   {
     $json_conf = $this->host->get($this, 'json_conf');
     $data = json_decode($json_conf, true);
+
+    $this->debug = $data['debug'];
+
     if(Feediron_Logger::get()->get_log_level() == 0){
-      Feediron_Logger::get()->set_log_level((isset($data['debug']) && $data['debug'])||!is_array($data));
+      Feediron_Logger::get()->set_log_level( ( isset( $this->debug ) && $this->debug ) || !is_array( $data ) );
     }
     if(!is_array($data)){
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "No Config found");
@@ -294,15 +306,15 @@ class Feediron extends Plugin implements IHandler
     switch ($config['type'])
     {
       case 'xpath':
-        $tags = $this->perform_tag_xpath($html, $config);
+        $tags = ( new mod_tags_xpath() )->get_tags( $html, $config );
         break;
 
       case 'regex':
-        $tags = $this->perform_tag_regex($html, $config);
+        $tags = ( new mod_tags_regex() )->get_tags( $html, $config );
         break;
 
       case 'search':
-        $tags = $this->perform_tag_search($html, $config);
+        $tags = ( new mod_tags_search() )->get_tags( $html, $config );
         break;
 
       default:
@@ -341,86 +353,6 @@ class Feediron extends Plugin implements IHandler
 
     $tags = array_filter($tags);
 
-    return $tags;
-  }
-
-  function perform_tag_regex($html, $config)
-  {
-    if(!is_array($config['pattern'])){
-      $patterns = array($config['pattern']);
-    }else{
-      $patterns = $config['pattern'];
-    }
-
-    if( !isset( $config['index'] ) ){
-      $index = 0;
-    } else {
-      $index = $config['index'];
-    }
-
-    // loop through regex pattern array
-    foreach( $patterns as $key=>$pattern ){
-      preg_match($pattern, $html, $match);
-      $tags[$key] = $match[$index];
-    }
-    return $tags;
-  }
-
-  function perform_tag_search($html, $config)
-  {
-    if(!is_array($config['pattern'])){
-      $patterns = array($config['pattern']);
-    }else{
-      $patterns = $config['pattern'];
-    }
-
-    if(!is_array($config['match'])){
-      $matches = array($config['match']);
-    }else{
-      $matches = $config['match'];
-    }
-
-    if( count($patterns) != count($matches) ){
-      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Number of Patterns ".count($patterns)." doesn't equal number of Matches ".count($matches));
-      return;
-    }
-
-    $matches = array_combine ( $patterns, $matches );
-
-    // loop through regex pattern array
-    foreach( $matches as $pattern=>$match ){
-      if( preg_match($pattern, $html) && substr( $match, 0, 1 ) != "!" ){
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag search match", $pattern);
-        $tags[$pattern] .= $match;
-      } else if( !preg_match($pattern, $html) && substr( $match, 0, 1 ) == "!" ) {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag inverted search match", $pattern);
-        $tags[$pattern] .= substr( $match, 1 );
-      }
-    }
-    return array_values( $tags );
-  }
-
-  function perform_tag_xpath($html, $config)
-  {
-    if(!is_array($config['xpath'])){
-      $xpaths = array($config['xpath']);
-    }else{
-      $xpaths = $config['xpath'];
-    }
-
-    // loop through xpath array
-    foreach( $xpaths as $key=>$xpath )
-    {
-      // set xpath in config
-      Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag xpath", $xpath);
-      $newtag = $this->performXpath( $html, $config );
-
-      // Filter bad tags
-      if( $newtag && $newtag !== $html ){
-        $tags[$key] .= $newtag;
-        Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag data found", $tags[$key]);
-      }
-    }
     return $tags;
   }
 
@@ -507,45 +439,6 @@ class Feediron extends Plugin implements IHandler
         $links[] = $entry->getAttribute('href');
       }
       return $links;
-    }
-
-    function getHtmlNode($node){
-      if (is_object($node)){
-        $newdoc = new DOMDocument();
-        if ($node->nodeType == XML_ATTRIBUTE_NODE) {
-          // appendChild will fail, so make it a text node
-          $imported = $newdoc->createTextNode($node->value);
-        } else {
-          $cloned = $node->cloneNode(TRUE);
-          $imported = $newdoc->importNode($cloned,TRUE);
-        }
-        $newdoc->appendChild($imported);
-        return $newdoc->saveHTML();
-      } else {
-        return $node;
-      }
-    }
-
-    function getDOM($html){
-      $doc = new DOMDocument();
-      if ($this->charset) {
-        $html = '<?xml encoding="' . $this->charset . '">' . $html;
-      }
-      libxml_use_internal_errors(true);
-      $doc->loadHTML($html);
-      if(!$doc)
-      {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "The content is not a valid xml format");
-        if($this->debug)
-        {
-          foreach (libxml_get_errors() as $value)
-          {
-            Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, $value);
-          }
-        }
-        return new DOMDocument();
-      }
-      return $doc;
     }
 
     function fixlinks($link, $links)
@@ -646,7 +539,7 @@ class Feediron extends Plugin implements IHandler
         break;
 
         case 'xpath':
-        $html = $this->performXpath($html, $config);
+        $html = ( new mod_xpath() )->perform_xpath( $html, $config );
         break;
 
         default:
@@ -748,7 +641,7 @@ class Feediron extends Plugin implements IHandler
       }
       // Perform xpath on readability output
       if (isset($config['xpath'])){
-        $html = $this->performXpath($content, $config);
+        $html = ( new mod_xpath() )->perform_xpath( $html, $config );
         // If no xpath for readability output perform simple cleanup
       } elseif(($cconfig = $this->getCleanupConfig($config))!== FALSE) {
         $html = $content;
@@ -798,105 +691,6 @@ class Feediron extends Plugin implements IHandler
       return $html;
     }
 
-    function performXpath($html, $config)
-    {
-      $doc = $this->getDOM($html);
-      $basenode = false;
-      $xpathdom = new DOMXPath($doc);
-
-      if(!is_array($config['xpath'])){
-        $xpaths = array($config['xpath']);
-      }else{
-        $xpaths = $config['xpath'];
-      }
-
-      $htmlout = array();
-
-      foreach($xpaths as $key=>$xpath){
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Perfoming xpath", $xpath);
-        $index = 0;
-        if(is_array($xpath) && array_key_exists('index', $xpath)){
-          $index = $xpath['index'];
-          $xpath = $xpath['xpath'];
-        }
-        $entries = $xpathdom->query('(//'.$xpath.')');   // find main DIV according to config
-
-          if ($entries->length > 0) {
-            $basenode = $entries->item($index);
-          }
-
-          if (!$basenode && count($xpaths) == ( $key + 1 )) {
-            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
-            return $html;
-          } elseif (!$basenode && count($xpaths) > 1){
-            continue;
-          }
-
-          Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Extracted node", $this->getHtmlNode($basenode));
-          // remove nodes from cleanup configuration
-          $basenode = $this->cleanupNode($xpathdom, $basenode, $config);
-
-          //render nested nodes to html
-          $inner_html = $this->getInnerHtml($basenode);
-          if (!$inner_html){
-            //if there's no nested nodes, render the node itself
-            $inner_html = $basenode->ownerDocument->saveXML($basenode);
-          }
-          array_push($htmlout, $inner_html);
-        }
-
-        $content = join((array_key_exists('join_element', $config)?$config['join_element']:''), $htmlout);
-        if(array_key_exists('start_element', $config)){
-          Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Adding start element", $config['start_element']);
-          $content = $config['start_element'].$content;
-        }
-
-        if(array_key_exists('end_element', $config)){
-          Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Adding end element", $config['end_element']);
-          $content = $content.$config['end_element'];
-        }
-
-        return $content;
-      }
-
-      function getInnerHtml( $node ) {
-        $innerHTML= '';
-        $children = $node->childNodes;
-        foreach ($children as $child) {
-          $innerHTML .= $child->ownerDocument->saveXML( $child );
-        }
-
-        return $innerHTML;
-      }
-
-      function cleanupNode($xpath, $basenode, $config)
-      {
-        if(($cconfig = $this->getCleanupConfig($config))!== FALSE)
-        {
-          foreach ($cconfig as $cleanup)
-          {
-            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "cleanup", $cleanup);
-            if(strpos($cleanup, "./") !== 0)
-            {
-              $cleanup = '//'.$cleanup;
-            }
-            $nodelist = $xpath->query($cleanup, $basenode);
-            foreach ($nodelist as $node)
-            {
-              if ($node instanceof DOMAttr)
-              {
-                $node->ownerElement->removeAttributeNode($node);
-              }
-              else
-              {
-                $node->parentNode->removeChild($node);
-              }
-            }
-            Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Node after cleanup", $this->getHtmlNode($basenode));
-          }
-        }
-        return $basenode;
-      }
 
       function getCleanupConfig($config)
       {
