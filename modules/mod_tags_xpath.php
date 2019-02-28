@@ -16,7 +16,7 @@ class mod_tags_xpath
     {
       // set xpath in config
       Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag xpath", $xpath);
-      $newtag = mod_xpath::perform_xpath( $html, $config );
+      $newtag = ( new mod_xpath() )->perform_xpath( $html, $config );
 
       // Filter bad tags
       if( $newtag && $newtag !== $html ){

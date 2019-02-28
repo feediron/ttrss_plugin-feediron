@@ -1,6 +1,6 @@
 <?php
 
-class mod_xpath extends Feediron
+class mod_xpath
 {
 
   public function perform_xpath( $html, $config )
