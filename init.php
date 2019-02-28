@@ -18,7 +18,7 @@ require_once "modules/mod_tags_search.php";
 require_once "modules/mod_tags_xpath.php";
 
 //Load Composer autoloader hiding errors
-@include('vendor/autoload.php');
+@include('lib/vendor/autoload.php');
 
 //Load Readability.php
 use andreskrey\Readability\Readability as ReadabilityPHP;
