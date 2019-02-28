@@ -2,7 +2,6 @@
 
 //Load bin components
 require_once "bin/Logger.php";
-require_once "bin/Functions.php";
 require_once "bin/Json.php";
 require_once "bin/Helper.php";
 
