@@ -1,11 +1,15 @@
 <?php
 
-require_once "RecipeManager.php";
-require_once "Logger.php";
-require_once "Functions.php";
-require_once "Json.php";
-require_once "User.php";
-require_once "PrefTab.php";
+//Load bin components
+require_once "bin/Logger.php";
+require_once "bin/Functions.php";
+require_once "bin/Json.php";
+require_once "bin/User.php";
+require_once "bin/Helper.php";
+
+//Load PrefTab components
+require_once "preftab/PrefTab.php";
+require_once "preftab/RecipeManager.php";
 
 //Load Filter modules
 require_once "modules/mod_xpath.php";
@@ -624,8 +628,8 @@ class Feediron extends Plugin implements IHandler
       else {
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Using Legacy Readability");
 
-        require_once 'php-readability/Readability.php';
-        require_once 'php-readability/JSLikeHTMLElement.php';
+        require_once 'lib/php-readability/Readability.php';
+        require_once 'lib/php-readability/JSLikeHTMLElement.php';
         $readability = new Readability\Readability($html, $link);
         $readability->debug = false;
         $readability->convertLinksToFootnotes = true;
