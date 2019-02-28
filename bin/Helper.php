@@ -3,7 +3,7 @@
 class Feediron_Helper
 {
 
-  public function getCleanupConfig( $config )
+  public static function getCleanupConfig( $config )
   {
     $cconfig = false;
 
@@ -18,7 +18,7 @@ class Feediron_Helper
     return $cconfig;
   }
 
-  public function check_array( $data )
+  public static function check_array( $data )
   {
 
     if(!is_array( $data )){
