@@ -5,7 +5,7 @@ class mod_xpath
 
   public function perform_xpath( $html, $config )
   {
-    $doc = Feediron_Helper::getDOM( $html, $this->charset, $this->debug );
+    $doc = Feediron_Helper::getDOM( $html, $config['charset'], $config['debug'] );
     $basenode = false;
     $xpathdom = new DOMXPath($doc);
 

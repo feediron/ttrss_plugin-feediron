@@ -42,6 +42,7 @@ class Feediron_Helper
   public static function getDOM( $html, $charset, $debug ){
     $doc = new DOMDocument();
     if ($charset) {
+			Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Applying Character set:".$charset);
       $html = '<?xml encoding="' . $charset . '">' . $html;
     }
     libxml_use_internal_errors(true);
