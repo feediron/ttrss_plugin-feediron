@@ -3,9 +3,9 @@
 class mod_xpath
 {
 
-  public function perform_xpath( $html, $config )
+  public function perform_xpath( $html, $config, $settings )
   {
-    $doc = Feediron_Helper::getDOM( $html, $config['charset'], $config['debug'] );
+    $doc = Feediron_Helper::getDOM( $html, $settings['charset'], $config['debug'] );
     $basenode = false;
     $xpathdom = new DOMXPath($doc);
 

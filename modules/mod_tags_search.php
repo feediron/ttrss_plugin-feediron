@@ -3,7 +3,7 @@
 class mod_tags_search
 {
 
-  public function get_tags($html, $config)
+  public function get_tags($html, $config, $settings )
   {
     if(!is_array($config['pattern'])){
       $patterns = array($config['pattern']);

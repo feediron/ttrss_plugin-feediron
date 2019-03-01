@@ -260,35 +260,35 @@ class Feediron extends Plugin implements IHandler
     }
     list($html, $content_type) = $this->get_content($link);
 
-    $config['charset'] = false;
+    $this->charset = false;
     if (!isset($config['force_charset']))
     {
       if ($content_type)
       {
         preg_match('/charset=(\S+)/', $content_type, $matches);
         if (isset($matches[1]) && !empty($matches[1])) {
-          $config['charset'] = str_replace('"', "", html_entity_decode($matches[1]));
+          $this->charset = str_replace('"', "", html_entity_decode($matches[1]));
         }
       }
     } elseif ( isset( $config['force_charset'] ) ) {
       // use forced charset
-      $config['charset'] = $config['force_charset'];
+      $this->charset = $config['force_charset'];
     } elseif ( mb_detect_encoding($html, 'UTF-8', true) == 'UTF-8' ) {
-      $config['charset'] = 'UTF-8';
+      $this->charset = 'UTF-8';
     }
 
-    Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "charset:", $config['charset']);
-    if ($config['charset'] && isset($config['force_unicode']) && $config['force_unicode'])
+    Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "charset:", $this->charset);
+    if ($this->charset && isset($config['force_unicode']) && $config['force_unicode'])
     {
-      $html = iconv($config['charset'], 'utf-8', $html);
-      $config['charset'] = 'utf-8';
+      $html = iconv($this->charset, 'utf-8', $html);
+      $this->charset = 'utf-8';
       Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Changed charset to utf-8:", $html);
     }
 
     // Use PHP tidy to fix source page if option tidy-source called
-    if (function_exists('tidy_parse_string') && $config['tidy-source'] == true && $config['charset'] !== false){
+    if (function_exists('tidy_parse_string') && $config['tidy-source'] == true && $this->charset !== false){
       // Use forced or discovered charset of page
-      $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $config['charset']));
+      $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
       $tidy->cleanRepair();
       $html = $tidy->value;
     }
@@ -299,21 +299,23 @@ class Feediron extends Plugin implements IHandler
     return $html;
   }
 
-  function getArticleTags($html, $config)
+  function getArticleTags( $html, $config )
   {
+    // Build settings array
+    $settings = array( "charset" => $this->charset );
 
-    switch ($config['type'])
+    switch ( $config['type'] )
     {
       case 'xpath':
-        $tags = ( new mod_tags_xpath() )->get_tags( $html, $config );
+        $tags = ( new mod_tags_xpath() )->get_tags( $html, $config, $settings );
         break;
 
       case 'regex':
-        $tags = ( new mod_tags_regex() )->get_tags( $html, $config );
+        $tags = ( new mod_tags_regex() )->get_tags( $html, $config, $settings );
         break;
 
       case 'search':
-        $tags = ( new mod_tags_search() )->get_tags( $html, $config );
+        $tags = ( new mod_tags_search() )->get_tags( $html, $config, $settings );
         break;
 
       default:
@@ -419,7 +421,7 @@ class Feediron extends Plugin implements IHandler
   }
   function extractlinks($html, $config)
   {
-    $doc = Feediron_Helper::getDOM( $html, $config['charset'], $config['debug'] );
+    $doc = Feediron_Helper::getDOM( $html, $this->charset, $config['debug'] );
     $links = array();
 
     $xpath = new DOMXPath($doc);
@@ -527,7 +529,10 @@ class Feediron extends Plugin implements IHandler
 
     function processArticle($html, $config, $link)
     {
-      switch ($config['type'])
+      // Build settings array
+      $settings = array( "charset" => $this->charset );
+
+      switch ( $config['type'] )
       {
         case 'readability':
         $html = $this->performReadability($html, $config, $link);
@@ -538,7 +543,7 @@ class Feediron extends Plugin implements IHandler
         break;
 
         case 'xpath':
-        $html = ( new mod_xpath() )->perform_xpath( $html, $config );
+        $html = ( new mod_xpath() )->perform_xpath( $html, $config, $settings );
         break;
 
         default:
@@ -550,8 +555,8 @@ class Feediron extends Plugin implements IHandler
         $html = $this->reformat($html, $config['modify']);
       }
       // if we've got Tidy, let's clean it up for output
-      if (function_exists('tidy_parse_string') && $config['tidy'] !== false && $config['charset'] !== false) {
-        $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $config['charset']));
+      if (function_exists('tidy_parse_string') && $config['tidy'] !== false && $this->charset !== false) {
+        $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
         $tidy->cleanRepair();
         $html = $tidy->value;
       }

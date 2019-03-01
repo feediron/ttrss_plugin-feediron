@@ -3,7 +3,7 @@
 class mod_tags_xpath
 {
 
-  public function get_tags($html, $config)
+  public function get_tags($html, $config, $settings )
   {
     if(!is_array($config['xpath'])){
       $xpaths = array($config['xpath']);
