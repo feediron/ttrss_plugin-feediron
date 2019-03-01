@@ -422,7 +422,7 @@ class Feediron extends Plugin implements IHandler
   }
   function extractlinks($html, $config)
   {
-    $doc = $this->getDOM($html);
+    $doc = Feediron_Helper::getDOM( $html, $this->charset, $this->debug );
     $links = array();
 
     $xpath = new DOMXPath($doc);

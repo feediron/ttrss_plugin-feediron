@@ -5,7 +5,7 @@ class mod_xpath
 
   public function perform_xpath( $html, $config )
   {
-    $doc = $this->getDOM( $html );
+    $doc = Feediron_Helper::getDOM( $html, $this->charset, $this->debug );
     $basenode = false;
     $xpathdom = new DOMXPath($doc);
 
@@ -58,28 +58,6 @@ class mod_xpath
     }
 
     return $content;
-  }
-
-  private function getDOM( $html ){
-    $doc = new DOMDocument();
-    if ($this->charset) {
-      $html = '<?xml encoding="' . $this->charset . '">' . $html;
-    }
-    libxml_use_internal_errors(true);
-    $doc->loadHTML($html);
-    if(!$doc)
-    {
-      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "The content is not a valid xml format");
-      if( $this->debug )
-      {
-        foreach (libxml_get_errors() as $value)
-        {
-          Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, $value);
-        }
-      }
-      return new DOMDocument();
-    }
-    return $doc;
   }
 
   private function getHtmlNode( $node ){

@@ -39,4 +39,26 @@ class Feediron_Helper
 
   }
 
+  public static function getDOM( $html, $charset, $debug ){
+    $doc = new DOMDocument();
+    if ($charset) {
+      $html = '<?xml encoding="' . $charset . '">' . $html;
+    }
+    libxml_use_internal_errors(true);
+    $doc->loadHTML($html);
+    if(!$doc)
+    {
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "The content is not a valid xml format");
+      if( $debug )
+      {
+        foreach (libxml_get_errors() as $value)
+        {
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, $value);
+        }
+      }
+      return new DOMDocument();
+    }
+    return $doc;
+  }
+
 }
