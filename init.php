@@ -301,6 +301,7 @@ class Feediron extends Plugin implements IHandler
 
       		if ($value === $this->charset) {
       			$this->charset = $index;
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Valid Charset detected"+$this->charset);
       			break 2;
       		}
       	}
