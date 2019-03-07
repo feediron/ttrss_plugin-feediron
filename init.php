@@ -304,8 +304,11 @@ class Feediron extends Plugin implements IHandler
       			break 2;
       		}
       	}
+        end($valid_charsets);
+  		  if ($index === key($valid_charsets)){
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unknown Charset detected");
+  		  }
       }
-      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unknown Charset detected");
     }
 
     // Use PHP tidy to fix source page if option tidy-source called
@@ -702,6 +705,7 @@ class Feediron extends Plugin implements IHandler
         } catch (Throwable $t) {
           Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Error running tidy", $t);
         }
+      }
       return $html;
     }
 
