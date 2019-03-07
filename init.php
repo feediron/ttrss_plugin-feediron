@@ -250,6 +250,25 @@ class Feediron extends Plugin implements IHandler
     list($html, $content_type) = $this->get_content($link);
 
     $this->charset = false;
+
+    // Array of valid charsets for tidy functions
+    $valid_charsets = array(
+      "raw" => array("raw"),
+      "ascii" => array("ascii"),
+      "latin0" => array("latin0"),
+      "latin1" => array("latin1"),
+      "utf8" => array("utf8", "UTF-8", "ISO88591", "ISO-8859-1", "ISO8859-1"),
+      "iso2022" => array("iso2022"),
+      "mac" => array("mac"),
+      "win1252" => array("win1252"),
+      "ibm858" => array("ibm858"),
+      "utf16le" => array("utf16le"),
+      "utf16be" => array("utf16be"),
+      "utf16" => array("utf16"),
+      "big5" => array("big5"),
+      "shiftjis" => array("shiftjis")
+    );
+
     if (!isset($config['force_charset']))
     {
       if ($content_type)
@@ -274,12 +293,27 @@ class Feediron extends Plugin implements IHandler
       Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Changed charset to utf-8:", $html);
     }
 
+    // Map Charset to valid_charsets
+    if ( isset($this->charset) ){
+      foreach($valid_charsets as $index => $alias) {
+
+          foreach($alias as $key => $value) {
+
+      		if ($value === $this->charset) {
+      			$this->charset = $index;
+      			break 2;
+      		}
+      	}
+      }
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unknown Charset detected");
+    }
+
     // Use PHP tidy to fix source page if option tidy-source called
     if (function_exists('tidy_parse_string') && $config['tidy-source'] == true && $this->charset !== false){
-      // Use forced or discovered charset of page
-      $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
-      $tidy->cleanRepair();
-      $html = $tidy->value;
+        // Use forced or discovered charset of page
+        $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
+        $tidy->cleanRepair();
+        $html = $tidy->value;
     }
 
     Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Writing into cache");
@@ -659,10 +693,15 @@ class Feediron extends Plugin implements IHandler
       }
       // if we've got Tidy, let's clean it up for output
       if (function_exists('tidy_parse_string') && $config['tidy'] !== false && $this->charset !== false) {
-        $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
-        $tidy->cleanRepair();
-        $html = $tidy->value;
-      }
+        try {
+          $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
+          $tidy->cleanRepair();
+          $html = $tidy->value;
+        } catch (Exception $e) {
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Error running tidy", $e);
+        } catch (Throwable $t) {
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Error running tidy", $t);
+        }
       return $html;
     }
 
