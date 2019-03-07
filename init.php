@@ -299,16 +299,12 @@ class Feediron extends Plugin implements IHandler
 
           foreach($alias as $key => $value) {
 
-      		if ($value === $this->charset) {
+      		if ($value == $this->charset) {
       			$this->charset = $index;
-            Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Valid Charset detected"+$this->charset);
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Valid Charset detected and mapped", $this->charset);
       			break 2;
       		}
       	}
-        end($valid_charsets);
-  		  if ($index === key($valid_charsets)){
-          Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unknown Charset detected");
-  		  }
       }
     }
 
