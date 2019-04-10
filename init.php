@@ -500,7 +500,7 @@ class Feediron extends Plugin implements IHandler
     if (count(array_intersect($seenlinks, $links)) != 0)
     {
       Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Break infinite loop for recursive multipage, link intersection",array_intersect($seenlinks, $links));
-      return array();
+      return array($link);
     }
     foreach ($links as $lnk)
     {
