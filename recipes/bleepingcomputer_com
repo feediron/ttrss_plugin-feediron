@@ -10,7 +10,7 @@
             "div[@class='cz-related-article-wrapp']"
         ]
     },
-	"modify": [
+    "modify": [
         {
             "type": "replace",
             "search": [
