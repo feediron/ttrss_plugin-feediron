@@ -6,7 +6,10 @@
     "match": "androidpolice.com",
     "config": {
         "type": "xpath",
-        "xpath": "div[@class='post-content']",
+        "xpath": [
+            "img[@class='img-hero']",
+            "div[@class='post-content']"
+        ],
         "cleanup": [
             "toc",
             "div[contains(@class,'gallery-slider')]",
