@@ -6,19 +6,22 @@
     "match": "arstechnica.com",
     "config": {
         "type": "xpath",
+        "xpath": "div[contains(@class, 'article-content')]",
         "multipage": {
-            "xpath": "span[@class='numbers']\/a",
+            "xpath": "nav[contains(@class, 'page-numbers')]\/span\/a[last()]",
             "append": true,
             "recursive": true
         },
-        "xpath": [
-            "section[@class='article-guts']"
+        "modify": [
+            {
+                "type": "regex",
+                "pattern": "\/<li.*? data-src=\"(.*?)\".*?>\\s*<figure.*?>.*?(?:<figcaption.*?<div class=\"caption\">(.*?)<\\\/div>.*?<\\\/figcaption>)?\\s*<\\\/figure>\\s*<\\\/li>\/s",
+                "replace": "<figure><img src=\"$1\"\/><figcaption>$2<\/figcaption><\/figure>"
+            }
         ],
         "cleanup": [
-            "figcaption",
             "aside",
-            "div[@class='article-expander']",
-            "nav"
+            "div[contains(@class, 'sidebar')]"
         ]
     }
 }
