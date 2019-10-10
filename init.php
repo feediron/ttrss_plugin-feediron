@@ -841,7 +841,6 @@ class Feediron extends Plugin implements IHandler
     function performXpath($html, $config)
     {
       $doc = $this->getDOM($html);
-      $basenode = false;
       $xpathdom = new DOMXPath($doc);
 
       if(!is_array($config['xpath'])){
@@ -861,6 +860,7 @@ class Feediron extends Plugin implements IHandler
         }
         $entries = $xpathdom->query('(//'.$xpath.')');   // find main DIV according to config
 
+          $basenode = false;
           if ($entries->length > 0) {
             $basenode = $entries->item($index);
           }
