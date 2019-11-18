@@ -440,6 +440,7 @@ Uses PHP preg_match() in order to find and return a string from the article. Req
 	"type":"regex",
   "pattern": "/The quick.*fox jumped/"
 }
+```
 
 #### tags regex index - `"index":int`
 
@@ -452,6 +453,7 @@ Default value `1`
   "pattern": "/The quick.*fox jumped/",
   "index": 2
 }
+```
 
 ### tags type search - `"type": "search"`
 
