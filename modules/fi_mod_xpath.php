@@ -6,7 +6,6 @@ class mod_xpath
   public function perform_xpath( $html, $config, $settings )
   {
     $doc = Feediron_Helper::getDOM( $html, $settings['charset'], $config['debug'] );
-    $basenode = false;
     $xpathdom = new DOMXPath($doc);
 
     $xpaths = Feediron_Helper::check_array( $config['xpath'] );
@@ -21,6 +20,8 @@ class mod_xpath
         $xpath = $xpath['xpath'];
       }
       $entries = $xpathdom->query('(//'.$xpath.')');   // find main DIV according to config
+
+      $basenode = false;
 
       if ($entries->length > 0) {
         $basenode = $entries->item($index);

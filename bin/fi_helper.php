@@ -39,6 +39,29 @@ class Feediron_Helper
 
   }
 
+  // reformat a string with given options
+  public function reformat($string, $options)
+  {
+    Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Reformat ", $string);
+    foreach($options as $option)
+    {
+      Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Reformat step with option ", $option);
+      switch($option['type'])
+      {
+        case 'replace':
+        $string = str_replace($option['search'], $option['replace'], $string);
+        break;
+
+        case 'regex':
+        $string = preg_replace($option['pattern'], $option['replace'], $string);
+        break;
+      }
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Step result ", $string);
+    }
+    Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Result ", $string);
+    return $string;
+  }
+
   public static function getDOM( $html, $charset, $debug ){
     $doc = new DOMDocument();
     if ($charset) {
