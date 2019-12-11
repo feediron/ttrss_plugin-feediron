@@ -10,18 +10,18 @@ require_once "preftab/fi_pref_tab.php";
 require_once "preftab/fi_recipe_manager.php";
 
 //Load Filter modules
-require_once "modules/fi_mod_xpath.php";
+require_once "filters/fi_mod_xpath.php";
 
 //Load Tag Filter modules
-require_once "modules/fi_mod_tags_regex.php";
-require_once "modules/fi_mod_tags_search.php";
-require_once "modules/fi_mod_tags_xpath.php";
+require_once "filters/fi_mod_tags_regex.php";
+require_once "filters/fi_mod_tags_search.php";
+require_once "filters/fi_mod_tags_xpath.php";
 
 //Load Split Filter module
-require_once "modules/fi_mod_split.php";
+require_once "filters/fi_mod_split.php";
 
 //Load Readability Filter module
-require_once "modules/fi_mod_split.php";
+require_once "filters/fi_mod_split.php";
 
 //Load Composer autoloader hiding errors
 @include('lib/vendor/autoload.php');
