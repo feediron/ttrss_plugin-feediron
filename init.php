@@ -10,21 +10,9 @@ require_once "preftab/fi_pref_tab.php";
 require_once "preftab/fi_recipe_manager.php";
 
 //Load Filter modules
-require_once "filters/fi_mod_xpath.php";
-
-//Load Tag Filter modules
-require_once "filters/fi_mod_tags_regex.php";
-require_once "filters/fi_mod_tags_search.php";
-require_once "filters/fi_mod_tags_xpath.php";
-
-//Load Split Filter module
-require_once "filters/fi_mod_split.php";
-
-//Load Readability Filter module
-require_once "filters/fi_mod_split.php";
-
-//Load Composer autoloader hiding errors
-@include('lib/vendor/autoload.php');
+spl_autoload_register(function ($class) {
+    include 'filters/' . $class . '/init.php';
+});
 
 class Feediron extends Plugin implements IHandler
 {
@@ -326,7 +314,7 @@ class Feediron extends Plugin implements IHandler
     // Build settings array
     $settings = array( "charset" => $this->charset );
 
-    $str = 'mod_';
+    $str = 'fi_mod_';
     $class = $str. $config['type'];
 
     if (class_exists($class)) {
@@ -546,13 +534,13 @@ class Feediron extends Plugin implements IHandler
     // Build settings array
     $settings = array( "charset" => $this->charset, "link" => $link );
 
-    $str = 'mod_';
+    $str = 'fi_mod_';
     $class = $str. $config['type'];
 
     if (class_exists($class)) {
       $html = ( new $class() )->perform_filter($html, $config, $settings);
     } else {
-      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']." ".$class);
     }
 
     if(is_array($config['modify']))

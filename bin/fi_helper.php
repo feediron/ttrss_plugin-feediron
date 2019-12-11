@@ -40,7 +40,7 @@ class Feediron_Helper
   }
 
   // reformat a string with given options
-  public function reformat($string, $options)
+  public static function reformat($string, $options)
   {
     Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Reformat ", $string);
     foreach($options as $option)

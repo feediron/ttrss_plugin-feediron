@@ -1,6 +1,6 @@
 <?php
 
-class mod_tags_xpath
+class fi_mod_tags_xpath
 {
 
   public function get_tags($html, $config, $settings )

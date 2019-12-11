@@ -1,6 +1,6 @@
 <?php
 
-class mod_xpath
+class fi_mod_xpath
 {
 
   public function perform_filter( $html, $config, $settings )

@@ -1,10 +1,13 @@
 <?php
 
-//Load Readability.php
-use \andreskrey\Readability\Readability as ReadabilityPHP;
-use \andreskrey\Readability\Configuration as ReadabilityPHPConf;
+//Load Composer autoloader hiding errors
+@include('vendor/autoload.php');
 
-class mod_readability
+//Load Readability.php
+use andreskrey\Readability\Readability as ReadabilityPHP;
+use andreskrey\Readability\Configuration as ReadabilityPHPConf;
+
+class fi_mod_readability
 {
 
   public function perform_filter( $html, $config, $settings ){
@@ -72,8 +75,8 @@ class mod_readability
     else {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Using Legacy Readability");
 
-      require_once 'lib/php-readability/Readability.php';
-      require_once 'lib/php-readability/JSLikeHTMLElement.php';
+      require_once 'php-readability/Readability.php';
+      require_once 'php-readability/JSLikeHTMLElement.php';
       $readability = new Readability\Readability($html, $settings['link']);
       $readability->debug = false;
       $readability->convertLinksToFootnotes = true;

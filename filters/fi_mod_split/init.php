@@ -1,6 +1,6 @@
 <?php
 
-class mod_split
+class fi_mod_split
 {
 
   public function perform_filter( $html, $config, $settings ){

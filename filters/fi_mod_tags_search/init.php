@@ -1,6 +1,6 @@
 <?php
 
-class mod_tags_search
+class fi_mod_tags_search
 {
 
   public function get_tags($html, $config, $settings )
