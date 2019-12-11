@@ -2,14 +2,14 @@
 
 class Feediron_Logger{
 
-	private static $logger = FALSE;
+	private static $logger = false;
 	const LOG_NONE = 0;
 	const LOG_TTRSS = 1;
 	const LOG_TEST = 2;
 	const LOG_VERBOSE = 3;
 
 	public static function get(){
-		if(self::$logger === FALSE){
+		if(self::$logger === false){
 			self::$logger = new Feediron_Logger();
 		}
 		return self::$logger;

@@ -89,10 +89,10 @@ class Feediron extends Plugin implements IHandler
       return $article;
     };
     $config = $this->getConfigSection($link);
-    if ($config === FALSE) {
+    if ($config === false) {
       $config = $this->getConfigSection($article['author']);
     }
-    if ($config !== FALSE)
+    if ($config !== false)
     {
       if (version_compare(VERSION, '1.14.0', '<=')){
         if (strpos($article['plugin_data'], $articleMarker) !== false)
@@ -140,7 +140,7 @@ class Feediron extends Plugin implements IHandler
 
   function getConfigSection($url)
   {
-    if ($url === null) { return FALSE; };
+    if ($url === null) { return false; };
     $data = $this->getConfig();
     if(is_array($data)){
 
@@ -168,7 +168,7 @@ class Feediron extends Plugin implements IHandler
         return $config;
       }
     }
-    return FALSE;
+    return false;
   }
 
   // Load config
@@ -299,7 +299,7 @@ class Feediron extends Plugin implements IHandler
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "charset:", $this->charset);
     if ($this->charset && isset($config['force_unicode']) && $config['force_unicode'])
     {
-      $html = iconv($this->charset, 'utf-8', $html);
+      $html = mb_convert_encoding($html, 'HTML-ENTITIES', $this->charset);
       $this->charset = 'utf-8';
       Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Changed charset to utf-8:", $html);
     }
@@ -439,7 +439,7 @@ class Feediron extends Plugin implements IHandler
     if (count(array_intersect($seenlinks, $links)) != 0)
     {
       Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Break infinite loop for recursive multipage, link intersection",array_intersect($seenlinks, $links));
-      return array();
+      return array($link);
     }
     foreach ($links as $lnk)
     {
@@ -693,7 +693,7 @@ class Feediron extends Plugin implements IHandler
       if (isset($config['xpath'])){
         $html = ( new mod_xpath() )->perform_xpath( $html, $config );
         // If no xpath for readability output perform simple cleanup
-      } elseif(($cconfig = $this->getCleanupConfig($config))!== FALSE) {
+      } elseif(($cconfig = $this->getCleanupConfig($config))!== false) {
         $html = $content;
         foreach($cconfig as $cleanup){
           Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Cleaning up", $cleanup);
@@ -729,7 +729,7 @@ class Feediron extends Plugin implements IHandler
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
         return $orig_html;
       }
-      if(($cconfig = $this->getCleanupConfig($config))!== FALSE)
+      if(($cconfig = $this->getCleanupConfig($config))!== false)
       {
         foreach($cconfig as $cleanup)
         {
@@ -740,7 +740,6 @@ class Feediron extends Plugin implements IHandler
       }
       return $html;
     }
-
 
       function getCleanupConfig($config)
       {
@@ -896,7 +895,7 @@ class Feediron extends Plugin implements IHandler
           $config = $this->getConfigSection($test_url);
           $newconfig = json_decode($_POST['test_conf'], true);
           Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config posted: ", $newconfig);
-          if($config != False){
+          if($config != false){
             Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config found: ", $config);
             Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config diff", $this->arrayRecursiveDiff($config, $newconfig));
             if(count($this->arrayRecursiveDiff($newconfig, $config))!= 0){
@@ -912,7 +911,7 @@ class Feediron extends Plugin implements IHandler
         Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Url after reformat: $test_url");
         header('Content-Type: application/json');
         $reply = array();
-        if($config === FALSE) {
+        if($config === false) {
 
           $reply['success'] = false;
           $reply['errormessage'] = "URL did not match";
