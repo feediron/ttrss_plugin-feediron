@@ -7,7 +7,7 @@ use \andreskrey\Readability\Configuration as ReadabilityPHPConf;
 class mod_readability
 {
 
-  public function perform_readability( $html, $config, $settings ){
+  public function perform_filter( $html, $config, $settings ){
 
     if (class_exists(ReadabilityPHP::class)) {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Using Readability.php");

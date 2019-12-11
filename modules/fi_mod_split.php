@@ -3,7 +3,7 @@
 class mod_split
 {
 
-  public function perform_split( $html, $config, $settings ){
+  public function perform_filter( $html, $config, $settings ){
     $orig_html = $html;
     foreach($config['steps'] as $step)
     {

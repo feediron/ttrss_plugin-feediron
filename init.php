@@ -326,23 +326,13 @@ class Feediron extends Plugin implements IHandler
     // Build settings array
     $settings = array( "charset" => $this->charset );
 
-    switch ( $config['type'] )
-    {
-      case 'xpath':
-        $tags = ( new mod_tags_xpath() )->get_tags( $html, $config, $settings );
-        break;
+    $str = 'mod_';
+    $class = $str. $config['type'];
 
-      case 'regex':
-        $tags = ( new mod_tags_regex() )->get_tags( $html, $config, $settings );
-        break;
-
-      case 'search':
-        $tags = ( new mod_tags_search() )->get_tags( $html, $config, $settings );
-        break;
-
-      default:
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
-        break;
+    if (class_exists($class)) {
+      $html = ( new $class() )->get_tags($html, $config, $settings);
+    } else {
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
     }
 
     if(!$tags){
@@ -556,24 +546,15 @@ class Feediron extends Plugin implements IHandler
     // Build settings array
     $settings = array( "charset" => $this->charset, "link" => $link );
 
-    switch ( $config['type'] )
-    {
-      case 'readability':
-      $html = ( new mod_readability() )->perform_readability($html, $config, $settings);
-      break;
+    $str = 'mod_';
+    $class = $str. $config['type'];
 
-      case 'split':
-      $html = ( new mod_split() )->perform_split($html, $config, $settings);
-      break;
-
-      case 'xpath':
-      $html = ( new mod_xpath() )->perform_xpath( $html, $config, $settings );
-      break;
-
-      default:
+    if (class_exists($class)) {
+      $html = ( new $class() )->perform_filter($html, $config, $settings);
+    } else {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
-      break;
     }
+
     if(is_array($config['modify']))
     {
       $html = Feediron_Helper::reformat($html, $config['modify']);

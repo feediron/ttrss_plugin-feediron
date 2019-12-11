@@ -3,7 +3,7 @@
 class mod_xpath
 {
 
-  public function perform_xpath( $html, $config, $settings )
+  public function perform_filter( $html, $config, $settings )
   {
     $doc = Feediron_Helper::getDOM( $html, $settings['charset'], $config['debug'] );
     $xpathdom = new DOMXPath($doc);
