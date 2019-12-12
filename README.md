@@ -94,7 +94,7 @@ Example:
       * after - `"after":"str"`
       * before - `"before":"str"`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup":"/regex str/" / [ "/array of regex str/" ]`
-* [readability](#readability) - Note: Also accepts all [Xpath type](#xpath-filter) options
+* [readability](#readability) - `"type":"readability"` Note: Also accepts all [Xpath type](#xpath-filter) options
 	1. [PHP-Readability](#php-readability)
 	2. [Readability.php](#readabilityphp) (Optionally installed)
 		* [relativeurl](#relativeurl---relativeurlstr) - `"relativeurl":"str"`
