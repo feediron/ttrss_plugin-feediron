@@ -314,7 +314,7 @@ class Feediron extends Plugin implements IHandler
     // Build settings array
     $settings = array( "charset" => $this->charset );
 
-    $str = 'fi_mod_';
+    $str = 'fi_mod_tags_';
     $class = $str. $config['type'];
 
     if (class_exists($class)) {
