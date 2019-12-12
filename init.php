@@ -315,10 +315,10 @@ class Feediron extends Plugin implements IHandler
     $settings = array( "charset" => $this->charset );
 
     $str = 'fi_mod_tags_';
-    $class = $str. $config['type'];
+    $class = $str . $config['type'];
 
     if (class_exists($class)) {
-      $html = ( new $class() )->get_tags($html, $config, $settings);
+      $tags = ( new $class() )->get_tags($html, $config, $settings);
     } else {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
     }
@@ -535,7 +535,7 @@ class Feediron extends Plugin implements IHandler
     $settings = array( "charset" => $this->charset, "link" => $link );
 
     $str = 'fi_mod_';
-    $class = $str. $config['type'];
+    $class = $str . $config['type'];
 
     if (class_exists($class)) {
       $html = ( new $class() )->perform_filter($html, $config, $settings);

@@ -16,12 +16,12 @@ class fi_mod_tags_xpath
     {
       // set xpath in config
       Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Tag xpath", $xpath);
-      $newtag = ( new mod_xpath() )->perform_xpath( $html, $config );
+      $newtag = ( new fi_mod_xpath() )->perform_filter( $html, $config, $settings );
 
       // Filter bad tags
       if( $newtag && $newtag !== $html ){
         $tags[$key] .= $newtag;
-        Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag data found", $tags[$key]);
+        Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag data found" . $tags[$key]);
       }
     }
     return $tags;
