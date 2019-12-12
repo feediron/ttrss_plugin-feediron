@@ -1,7 +1,7 @@
 <?php
 class RecipeManager{
 	private $recipes = array();
-	private $recipes_location = array(array("url"=>"https://api.github.com/repos/m42e/ttrss_plugin-feediron/contents/recipes", "branch"=>"master"), array("url"=>"https://api.github.com/repos/mbirth/ttrss_plugin-af_feedmod/contents/mods", "branch"=>"master"));
+	private $recipes_location = array(array("url"=>"https://api.github.com/repos/feediron/feediron-recipes/contents/general", "branch"=>"master"));
 
 	function __construct(){
 		#	$this->loadAvailableRecipes();
@@ -14,10 +14,10 @@ class RecipeManager{
 			Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "content: $content");
 			$data = json_decode($content, true);
 			if(isset ($data['message'])){
-				$this->recipes[$data['message']] = ''; 
+				$this->recipes[$data['message']] = '';
 			}else{
 				foreach ($data as $file){
-					$this->recipes[$file['name']] = $file['url']; 
+					$this->recipes[$file['name']] = $file['url'];
 				}
 			}
 		}
