@@ -26,7 +26,7 @@ class Feediron extends Plugin implements IHandler
   function about()
   {
     return array(
-      1.20,   // version
+      1.23,   // version
       'Reforge your feeds',   // description
       'm42e',   // author
       false,   // is_system
