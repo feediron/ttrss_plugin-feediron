@@ -617,11 +617,16 @@ class Feediron extends Plugin implements IHandler
     }
     $json_reply['success'] = true;
     $json_reply['message'] = __('Exported');
+
+    $sth = $this->pdo->prepare("SELECT full_name FROM ttrss_users WHERE id = ?");
+    $sth->execute([$_SESSION['uid']]);
+    $author = $sth->fetch();
+
     $data = array(
       "name"=> (isset($conf[$recipe2export]['name'])?$conf[$recipe2export]['name']:$recipe2export),
       "url" => (isset($conf[$recipe2export]['url'])?$conf[$recipe2export]['url']:$recipe2export),
       "stamp" => time(),
-      "author" => Feediron_User::get_full_name(),
+      "author" =>  $author['full_name'],
       "match" => $recipe2export,
       "config" => $conf[$recipe2export]
     );
