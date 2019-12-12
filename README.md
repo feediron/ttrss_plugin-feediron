@@ -1,6 +1,8 @@
 # FeedIron TT-RSS Plugin <img src="icon.svg" width="80" align="left">
 Reforge your feeds
 
+**Recipes moved to separate [Repository](https://github.com/feediron/feediron-recipes)**
+
 About |Table Of Contents
  :---- | --------
 This is a plugin for [Tiny Tiny RSS (tt-rss)](https://tt-rss.org/).<br>It allows you to replace an article's contents by the contents of an element on the linked URL's page<br><br>i.e. create a "full feed".<br><br>Keep up to date by subscribing to the [Release Feed](https://github.com/feediron/ttrss_plugin-feediron/releases.atom)|<ul><li>[Installation](#installation)</li><li>[Configuration tab](#configuration-tab)</li><ul><li>[Usage](#usage)</li><li>[Filters](#filters)</li><li>[General Options](#general-options)</li><li>[Global Options](#global-options)</li></ul><li>[Testing Tab](#testing-tab)</li><li>[Full configuration example](#full-configuration-example)</li><li>[Xpath General Information](#xpath-general-information)</li></ul>
