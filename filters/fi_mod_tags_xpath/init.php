@@ -21,7 +21,7 @@ class fi_mod_tags_xpath
       // Filter bad tags
       if( $newtag && $newtag !== $html ){
         $tags[$key] .= $newtag;
-        Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag data found" . $tags[$key]);
+        Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TTRSS, "Tag data found: " . $tags[$key]);
       }
     }
     return $tags;
