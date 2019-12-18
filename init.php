@@ -697,7 +697,7 @@ class Feediron extends Plugin implements IHandler
     Feediron_Logger::get()->set_log_level($_POST['verbose']?Feediron_Logger::LOG_VERBOSE:Feediron_Logger::LOG_TEST);
     $test_url = $_POST['test_url'];
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
-    $this->$oldcontent = "<h1>Original Feed Content Placeholder</h1>"
+    $this->$oldcontent = "<h1>Original Feed Content Placeholder</h1>";
 
     if(isset($_POST['test_conf']) && trim($_POST['test_conf']) != ''){
 
