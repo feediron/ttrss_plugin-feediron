@@ -12,12 +12,14 @@ require_once "preftab/fi_recipe_manager.php";
 //Load Filter modules
 spl_autoload_register(function ($class) {
     include 'filters/' . $class . '/init.php';
+    include 'modules/' . $class . '/init.php';
 });
 
 class Feediron extends Plugin implements IHandler
 {
   private $host;
   protected $charset;
+  protected $oldcontent;
   private $json_error;
   private $cache;
   protected $debug;
@@ -95,6 +97,7 @@ class Feediron extends Plugin implements IHandler
       }
       $link = $this->reformatUrl($article['link'], $config);
 
+      $this->oldcontent = $article['content'];
       $NewContent = $this->getNewContent($link, $config);
 
       // If xpath tags are to replaced tags completely
@@ -228,7 +231,22 @@ class Feediron extends Plugin implements IHandler
       Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Fetching from cache");
       return $this->cache[$link];
     }
-    list($html, $content_type) = $this->get_content($link);
+    if (!empty($config['fetch']))
+    {
+      $str = 'fi_mod_fetch_';
+      $class = $str . $config['fetch'];
+    } else {
+      $class = "fi_mod_fetch_default"
+    }
+
+    if (class_exists($class)) {
+      list($html, $content_type) = ( new $class() )->get_content($html, $config, $settings);
+    } else {
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
+      return $this->oldcontent;
+    }
+
+    //list($html, $content_type) = $this->get_content($link);
 
     $this->charset = false;
 
@@ -355,35 +373,6 @@ class Feediron extends Plugin implements IHandler
     $tags = array_filter($tags);
 
     return $tags;
-  }
-
-  function get_content($link)
-  {
-    global $fetch_last_content_type;
-    Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, $link);
-    if (version_compare(VERSION, '1.7.9', '>='))
-    {
-      $html = fetch_file_contents($link);
-      $content_type = $fetch_last_content_type;
-    }
-    else
-    {
-      // fallback to file_get_contents()
-      $html = file_get_contents($link);
-
-      // try to fetch charset from HTTP headers
-      $headers = $http_response_header;
-      $content_type = false;
-      foreach ($headers as $h)
-      {
-        if (substr(strtolower($h), 0, 13) == 'content-type:')
-        {
-          $content_type = substr($h, 14);
-          // don't break here to find LATEST (if redirected) entry
-        }
-      }
-    }
-    return array( $html,  $content_type);
   }
 
   function fetch_links($link, $config, $seenlinks = array())
@@ -541,6 +530,7 @@ class Feediron extends Plugin implements IHandler
       $html = ( new $class() )->perform_filter($html, $config, $settings);
     } else {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']." ".$class);
+      return $this->oldcontent;
     }
 
     if(is_array($config['modify']))

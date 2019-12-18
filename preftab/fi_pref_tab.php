@@ -23,7 +23,12 @@ class Feediron_PrefTab{
 		$tab .= '<h3>Add predefined rules</h3>';
 		$tab .= self::get_form_start('add');
 		$tab .= self::get_script('transport.responseJSON.message','dojo.query("#json_conf").attr("value",transport.responseJSON.json_conf); ');
-
+		$tab .= '<label for="recipecategory">'.__("Category").': </label>';
+		$tab .= '<select dojoType="dijit.form.Select" class="dijit dijitReset dijitInline dijitLeft dijitDownArrowButton dijitSelect dijitValidationTextBox" name="recipecategory">';
+		foreach($rm->getCategories() as $key => $category){
+			$tab .= '<option value="'.$category.'">'.$key.'</option>';
+		}
+		$tab .= '</select>&nbsp;';
 		$tab .= '<label for="addrecipe">'.__("Add recipe").': </label>';
 		$tab .= '<select dojoType="dijit.form.Select" class="dijit dijitReset dijitInline dijitLeft dijitDownArrowButton dijitSelect dijitValidationTextBox" name="addrecipe">';
 		foreach($rm->getRecipes() as $key => $recipe){

@@ -23,6 +23,10 @@ class RecipeManager{
 		}
 	}
 
+	public function getCategories(){
+		return $this->categories;
+	}
+
 	public function getRecipes(){
 		return $this->recipes;
 	}
