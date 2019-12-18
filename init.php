@@ -523,30 +523,49 @@ class Feediron extends Plugin implements IHandler
     // Build settings array
     $settings = array( "charset" => $this->charset, "link" => $link );
 
-    $str = 'fi_mod_';
-    $class = $str . $config['type'];
-
-    if (class_exists($class)) {
-      $html = ( new $class() )->perform_filter($html, $config, $settings);
-    } else {
-      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']." ".$class);
-      return $this->oldcontent;
-    }
-
-    if(is_array($config['modify']))
+    $steps = array();
+    foreach($config as $key=>$value)
     {
-      $html = Feediron_Helper::reformat($html, $config['modify']);
+      if("step" == substr($key,0,4))
+      {
+        $step = array();
+        $step[ trim( str_replace("step","",$key) ) ] = $value;
+        array_push($steps, $step);
+      }
     }
-    // if we've got Tidy, let's clean it up for output
-    if (function_exists('tidy_parse_string') && $config['tidy'] !== false && $this->charset !== false) {
-      try {
-        $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
-        $tidy->cleanRepair();
-        $html = $tidy->value;
-      } catch (Exception $e) {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Error running tidy", $e);
-      } catch (Throwable $t) {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Error running tidy", $t);
+
+    if (sizeof($steps) == 0)
+    {
+      $steps["1"] = $config;
+    }
+
+    sort($steps);
+    foreach($steps as $sconfig) {
+      $str = 'fi_mod_';
+      $class = $str . $sconfig['type'];
+
+      if (class_exists($class)) {
+        $html = ( new $class() )->perform_filter($html, $sconfig, $settings);
+      } else {
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$sconfig['type']." ".$class);
+        return $this->oldcontent;
+      }
+
+      if(is_array($sconfig['modify']))
+      {
+        $html = Feediron_Helper::reformat($html, $sconfig['modify']);
+      }
+      // if we've got Tidy, let's clean it up for output
+      if (function_exists('tidy_parse_string') && $sconfig['tidy'] !== false && $this->charset !== false) {
+        try {
+          $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
+          $tidy->cleanRepair();
+          $html = $tidy->value;
+        } catch (Exception $e) {
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Error running tidy", $e);
+        } catch (Throwable $t) {
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Error running tidy", $t);
+        }
       }
     }
     return $html;
@@ -678,6 +697,7 @@ class Feediron extends Plugin implements IHandler
     Feediron_Logger::get()->set_log_level($_POST['verbose']?Feediron_Logger::LOG_VERBOSE:Feediron_Logger::LOG_TEST);
     $test_url = $_POST['test_url'];
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
+    $this->$oldcontent = "<h1>Original Feed Content Placeholder</h1>"
 
     if(isset($_POST['test_conf']) && trim($_POST['test_conf']) != ''){
 
