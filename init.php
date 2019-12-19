@@ -86,7 +86,7 @@ class Feediron extends Plugin implements IHandler
     }
     if ($config !== false)
     {
-      if (version_compare(VERSION, '1.14.0', '<=')){
+      if (version_compare(get_version(), '1.14.0', '<=')){
         if (strpos($article['plugin_data'], $articleMarker) !== false)
         {
           return $article;
