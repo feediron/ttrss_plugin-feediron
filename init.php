@@ -236,11 +236,11 @@ class Feediron extends Plugin implements IHandler
       $str = 'fi_mod_fetch_';
       $class = $str . $config['fetch'];
     } else {
-      $class = "fi_mod_fetch_default"
+      $class = "fi_mod_fetch_default";
     }
 
     if (class_exists($class)) {
-      list($html, $content_type) = ( new $class() )->get_content($html, $config, $settings);
+      list($html, $content_type) = ( new $class() )->get_content($link);
     } else {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']);
       return $this->oldcontent;
@@ -534,20 +534,26 @@ class Feediron extends Plugin implements IHandler
       }
     }
 
-    if (sizeof($steps) == 0)
+    // if no steps are defined create a step
+    if (sizeof($steps[0]) == 0)
     {
-      $steps["1"] = $config;
+      $steps[]["1"] = $config;
     }
 
     sort($steps);
-    foreach($steps as $sconfig) {
+
+    // loop over all available steps in the configuration
+    foreach($steps[0] as $key=>$sconfig) {
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Running configuration step: ". $key);
+      Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Step Config: ", $sconfig);
       $str = 'fi_mod_';
       $class = $str . $sconfig['type'];
 
       if (class_exists($class)) {
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Running type: ". $sconfig['type']);
         $html = ( new $class() )->perform_filter($html, $sconfig, $settings);
       } else {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$sconfig['type']." ".$class);
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized type: ".$sconfig['type']." ".$class);
         return $this->oldcontent;
       }
 
@@ -697,7 +703,7 @@ class Feediron extends Plugin implements IHandler
     Feediron_Logger::get()->set_log_level($_POST['verbose']?Feediron_Logger::LOG_VERBOSE:Feediron_Logger::LOG_TEST);
     $test_url = $_POST['test_url'];
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
-    $this->$oldcontent = "<h1>Original Feed Content Placeholder</h1>";
+    $this->oldcontent = "<h1>Original Feed Content Placeholder</h1>";
 
     if(isset($_POST['test_conf']) && trim($_POST['test_conf']) != ''){
 
