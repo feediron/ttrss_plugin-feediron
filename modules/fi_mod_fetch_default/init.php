@@ -6,7 +6,7 @@ class fi_mod_fetch_default
   {
     global $fetch_last_content_type;
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, $link);
-    if (version_compare(VERSION, '1.7.9', '>='))
+    if (version_compare(get_version(), '1.7.9', '>='))
     {
       $html = fetch_file_contents($link);
       $content_type = $fetch_last_content_type;
