@@ -84,7 +84,7 @@ class Feediron extends Plugin implements IHandler
     }
     if ($config !== false)
     {
-      if (version_compare(VERSION, '1.14.0', '<=')){
+      if (version_compare(get_version(), '1.14.0', '<=')){
         if (strpos($article['plugin_data'], $articleMarker) !== false)
         {
           return $article;
@@ -361,7 +361,7 @@ class Feediron extends Plugin implements IHandler
   {
     global $fetch_last_content_type;
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, $link);
-    if (version_compare(VERSION, '1.7.9', '>='))
+    if (version_compare(get_version(), '1.7.9', '>='))
     {
       $html = fetch_file_contents($link);
       $content_type = $fetch_last_content_type;
