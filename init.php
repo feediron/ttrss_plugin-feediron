@@ -1,18 +1,18 @@
 <?php
 
 //Load bin components
-require_once "bin/fi_logger.php";
-require_once "bin/fi_json.php";
-require_once "bin/fi_helper.php";
+require_once "bin". DIRECTORY_SEPARATOR ."fi_logger.php";
+require_once "bin". DIRECTORY_SEPARATOR ."fi_json.php";
+require_once "bin". DIRECTORY_SEPARATOR ."fi_helper.php";
 
 //Load PrefTab components
-require_once "preftab/fi_pref_tab.php";
-require_once "preftab/fi_recipe_manager.php";
+require_once "preftab". DIRECTORY_SEPARATOR ."fi_pref_tab.php";
+require_once "preftab". DIRECTORY_SEPARATOR ."fi_recipe_manager.php";
 
 //Load Filter modules
 spl_autoload_register(function ($class) {
-    include 'filters/' . $class . '/init.php';
-    include 'modules/' . $class . '/init.php';
+    include "filters". DIRECTORY_SEPARATOR . $class . DIRECTORY_SEPARATOR ."init.php";
+    include "modules". DIRECTORY_SEPARATOR . $class . DIRECTORY_SEPARATOR ."init.php";
 });
 
 class Feediron extends Plugin implements IHandler
@@ -30,7 +30,7 @@ class Feediron extends Plugin implements IHandler
     return array(
       1.23,   // version
       'Reforge your feeds',   // description
-      'm42e',   // author
+      'Dugite-Code/m42e',   // author
       false,   // is_system
     );
   }
@@ -649,6 +649,9 @@ class Feediron extends Plugin implements IHandler
     echo json_encode($json_reply);
   }
 
+  /*
+  * Import recipe from the RecipeManager sources
+  */
   function add()
   {
     $conf = $this->getConfig();
@@ -675,7 +678,11 @@ class Feediron extends Plugin implements IHandler
     echo json_encode($json_reply);
   }
 
-  function arrayRecursiveDiff($aArray1, $aArray2) {
+  /*
+  * Compare one array to another for the testing tab
+  */
+  function arrayRecursiveDiff($aArray1, $aArray2)
+  {
     $aReturn = array();
 
     foreach ($aArray1 as $mKey => $mValue) {
