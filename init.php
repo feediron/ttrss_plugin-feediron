@@ -523,27 +523,16 @@ class Feediron extends Plugin implements IHandler
     // Build settings array
     $settings = array( "charset" => $this->charset, "link" => $link );
 
-    $steps = array();
-    foreach($config as $key=>$value)
-    {
-      if("step" == substr($key,0,4))
-      {
-        $step = array();
-        $step[ trim( str_replace("step","",$key) ) ] = $value;
-        array_push($steps, $step);
-      }
-    }
-
     // if no steps are defined create a step
-    if (sizeof($steps[0]) == 0)
+    if (!empty($config['type']))
     {
-      $steps[]["1"] = $config;
+      $steps[0] = $config;
+    } else {
+      $steps = $config;
     }
-
-    sort($steps);
 
     // loop over all available steps in the configuration
-    foreach($steps[0] as $key=>$sconfig) {
+    foreach($steps as $key=>$sconfig) {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Running configuration step: ". $key);
       Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Step Config: ", $sconfig);
       $str = 'fi_mod_';
