@@ -1,20 +1,21 @@
 {
-    "name": "tagesspiegel",
-    "url": "tagesspiegel",
-    "stamp": 1426874822,
+    "name": "tagesspiegel.de",
+    "url": "tagesspiegel.de",
+    "stamp": 1578467052,
     "author": "radlerandi",
-    "match": "tagesspiegel",
+    "match": "tagesspiegel.de",
     "config": {
         "type": "xpath",
-        "xpath": "article",
+        "xpath": "div[contains(@class, 'ts-article-area')]",
         "multipage": {
-            "xpath": "a[contains(@class, 'hcf-forward')]",
-            "append": true
+            "xpath": "a[contains(@class, 'ts-next-page')]",
+            "append": true,
+            "recursive": true
         },
         "reformat": [
             {
                 "type": "regex",
-                "pattern": "\/(?:[a-z0-9A-Z\\\/.\\:]*?)tagesspiegel0Bde0C(.*)\\\/ia1.htm\/",
+                "pattern": "\/(?:[a-z0-9A-Z\\\/.\\:]*?)tagesspiegel0Bde0C(.*)\\\/story01.htm\/",
                 "replace": "http:\/\/www.tagesspiegel.de\/$1"
             },
             {
@@ -34,14 +35,21 @@
             }
         ],
         "cleanup": [
-            "div[contains(@class, 'hcf-inline-right')]",
-            "div[contains(@class, 'hcf-links')]",
-            "div[contains(@class, 'hcf-inline-gallery')]",
-            "div[contains(@class, 'hcf-hidden')]",
-            "span[contains(@class, 'date')]",
-            "span[@class='hcf-author author']",
-            "div[@class='hcf-subpage-titles']",
-            "div[@class='hcf-checkpoint-wrapper']"
+            "iframe",
+            "div[@class='ts-meta']",
+            "address[@class='ts-authors']",
+            "div[@class='ts-secondary-supplements']",
+            "a[@class='ts-link']",
+            "a[@class='ts-comments-count']",
+            "a[contains(@class,'ts-print')]",
+            "a[contains(@href,'symbolbild')]",
+            "a[contains(@href,'rettungs_dpa')]",
+            "a[contains(@href,'patrickpleuldpa')]",
+            "aside[@class='newsletter']",
+            "div[contains(@class,'hcf-ad')]",
+            "figure[contains(., 'Archivbild')]",
+            "figure[contains(., 'Symbolbild')]",
+            "figure[contains(., 'Symbolfoto')]"
         ]
     }
 }
