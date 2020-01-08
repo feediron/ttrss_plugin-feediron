@@ -1,31 +1,33 @@
 {
     "name": "www.zeit.de",
     "url": "www.zeit.de",
-    "stamp": 1426875674,
+    "stamp": 1578467103,
     "author": "radlerandi",
     "match": "www.zeit.de",
     "config": {
         "type": "xpath",
-        "xpath": "div[@class='article']",
-        "reformat": [
-            {
-                "type": "regex",
-                "pattern": "\/(.*)zeit.de(.*)\/",
-                "replace": "http:\/\/www.zeit.de$2\/komplettansicht"
-            }
-        ],
+        "xpath": "main",
+        "multipage": {
+            "xpath": "a[@data-ct-label='N\u00e4chste Seite']",
+            "append": true,
+            "recursive": true
+        },
         "cleanup": [
-            "div[@id='relatedArticles']",
-            "span[@class='anzeige']",
-            "div[@class='commentform']",
-            "div[@class='home-button-article']",
-            "div[@class='inline pic']",
-            "div[@class='articlemeta']",
-            "div[@class='articlefooter af']",
-            "div[@class='reaktion']",
-            "div[@class='recommandations']",
+            "div[@class='metadata']",
+            "figcaption",
+            "div[@class='postfaktisch']",
+            "div[@class='stack']",
+            "div[@class='byline']",
+            "ul[@class='article-pager']",
+            "article[contains(@class, 'nextread')]",
+            "div[contains(@class, 'article-footer')]",
+            "script[contains(@id, 'ad-desktop')]",
             "div[contains(@class, 'portrait')]",
-            "div[contains(@class, 'infobox')]"
+            "div[contains(@class, 'article-lineage')]",
+            "div[contains(@class, 'article-pagination')]",
+            "figure[contains(@class, 'article__item--marginalia')]",
+            "div[contains(@class, 'infobox')]",
+            "div[contains(@class, 'x-content-column')]"
         ]
     }
 }
