@@ -1,17 +1,32 @@
 {
     "name": "heise.de\/tr",
     "url": "heise.de\/tr",
-    "stamp": 1426875509,
+    "stamp": 1578466986,
     "author": "radlerandi",
     "match": "heise.de\/tr",
     "config": {
         "type": "xpath",
         "xpath": "div[@id='mitte_links']",
-        "multipage": {
-            "xpath": "a[contains(@class, 'seite_weiter')]",
-            "append": true
-        },
+        "reformat": [
+            {
+                "type": "replace",
+                "search": "html?wt_mc=rss.tr.beitrag.atom",
+                "replace": "html"
+            },
+            {
+                "type": "replace",
+                "search": "html",
+                "replace": "html?seite=all"
+            }
+        ],
         "cleanup": [
+            "div[@class='native-ad']",
+            "div[@class='adbottom']",
+            "footer",
+            "img[contains(@src,'kommentarfeld_dummy')]",
+            "section[@id='comments_container']",
+            "figure[@class='logo']",
+            "div[contains(@class,'akwa-inline-textbox')]",
             "ul[@class='optionen_beitrag']",
             "p[@class='ausgabe']",
             "p[@class='printversion']",
