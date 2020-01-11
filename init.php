@@ -20,7 +20,8 @@ class Feediron extends Plugin implements IHandler
   protected $charset;
   private $json_error;
   private $cache;
-  protected $debug;
+  protected $defaults = array(  'debug' => false,
+                                'tidy-source' => true);
 
   // Required API
   function about()
@@ -150,13 +151,19 @@ class Feediron extends Plugin implements IHandler
         if (strpos($url, $urlpart) === false){
           continue;   // skip this config if URL not matching
         }
+
+        foreach ($this->defaults as $key => $value) {
+            if( !isset( $data[$key] ) && is_bool( $data[$key] ) ) {
+                $this->defaults[$key] = $value;
+            }
+        }
+
         Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "Config found", $config);
-        if( !isset( $config['debug'] ) && isset( $data['debug'] ) ){
-          $config['debug'] = $data['debug'];
-        }
+
         if(Feediron_Logger::get()->get_log_level() == 0){
-          Feediron_Logger::get()->set_log_level( ( isset( $config['debug'] ) && $config['debug'] ) || !is_array( $data ) );
+          Feediron_Logger::get()->set_log_level( ( $this->defaults['debug'] ) || !is_array( $data ) );
         }
+
         return $config;
       }
     }
@@ -290,6 +297,9 @@ class Feediron extends Plugin implements IHandler
     }
 
     // Use PHP tidy to fix source page if option tidy-source called
+    if ( !isset($config['tidy-source']) ){
+        $config['tidy-source'] = $this->defaults['tidy-source'];
+    }
     if (function_exists('tidy_parse_string') && $config['tidy-source'] !== false && $this->charset !== false){
         try {
           // Use forced or discovered charset of page
