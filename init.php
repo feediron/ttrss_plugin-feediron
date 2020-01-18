@@ -11,7 +11,7 @@ require_once "preftab/fi_recipe_manager.php";
 
 //Load Filter modules
 spl_autoload_register(function ($class) {
-    $file = __DIR__ . 'filters' . DIRECTORY_SEPARATOR . $class . DIRECTORY_SEPARATOR . 'init.php';
+    $file = __DIR__ . DIRECTORY_SEPARATOR . 'filters' . DIRECTORY_SEPARATOR . $class . DIRECTORY_SEPARATOR . 'init.php';
     if(is_readable($file))
         include $file;
 });
