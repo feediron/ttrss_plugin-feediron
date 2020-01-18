@@ -11,7 +11,9 @@ require_once "preftab/fi_recipe_manager.php";
 
 //Load Filter modules
 spl_autoload_register(function ($class) {
-    include 'filters/' . $class . '/init.php';
+    $file = 'filters/' . $class . '/init.php';
+    if(file_exists($file))
+        include $file;
 });
 
 class Feediron extends Plugin implements IHandler
