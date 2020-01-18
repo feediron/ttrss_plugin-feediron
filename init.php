@@ -307,7 +307,13 @@ class Feediron extends Plugin implements IHandler
           // Use forced or discovered charset of page
           $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
           $tidy->cleanRepair();
-          $html = $tidy->value;
+          $tidy_html = $tidy->value;
+          if( strlen($tidy_html) <= ( strlen($html)/2 )) {
+                Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "tidy removed too much content, reverting");
+          } else {
+                Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "tidy of source completed successfully");
+                $html = $tidy_html;
+          }
         } catch (Exception $e) {
           Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Error running tidy", $e);
         } catch (Throwable $t) {
