@@ -1,7 +1,7 @@
 {
-	"name": "feedIron recipes have moved",
+	"name": "update-feediron",
 	"url": "NA",
-	"match": "",
+	"match": "update-feediron",
 	"author": "Dugite-Code",
 	"stamp": 0000000000,
 	"config": {
