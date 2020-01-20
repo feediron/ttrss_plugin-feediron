@@ -40,7 +40,7 @@ Additionally you can load predefined rules submitted by the community or export 
 
 ## Usage
 
-There are three (3) types of [Filters](#filters), five (5) [general options](#general-options) and one (1) [global option](#global-options). Note: The rule `type` Must be defined and has to be one of the following: `xpath`, `split` or `readability`.
+There are [Filters](#filters), [general options](#general-options) and [global options](#global-options). Note: The rule `type` Must be defined and has to be one of the following: `xpath`, `split` or `readability`.
 
 The best way to understand Feediron is to read the [Full configuration example](#full-configuration-example)
 
@@ -670,7 +670,9 @@ Note: If Character set of page cannot be detected tidy will not be executed. In 
 
 ### debug - `"debug":bool`
 
-debug You can activate debugging informations. (At the moment there are not that much debug informations to be activated), this option must be places at the same level as the site configs.
+Activate debugging information (Note: not for testing tab).  Default - `false`
+
+At the moment there is not that much debug information to be activated, this option must be places at the same level as the site configs.
 
 Example:
 
@@ -688,6 +690,31 @@ Example:
     ]
   },
   "debug":false
+}
+```
+
+### tidy-source - `"tidy-source":bool`
+
+Allows you to disable globally the use of php-tidy on the fetched html source. tidy-source. Default - `true`
+
+Uses tidy::cleanrepair to attempt to fix fetched article source, useful for improperly closed tags interfering with xpath queries.
+
+Example:
+
+```json
+{
+  "example.com":{
+    "type":"xpath",
+    "xpath":"div[@id='content']"
+  },
+  "secondexample.com":{
+    "type":"xpath",
+    "xpath": [
+      "div[@id='article']",
+      "div[@id='footer']"
+    ]
+  },
+  "tidy-source":false
 }
 ```
 
