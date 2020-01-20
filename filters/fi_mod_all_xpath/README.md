@@ -1,8 +1,8 @@
 # XPath Filter - All-items ( Experimental )
 
-* [xpath](#xpath-filter) - `"type":"xpath"`
+* [all_xpath](#xpath-filter) - `"type":"all_xpath"`
 	* [xpath](#xpath---xpathxpath-str---array-of-xpath-str-)  - `"xpath":"xpath str" / [ "array of xpath str" ]`
-	* [index](#index---index-int) - `"index":int`
+	* [index](#index---index-intall) - `"index":int/all`
 
 ## Xpath Filter
 The **xpath** value is the actual Xpath-element to fetch from the linked page. Omit the leading `//` - they will get prepended automatically.
@@ -16,8 +16,7 @@ Single xpath string:
 ```json
 "example.com":{
   "type":"all_xpath",
-  "xpath":"div[@id='content']",
-	"index": "all"
+  "xpath":"div[@id='content']"
 }
 ```
 
@@ -27,10 +26,7 @@ Array of xpath strings:
   "type":"all_xpath",
   "xpath":[
     "div[@id='footer']",
-		{
-			"div[@class='content']",
-			"index": "all"
-		},
+    "div[@class='content']",
     "div[@class='header']"
   ]
 }
@@ -38,8 +34,9 @@ Array of xpath strings:
 
 Xpaths are evaluated in the order they are given in the array and will be concatenated together. In the above example the output would be in the order of `Footer -> Content -> Header` instead of the normal `Header -> Footer -> Content`. See also [concatenation elements](#concatenation-elements)
 
-### index - `"index": int`
+### index - `"index": int/all`
 Integer - Every xpath can also be an object consisting of an `xpath` element and an `index` element.
+All - Feteches all instances of the `xpath` element.
 
 Selecting the 3rd Div in a page:
 ```json
@@ -48,7 +45,7 @@ Selecting the 3rd Div in a page:
 	"xpath":[
 		{
 			"xpath":"div",
-			"index":3
+			"index":"all"
 		}
 	]
 }
