@@ -11,7 +11,9 @@ require_once "preftab/fi_recipe_manager.php";
 
 //Load Filter modules
 spl_autoload_register(function ($class) {
-    include 'filters/' . $class . '/init.php';
+    $file = __DIR__ . DIRECTORY_SEPARATOR . 'filters' . DIRECTORY_SEPARATOR . $class . DIRECTORY_SEPARATOR . 'init.php';
+    if(is_readable($file))
+        include $file;
 });
 
 class Feediron extends Plugin implements IHandler
@@ -20,7 +22,8 @@ class Feediron extends Plugin implements IHandler
   protected $charset;
   private $json_error;
   private $cache;
-  protected $debug;
+  protected $defaults = array(  'debug' => false,
+                                'tidy-source' => true);
 
   // Required API
   function about()
@@ -150,13 +153,19 @@ class Feediron extends Plugin implements IHandler
         if (strpos($url, $urlpart) === false){
           continue;   // skip this config if URL not matching
         }
+
+        foreach ( array_keys( $this->defaults ) as $key ) {
+            if( isset( $data[$key] ) && is_bool( $data[$key] ) ) {
+                $this->defaults[$key] = $data[$key];
+            }
+        }
+
         Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "Config found", $config);
-        if( !isset( $config['debug'] ) && isset( $data['debug'] ) ){
-          $config['debug'] = $data['debug'];
-        }
+
         if(Feediron_Logger::get()->get_log_level() == 0){
-          Feediron_Logger::get()->set_log_level( ( isset( $config['debug'] ) && $config['debug'] ) || !is_array( $data ) );
+          Feediron_Logger::get()->set_log_level( ( $this->defaults['debug'] ) || !is_array( $data ) );
         }
+
         return $config;
       }
     }
@@ -290,12 +299,22 @@ class Feediron extends Plugin implements IHandler
     }
 
     // Use PHP tidy to fix source page if option tidy-source called
+    if ( !isset($config['tidy-source']) ){
+        $config['tidy-source'] = $this->defaults['tidy-source'];
+    }
     if (function_exists('tidy_parse_string') && $config['tidy-source'] !== false && $this->charset !== false){
         try {
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "attempting tidy of source");
           // Use forced or discovered charset of page
           $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
           $tidy->cleanRepair();
-          $html = $tidy->value;
+          $tidy_html = $tidy->value;
+          if( strlen($tidy_html) <= ( strlen($html)/2 )) {
+                Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "tidy removed too much content, reverting");
+          } else {
+                Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "tidy of source completed successfully");
+                $html = $tidy_html;
+          }
         } catch (Exception $e) {
           Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Error running tidy", $e);
         } catch (Throwable $t) {
