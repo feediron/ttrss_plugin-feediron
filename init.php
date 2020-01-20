@@ -154,9 +154,9 @@ class Feediron extends Plugin implements IHandler
           continue;   // skip this config if URL not matching
         }
 
-        foreach ($this->defaults as $key => $value) {
-            if( !isset( $data[$key] ) && is_bool( $data[$key] ) ) {
-                $this->defaults[$key] = $value;
+        foreach ( array_keys( $this->defaults ) as $key ) {
+            if( isset( $data[$key] ) && is_bool( $data[$key] ) ) {
+                $this->defaults[$key] = $data[$key];
             }
         }
 
@@ -304,6 +304,7 @@ class Feediron extends Plugin implements IHandler
     }
     if (function_exists('tidy_parse_string') && $config['tidy-source'] !== false && $this->charset !== false){
         try {
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "attempting tidy of source");
           // Use forced or discovered charset of page
           $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
           $tidy->cleanRepair();
