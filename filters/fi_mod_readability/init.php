@@ -90,21 +90,7 @@ class fi_mod_readability
         Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Readability modified Source ".$settings['link'].":", $html);
       }
     }
-    // Perform xpath on readability output
-    if (isset($config['xpath'])){
-      $html = ( new fi_mod_xpath() )->perform_filter( $html, $config, $settings );
-      // If no xpath for readability output perform simple cleanup
-    } elseif(($cconfig = Feediron_Helper::getCleanupConfig($config))!== false) {
-      $html = $content;
-      foreach($cconfig as $cleanup){
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Cleaning up", $cleanup);
-        $html = preg_replace($cleanup, '', $html);
-        Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "cleanup  result", $html);
-      }
-    } else {
-      // If no extra config just return the content
-      $html = $content;
-    }
-    return $html;
+
+    return $content;
   }
 }
