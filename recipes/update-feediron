@@ -1,0 +1,11 @@
+{
+    "name": "update-feediron",
+    "url": "update-feediron",
+    "stamp": 1579488118,
+    "author": "Dugite-code",
+    "match": "update-feediron",
+    "config": {
+        "FeedIron Recipes Have Moved": "https:\/\/github.com\/feediron\/feediron-recipes",
+        "Update FeedIron or follow instructions here:": "https:\/\/community.tt-rss.org\/t\/plugin-update-feediron-v1-30\/2999"
+    }
+}
