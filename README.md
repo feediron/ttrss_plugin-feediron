@@ -79,7 +79,7 @@ Example:
 
 # Filters:
 * [XPath Module](https://github.com/feediron/ttrss_plugin-feediron/tree/master/filters/fi_mod_xpath) - `"type":"xpath"`
-* [Readability Module](https://github.com/feediron/ttrss_plugin-feediron/tree/master/filters/fi_mod_readability)
+* [Readability Module](https://github.com/feediron/ttrss_plugin-feediron/tree/master/filters/fi_mod_readability) - "type":"readability"
 * [tags](#tags-filter) - `"tags":"{options}"`
 	* [xpath](#tags-type-xpath---type-xpath) - `"type": "xpath"`
 		* [xpath](#tags-xpath---xpathxpath-str---array-of-xpath-str-) - `"xpath":"xpath str" / [ "array of xpath str" ]`

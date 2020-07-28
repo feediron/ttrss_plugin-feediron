@@ -3,7 +3,7 @@ The **xpath** value is the actual Xpath-element to fetch from the linked page. O
 
 See also - [Xpath General Information](#xpath-general-information)
 
-* xpath - `"type":"xpath"`
+* XPath - `"type":"xpath"`
 	* [xpath](#xpath---xpathxpath-str---array-of-xpath-str-)  - `"xpath":"xpath str" / [ "array of xpath str" ]`
 	* [index](#index---index-int) - `"index":int`
 	* [multipage](#multipage---multipageoptions) - `"multipage":{options}`
@@ -20,7 +20,7 @@ See also - [Xpath General Information](#xpath-general-information)
       * before - `"before":"str"`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup":"/regex str/" / [ "/array of regex str/" ]`
 
-Basic Usage:
+### Basic Usage:
 
 Xpaths are evaluated in the order they are given in the array and will be concatenated together. In the above example the output would be in the order of `Footer -> Content -> Header` instead of the normal `Header -> Footer -> Content`. See also [concatenation elements](#concatenation-elements)
 

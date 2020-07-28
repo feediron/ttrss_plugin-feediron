@@ -1,6 +1,8 @@
 # Readability Filter
 
-Note: Also accepts all [Xpath type](#xpath-filter) options
+The Readability modules are a automated method that attempts to isolate the relevant article text and images.
+
+Note: Also accepts all [Xpath type](https://github.com/feediron/ttrss_plugin-feediron/tree/master/filters/fi_mod_xpath) options
 
 ### Optional Readability.php
 
@@ -18,10 +20,7 @@ Install [Readability.php](https://github.com/andreskrey/readability.php) using [
 		* [allimages](#allimages---allimagesbool) - `"allimages":bool`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
 
-## Readability
-The Readability modules are a automated method that attempts to isolate the relevant article text and images.
-
-Basic Usage:
+### Basic Usage:
 ```json
 "example.com":{
 	"type":"readability"
