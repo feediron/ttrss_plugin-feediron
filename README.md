@@ -34,7 +34,7 @@ After install in the TinyTinyRSS preferences menu  you will find new tab called 
 # Configuration tab
 The configuration for FeedIron is done in [JSON format](https://json.org/) and will be displayed in the large configuration text field. Use the large field to enter/modify the configuration data and click the Save button to store it.
 
-Additionally you can load predefined rules submitted by the community or export your own rules. To submit your own rules you can submit a pull request through Github.
+Additionally you can load predefined rules/recipes submitted by the community or export your own rules. To submit your own rules/recipes you can submit a pull request through Github in the [recipes repository](https://github.com/feediron/feediron-recipes).
 
 ![](./screenshots/config.png)
 
