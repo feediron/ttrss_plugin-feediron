@@ -241,7 +241,7 @@ Result: `Tag1, Tag2, Tag3`
 		* [replace](#replace---replacestr---array-of-str-) - `"replace":"str"`
 * [force_charset](#force_charset---force_charsetcharset) - `"force_charset":"charset"`
 * [force_unicode](#force_unicode---force_unicodebool) - `"force_unicode":bool`
-* [tidy-source](#tidysource---tidysourcebool) - `"tidy-source":bool`
+* [tidy-source](#tidy-source---tidy-sourcebool) - `"tidy-source":bool`
 * [tidy](#tidy---tidybool) - `"tidy":bool`
 
 ## reformat / modify - `"reformat":[array of options]` `"modify":[array of options]`
