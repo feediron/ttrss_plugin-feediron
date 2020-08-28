@@ -14,10 +14,12 @@ Install [Readability.php](https://github.com/andreskrey/readability.php) using [
 		* [relativeurl](#relativeurl---relativeurlstr) - `"relativeurl":"str"`
 		* [removebyline](#removebyline---removebylinebool) - `"removebyline":bool`
 		* [normalize](#normalize---normalizebool) - `"normalize":bool`
-		* [prependimage](#prependimage---prependimagebool) - `"prependimage":bool`
+		* [excerpt](#excerpt---excerptbool) - `"excerpt":bool`
 		* [mainimage](#mainimage---mainimagebool) - `"mainimage":bool`
-		* [appendimages](#appendimages---appendimagesbool) - `"appendimages":bool`
 		* [allimages](#allimages---allimagesbool) - `"allimages":bool`
+		* [prependexcerpt](#prependexcerpt---prependexcerptbool) - `"prependexcerpt":bool`
+		* [prependimage](#prependimage---prependimagebool) - `"prependimage":bool`
+		* [appendimages](#appendimages---appendimagesbool) - `"appendimages":bool`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
 
 ### Basic Usage:
@@ -62,21 +64,21 @@ Converts UTF-8 characters to its HTML Entity equivalent. Useful to parse HTML wi
 }
 ```
 
-#### prependimage - `"prependimage":bool`
+#### excerpt - `"excerpt":bool`
 Default value `false`
 
-Returns the main image of the article Prepended before the article.
+Returns an excerpt of the article as the content.
 ```json
 "example.com":{
 	"type":"readability",
-	"prependimage":true
+	"excerpt":true
 }
 ```
 
 #### mainimage - `"mainimage":bool`
 Default value `false`
 
-Returns the main image of the article.
+Returns the main image of the article as the content.
 ```json
 "example.com":{
 	"type":"readability",
@@ -84,10 +86,43 @@ Returns the main image of the article.
 }
 ```
 
+#### allimages - `"allimages":bool`
+Default value `false`
+
+Returns all images in article without the article as the content.
+```json
+"example.com":{
+	"type":"readability",
+	"allimages":true
+}
+```
+
+#### prependexcerpt - `"prependexcerpt":bool`
+Default value `false`
+
+Returns an excerpt of the article Prepended before the content.
+```json
+"example.com":{
+	"type":"readability",
+	"prependexcerpt":true
+}
+```
+
+#### prependimage - `"prependimage":bool`
+Default value `false`
+
+Returns the main image of the article Prepended before the content.
+```json
+"example.com":{
+	"type":"readability",
+	"prependimage":true
+}
+```
+
 #### appendimages - `"appendimages":bool`
 Default value `false`
 
-Returns all images in article appended after the article.
+Returns all images in article appended after the content.
 ```json
 "example.com":{
 	"type":"readability",
@@ -95,13 +130,12 @@ Returns all images in article appended after the article.
 }
 ```
 
-#### allimages - `"allimages":bool`
-Default value `false`
+### cleanup `"cleanup":[ "array of regex" ]`
+Optional - An array of regex that are removed using preg_replace.
 
-Returns all images in article without the article.
 ```json
 "example.com":{
-	"type":"readability",
-	"allimages":true
+  "type":"readability",
+	"cleanup" : [ "/<script>.*?</script>/" ]
 }
 ```
