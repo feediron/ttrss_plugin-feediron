@@ -102,7 +102,7 @@ class fi_mod_readability
       if( isset( $config['prependexcerpt'] ) && ( $config['prependexcerpt'] ) && !( $config['excerpt'] )  ) {
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Prepending Excerpt");
         $excerpt = $readability->getExcerpt();
-        $content = $excerpt.'<br><details><summary>Full Article</summary>'.$content.'</details>';
+        $content = $excerpt.'<br><hr><details><summary>Full Article</summary>'.$content.'</details>';
       }
 
       if( isset( $config['prependimage'] ) && ( $config['prependimage'] )  ) {
