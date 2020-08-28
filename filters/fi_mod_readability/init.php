@@ -16,22 +16,37 @@ class fi_mod_readability
       Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Using Readability.php");
 
       $configuration = new ReadabilityPHPConf();
-      if( isset( $config['relativeurl'] ) ) {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php fixing relative URLS ".$config['relativeurl']);
-        $configuration
-        ->setFixRelativeURLs( true )
-        ->setOriginalURL( $config['relativeurl'] );
+
+      //Define Readability Configuration
+      foreach ($config as $key => $value) {
+        switch ($key) {
+
+          case "relativeurl":
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php fixing relative URLS ".$value);
+            $configuration
+            ->setFixRelativeURLs( true )
+            ->setOriginalURL( $value );
+            continue 2;
+
+          case "normalize":
+            if(!is_bool($value)) continue 2;
+
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Normalizing content");
+            $configuration
+            ->setNormalizeEntities( $config['normalize'] );
+            continue 2;
+
+          case "removebyline":
+            if(!is_bool($value)) continue 2;
+
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Removing ByLine");
+            $configuration
+            ->setArticleByLine( $config['removebyline'] );
+            continue 2;
+
+        }
       }
-      if( isset( $config['normalize'] ) && is_bool( $config['normalize'] )  ) {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Normalizing content");
-        $configuration
-        ->setNormalizeEntities( $config['normalize'] );
-      }
-      if( isset( $config['removebyline'] ) && is_bool( $config['removebyline'] )  ) {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Removing ByLine");
-        $configuration
-        ->setArticleByLine( $config['removebyline'] );
-      }
+
       //Load Readability with Configuration
       $readability = new ReadabilityPHP( $configuration );
 
@@ -46,33 +61,64 @@ class fi_mod_readability
         return $html;
 
       }
+
+      //Define Main Content
+      foreach ($config as $key => $value) {
+        switch ($key) {
+
+          case "excerpt":
+            if(!$value) continue 2;
+
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Fetching Excerpt");
+            $content = $readability->getExcerpt();
+            break 2;
+
+          case "mainimage":
+            if(!$value) continue 2;
+
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Fetching Main Image");
+            $image = $readability->getImage();
+            $content = '<img src="'.$image.'"></img>';
+            break 2;
+
+          case "allimages":
+            if(!$value) continue 2;
+
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Fetching All Images");
+            $images = $readability->getImages();
+            foreach ( $images as $image ) {
+              $content.='<img src="'.$image.'"></img><br>';
+            }
+            break 2;
+
+          default:
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Fetching Main body text");
+            $content = $readability->getContent()
+
+        }
+      }
+
+      //Append/Prepend additional content
+      if( isset( $config['prependexcerpt'] ) && ( $config['prependexcerpt'] ) && !( $config['excerpt'] )  ) {
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Prepending Excerpt");
+        $excerpt = $readability->getExcerpt();
+        $content = $excerpt.'<br><details><summary><h2>Full Article</h2></summary>"'.$content.'"></details>';
+      }
+
       if( isset( $config['prependimage'] ) && ( $config['prependimage'] )  ) {
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Prepending Main Image");
         $image = $readability->getImage();
-        $content = '<img src="'.$image.'"></img>';
-        $content .= $readability->getContent();
+        $content = '<img src="'.$image.'"></img><br>'.$content;
       }
-      elseif( isset( $config['mainimage'] ) && ( $config['mainimage'] )  ) {
-        $image = $readability->getImage();
-        $content = '<img src="'.$image.'"></img>';
-      }
-      elseif( isset( $config['appendimages'] ) && ( $config['apendimages'] )  ) {
-        $images = $readability->getImages();
-        $content = $readability->getContent();
-        foreach ( $images as $image ) {
-          $content.='<img src="'.$image.'"></img><br>';
-        }
-      }
-      elseif( isset( $config['allimages'] ) && ( $config['allimages'] )  ) {
+
+      if( isset( $config['appendimages'] ) && ( $config['apendimages'] )  ) {
         $images = $readability->getImages();
         foreach ( $images as $image ) {
           $content.='<img src="'.$image.'"></img><br>';
         }
-      } else {
-        $content = $readability->getContent();
       }
-    }
-    else {
+
+    } else {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Using Legacy Readability");
 
       require_once 'php-readability/Readability.php';
