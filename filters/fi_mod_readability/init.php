@@ -93,7 +93,7 @@ class fi_mod_readability
 
           default:
             Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Fetching Main body text");
-            $content = $readability->getContent()
+            $content = $readability->getContent();
 
         }
       }
@@ -102,7 +102,7 @@ class fi_mod_readability
       if( isset( $config['prependexcerpt'] ) && ( $config['prependexcerpt'] ) && !( $config['excerpt'] )  ) {
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Prepending Excerpt");
         $excerpt = $readability->getExcerpt();
-        $content = $excerpt.'<br><details><summary><h2>Full Article</h2></summary>"'.$content.'"></details>';
+        $content = $excerpt.'<br><details><summary>Full Article</summary>'.$content.'</details>';
       }
 
       if( isset( $config['prependimage'] ) && ( $config['prependimage'] )  ) {
