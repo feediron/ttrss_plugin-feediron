@@ -129,3 +129,13 @@ Returns all images in article appended after the content.
 	"appendimages":true
 }
 ```
+
+### cleanup `"cleanup":[ "array of regex" ]`
+Optional - An array of regex that are removed using preg_replace.
+
+```json
+"example.com":{
+  "type":"readability",
+	"cleanup" : [ "/<script>.*?</script>/" ]
+}
+```
