@@ -1,4 +1,6 @@
 <?php
+require_once "fi_fivefilters.php";
+
 class RecipeManager{
 	private $recipes = array();
 	private $recipes_location = array(array("url"=>"https://api.github.com/repos/feediron/feediron-recipes/contents/general", "branch"=>"master"));
