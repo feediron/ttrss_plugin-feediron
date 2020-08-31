@@ -92,8 +92,10 @@ class fi_mod_readability
             break 2;
 
           default:
-            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Fetching Main body text");
-            $content = $readability->getContent();
+            if ($key === key($array)) {
+              Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Fetching Main body text");
+              $content = $readability->getContent();
+            }
 
         }
       }
