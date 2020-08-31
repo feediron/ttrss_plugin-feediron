@@ -138,7 +138,7 @@ class fi_mod_readability
     }
     // Perform xpath on readability output
     if (isset($config['xpath'])){
-      $content = ( new fi_mod_xpath() )->perform_filter( $html, $config, $settings );
+      $content = ( new fi_mod_xpath() )->perform_filter( $content, $config, $settings );
       // If no xpath for readability output perform simple cleanup
     } elseif(($cconfig = Feediron_Helper::getCleanupConfig($config))!== false) {
       foreach($cconfig as $cleanup){
