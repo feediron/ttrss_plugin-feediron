@@ -62,6 +62,9 @@ class fi_mod_readability
 
       }
 
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Fetching Main body text");
+      $content = $readability->getContent();
+
       //Define Main Content
       foreach ($config as $key => $value) {
         switch ($key) {
@@ -90,12 +93,6 @@ class fi_mod_readability
               $content.='<img src="'.$image.'"></img><br>';
             }
             break 2;
-
-          default:
-            if ($key === key($array)) {
-              Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Fetching Main body text");
-              $content = $readability->getContent();
-            }
 
         }
       }
