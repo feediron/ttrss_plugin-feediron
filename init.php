@@ -642,13 +642,21 @@ class Feediron extends Plugin implements IHandler
     $sth->execute([$_SESSION['uid']]);
     $author = $sth->fetch();
 
+    $recipe = json_encode($conf[$recipe2export]);
+
+    $recipe = preg_replace('/&/', '&amp;', $recipe);
+    $recipe = preg_replace('/</', '&lt;', $recipe);
+    $recipe = preg_replace('/</', '&gt;', $recipe);
+
+    $recipe = json_decode($recipe);
+
     $data = array(
       "name"=> (isset($conf[$recipe2export]['name'])?$conf[$recipe2export]['name']:$recipe2export),
       "url" => (isset($conf[$recipe2export]['url'])?$conf[$recipe2export]['url']:$recipe2export),
       "stamp" => time(),
       "author" =>  $author['full_name'],
       "match" => $recipe2export,
-      "config" => $conf[$recipe2export]
+      "config" => $recipe
     );
     $json_reply['json_export'] = Feediron_Json::format(json_encode($data));
     echo json_encode($json_reply);
