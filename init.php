@@ -223,7 +223,14 @@ class Feediron extends Plugin implements IHandler
   {
     if (isset($config['multipage']))
     {
-      $links = $this->fetch_links($link, $config);
+      if( isset( $config['multipage']['pages'] ) && is_int( $config['multipage']['pages'] ))
+      {
+      	$maxpages = $config['multipage']['pages'];
+      } else {
+      	$maxpages = 10;
+      }
+
+      $links = $this->fetch_links($link, $config, 0, $maxpages);
     }
     else
     {
@@ -406,9 +413,10 @@ class Feediron extends Plugin implements IHandler
     return array( $html,  $content_type);
   }
 
-  function fetch_links($link, $config, $seenlinks = array())
+  function fetch_links($link, $config, $counter, $maxpages, $seenlinks = array())
   {
-    Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "fetching links from :".$lnk);
+    $counter++;
+    Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Page ".$counter." of a maxiumum ".$maxpages." pages", $lnk);
     $html = $this->getArticleContent($link, $config);
     $links = $this->extractlinks($html, $config);
     if (count($links) == 0)
@@ -421,13 +429,14 @@ class Feediron extends Plugin implements IHandler
       Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Break infinite loop for recursive multipage, link intersection",array_intersect($seenlinks, $links));
       return array($link);
     }
+
     foreach ($links as $lnk)
     {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "link:".$lnk);
       /* If recursive mode is active fetch links from newly fetched link */
-      if(isset($config['multipage']['recursive']) && $config['multipage']['recursive'])
+      if(isset($config['multipage']['recursive']) && $config['multipage']['recursive'] && !($counter == ($maxpages-1)) )
       {
-        $links =  $this->fetch_links($lnk, $config, array($links, $link));
+        $links =  $this->fetch_links($lnk, $config, $counter, $maxpages, array($links, $link));
       }
     }
     if(isset($config['multipage']['append']) && $config['multipage']['append'])
