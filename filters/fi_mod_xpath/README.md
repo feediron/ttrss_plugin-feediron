@@ -6,10 +6,6 @@ See also - [Xpath General Information](#xpath-general-information)
 * XPath - `"type":"xpath"`
 	* [xpath](#xpath---xpathxpath-str---array-of-xpath-str-)  - `"xpath":"xpath str" / [ "array of xpath str" ]`
 	* [index](#index---index-int) - `"index":int`
-	* [multipage](#multipage---multipageoptions) - `"multipage":{options}`
-		* xpath - `"xpath":"xpath str"`
-		* [append](#append---appendbool) - `"append":bool`
-		* [recursive](#recursive---recursivebool) - `"recursive":bool`
 	* [start_element](#start_element---start_elementstr) - `"start_element":"str"`
 	* [join_element](#join_element---join_elementstr) - `"join_element":"str"`
 	* [end_element](#end_element----end_elementstr) - `"end_element":"str"`
@@ -59,28 +55,6 @@ Selecting the 3rd Div in a page:
 	]
 }
 ```
-
-### multipage - `"multipage":{[options]}`
-This option indicates that the article is split into two or more pages (eventually). FeedIron can combine all the parts into the content of the article.
-
-You have to specify a ```xpath``` which identifies the links (&lt;a&gt;) to the pages.
-
-```json
-"example.com":{
-	"type": "xpath",
-	"multipage": {
-		"xpath": "a[contains(@data-ga-category,'Pagination') and text() = 'Next']",
-		"append": true,
-		"recursive": true
-	}
-}
-```
-
-#### append - `"append":bool`
-Boolean - If false, only the links are used and the original link is ignored else the links found using the xpath expression are added to the original page link.
-
-#### recursive - `"recursive":bool`
-Boolean - If true this option to parses every following page for more links. To avoid infinite loops the fetching stops if an url is added twice.
 
 ### Concatenation Elements
 

@@ -240,6 +240,10 @@ Result: `Tag1, Tag2, Tag3`
 	* [replace](#replace---typereplace) - `"type":"replace"`
 		* [search](#search---typesearch-str---array-of-search-str-) - `"type":"search str" / [ "array of search str" ]`
 		* [replace](#replace---replacestr---array-of-str-) - `"replace":"str"`
+	* [multipage](#multipage---multipageoptions) - `"multipage":{options}`
+		* xpath - `"xpath":"xpath str"`
+		* [append](#append---appendbool) - `"append":bool`
+		* [recursive](#recursive---recursivebool) - `"recursive":bool`
 * [force_charset](#force_charset---force_charsetcharset) - `"force_charset":"charset"`
 * [force_unicode](#force_unicode---force_unicodebool) - `"force_unicode":bool`
 * [tidy-source](#tidy-source---tidy-sourcebool) - `"tidy-source":bool`
@@ -330,6 +334,28 @@ Example search and replace h1 and h2 tags with h3 tags:
   ]
 }
 ```
+
+### multipage - `"multipage":{[options]}`
+This option indicates that the article is split into two or more pages (eventually). FeedIron can combine all the parts into the content of the article.
+
+You have to specify a ```xpath``` which identifies the links (&lt;a&gt;) to the pages.
+
+```json
+"example.com":{
+	"type": "xpath",
+	"multipage": {
+		"xpath": "a[contains(@data-ga-category,'Pagination') and text() = 'Next']",
+		"append": true,
+		"recursive": true
+	}
+}
+```
+
+#### append - `"append":bool`
+Boolean - If false, only the links are used and the original link is ignored else the links found using the xpath expression are added to the original page link.
+
+#### recursive - `"recursive":bool`
+Boolean - If true this option to parses every following page for more links. To avoid infinite loops the fetching stops if an url is added twice.
 
 ### force_charset - `"force_charset":"charset"`
 
