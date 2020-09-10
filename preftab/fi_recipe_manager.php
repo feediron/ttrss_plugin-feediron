@@ -17,6 +17,8 @@ class RecipeManager{
 				$this->recipes[$data['message']] = '';
 			}else{
 				foreach ($data as $file){
+          $info = new SplFileInfo($file['name']);
+          $file['name'] = $info->getBasename(".json");
 					$this->recipes[$file['name']] = $file['url'];
 				}
 			}
