@@ -44,6 +44,14 @@ class fi_mod_readability
             ->setArticleByLine( $config['removebyline'] );
             continue 2;
 
+          case "summoncthulhu":
+            if(!is_bool($value)) continue 2;
+
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Summoning Cthulhu");
+            $configuration
+            ->setSummonCthulhu( $config['summoncthulhu'] );
+            continue 2;
+
         }
       }
 
