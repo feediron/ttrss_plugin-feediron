@@ -20,6 +20,7 @@ Install [Readability.php](https://github.com/andreskrey/readability.php) using [
 		* [prependexcerpt](#prependexcerpt---prependexcerptbool) - `"prependexcerpt":bool`
 		* [prependimage](#prependimage---prependimagebool) - `"prependimage":bool`
 		* [appendimages](#appendimages---appendimagesbool) - `"appendimages":bool`
+		* [summoncthulhu](#summoncthulhu---summoncthulhubool) - `"summoncthulhu":bool`
 	* [cleanup](#cleanup-cleanup-array-of-regex-) - `"cleanup": "/regex str/" / [ "/array of regex str/" ]`
 
 ### Basic Usage:
@@ -127,6 +128,17 @@ Returns all images in article appended after the content.
 "example.com":{
 	"type":"readability",
 	"appendimages":true
+}
+```
+
+#### summoncthulhu - `"summoncthulhu":bool`
+Default value `false`
+
+Remove all `<script>` nodes via regex
+```json
+"example.com":{
+	"type":"readability",
+	"summoncthulhu":true
 }
 ```
 
