@@ -5,7 +5,7 @@ class fi_mod_tags_regex
 
   public function get_tags($html, $config, $settings )
   {
-    if(!is_array($config['pattern'])){
+    if(!( array_key_exists('pattern', $config) && is_array($config['pattern']) )){
       $patterns = array($config['pattern']);
     }else{
       $patterns = $config['pattern'];

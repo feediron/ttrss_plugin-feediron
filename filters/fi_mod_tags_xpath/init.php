@@ -5,7 +5,7 @@ class fi_mod_tags_xpath
 
   public function get_tags($html, $config, $settings )
   {
-    if(!is_array($config['xpath'])){
+    if(!( array_key_exists('xpath', $config) && is_array($config['xpath']) )){
       $xpaths = array($config['xpath']);
     }else{
       $xpaths = $config['xpath'];
