@@ -13,13 +13,13 @@ class fi_mod_tags_search
 
   public function get_tags($html, $config, $settings )
   {
-    if(!array_check($config,'pattern')){
+    if(!$this->array_check($config,'pattern')){
       $patterns = array($config['pattern']);
     }else{
       $patterns = $config['pattern'];
     }
 
-    if(!array_check($config,'match')){
+    if(!$this->array_check($config,'match')){
       $matches = array($config['match']);
     }else{
       $matches = $config['match'];
