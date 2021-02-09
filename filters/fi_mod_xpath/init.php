@@ -5,7 +5,8 @@ class fi_mod_xpath
 
   public function perform_filter( $html, $config, $settings )
   {
-    $doc = Feediron_Helper::getDOM( $html, $settings['charset'], $config['debug'] );
+    $debug = array_key_exists('debug', $config) ?: false;
+    $doc = Feediron_Helper::getDOM( $html, $settings['charset'], $debug );
     $xpathdom = new DOMXPath($doc);
 
     $xpaths = Feediron_Helper::check_array( $config['xpath'] );
