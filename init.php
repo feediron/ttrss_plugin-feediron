@@ -603,7 +603,7 @@ class Feediron extends Plugin implements IHandler
     return $html;
   }
 
-  function hook_prefs_tabs($args)
+  function hook_prefs_tabs(...$args)
   {
     print '<div id="feedironConfigTab" dojoType="dijit.layout.ContentPane"
     href="backend.php?op=feediron"
