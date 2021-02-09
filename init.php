@@ -210,7 +210,7 @@ class Feediron extends Plugin implements IHandler
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Fetching ".count($links)." links", join("\n", $links));
     $NewContent['content'] = "";
 
-    if( array_key_exists($config, 'replace-tags'){
+    if( array_key_exists($config, 'replace-tags')){
       $NewContent['replace-tags'] = $config['replace-tags'];
     }
 
