@@ -120,6 +120,14 @@ class Feediron extends Plugin implements IHandler
     return $article;
   }
 
+  function array_check($array, $key){
+    if( array_key_exists($key, $array) && is_array($array[$key]) ){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //Creates a marker for the article processed with specific config
   function getMarker($article, $config)
   {
@@ -186,7 +194,7 @@ class Feediron extends Plugin implements IHandler
   function reformatUrl($url, $config)
   {
     $link = trim($url);
-    if(is_array($config['reformat']))
+    if($this->array_check($config, 'reformat'))
     {
       $link = Feediron_Helper::reformat($link, $config['reformat']);
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Reformated url: ".$link);
@@ -201,7 +209,11 @@ class Feediron extends Plugin implements IHandler
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Fetching ".count($links)." links");
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Fetching ".count($links)." links", join("\n", $links));
     $NewContent['content'] = "";
-    $NewContent['replace-tags'] = $config['replace-tags'];
+
+    if( array_key_exists('replace-tags', $config)){
+      $NewContent['replace-tags'] = $config['replace-tags'];
+    }
+
     foreach($links as $lnk)
     {
       $html = $this->getArticleContent($lnk, $config);
@@ -370,7 +382,7 @@ class Feediron extends Plugin implements IHandler
     foreach( $tags as $key=>$tag )
     {
       // If set perform modify
-      if(is_array($config['modify']))
+      if($this->array_check($config, 'modify'))
       {
         $tag = Feediron_Helper::reformat($tag, $config['modify']);
       }
@@ -572,7 +584,7 @@ class Feediron extends Plugin implements IHandler
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['type']." ".$class);
     }
 
-    if(is_array($config['modify']))
+    if($this->array_check($config, 'modify'))
     {
       $html = Feediron_Helper::reformat($html, $config['modify']);
     }
@@ -591,7 +603,7 @@ class Feediron extends Plugin implements IHandler
     return $html;
   }
 
-  function hook_prefs_tabs($args)
+  function hook_prefs_tabs(...$args)
   {
     print '<div id="feedironConfigTab" dojoType="dijit.layout.ContentPane"
     href="backend.php?op=feediron"

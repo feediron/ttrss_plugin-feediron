@@ -106,19 +106,19 @@ class fi_mod_readability
       }
 
       //Append/Prepend additional content
-      if( isset( $config['prependexcerpt'] ) && ( $config['prependexcerpt'] ) && !( $config['excerpt'] )  ) {
+      if( array_key_exists( 'prependexcerpt',$config ) && ( $config['prependexcerpt'] ) && !( $config['excerpt'] )  ) {
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Prepending Excerpt");
         $excerpt = $readability->getExcerpt();
         $content = $excerpt.'<br><hr><details><summary>Full Article</summary>'.$content.'</details>';
       }
 
-      if( isset( $config['prependimage'] ) && ( $config['prependimage'] )  ) {
+      if( array_key_exists( 'prependimage',$config ) && ( $config['prependimage'] )  ) {
         Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Readability.php Prepending Main Image");
         $image = $readability->getImage();
         $content = '<img src="'.$image.'"></img><br>'.$content;
       }
 
-      if( isset( $config['appendimages'] ) && ( $config['apendimages'] )  ) {
+      if( array_key_exists( 'appendimages',$config ) && ( $config['appendimages'] )  ) {
         $images = $readability->getImages();
         foreach ( $images as $image ) {
           $content.='<img src="'.$image.'"></img><br>';
@@ -144,7 +144,7 @@ class fi_mod_readability
       }
     }
     // Perform xpath on readability output
-    if (isset($config['xpath'])){
+    if (array_key_exists( 'xpath',$config )){
       $content = ( new fi_mod_xpath() )->perform_filter( $content, $config, $settings );
       // If no xpath for readability output perform simple cleanup
     } elseif(($cconfig = Feediron_Helper::getCleanupConfig($config))!== false) {

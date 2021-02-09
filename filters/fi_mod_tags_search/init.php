@@ -3,15 +3,23 @@
 class fi_mod_tags_search
 {
 
+  private function array_check($array, $key){
+    if( array_key_exists($key, $array) && is_array($array[$key]) ){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public function get_tags($html, $config, $settings )
   {
-    if(!is_array($config['pattern'])){
+    if(!$this->array_check($config,'pattern')){
       $patterns = array($config['pattern']);
     }else{
       $patterns = $config['pattern'];
     }
 
-    if(!is_array($config['match'])){
+    if(!$this->array_check($config,'match')){
       $matches = array($config['match']);
     }else{
       $matches = $config['match'];
