@@ -194,7 +194,7 @@ class Feediron extends Plugin implements IHandler
   function reformatUrl($url, $config)
   {
     $link = trim($url);
-    if($this->array_check($config, 'reformat'));
+    if($this->array_check($config, 'reformat'))
     {
       $link = Feediron_Helper::reformat($link, $config['reformat']);
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Reformated url: ".$link);
