@@ -28,10 +28,11 @@ class fi_mod_xpath
         $basenode = $entries->item($index);
       }
 
-      if (!$basenode && count($xpaths) == ( $key + 1 )) {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
+      if (!$basenode && count($xpaths) == 1) {
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Removed all content, reverting");
         return $html;
-      } elseif (!$basenode && count($xpaths) > 1){
+      } elseif (!$basenode && count($xpaths) >= 1){
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "No node extracted, continuing");
         continue;
       }
 
