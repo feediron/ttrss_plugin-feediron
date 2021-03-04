@@ -712,6 +712,10 @@ class Feediron extends Plugin implements IHandler
   function arrayRecursiveDiff($aArray1, $aArray2) {
     $aReturn = array();
 
+    // Ensure we are dealing with arrays
+    $aArray1 = Feediron_Helper::check_array( $aArray1 );
+    $aArray2 = Feediron_Helper::check_array( $aArray2 );
+
     foreach ($aArray1 as $mKey => $mValue) {
       if (array_key_exists($mKey, $aArray2)) {
         if (is_array($mValue)) {
