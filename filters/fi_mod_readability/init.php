@@ -1,7 +1,9 @@
 <?php
 
 //Load Composer autoloader hiding errors
-@include('vendor/autoload.php');
+$autoloader_file= __DIR__ . '/vendor/autoload.php';
+if(is_readable($autoloader_file))
+  include($autoloader_file);
 
 //Load Readability.php
 use andreskrey\Readability\Readability as ReadabilityPHP;

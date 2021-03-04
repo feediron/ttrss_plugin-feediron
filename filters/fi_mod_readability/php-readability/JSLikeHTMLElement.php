@@ -3,7 +3,7 @@
 namespace Readability;
 
 /**
- * JavaScript-like HTML DOM Element
+ * JavaScript-like HTML DOM Element.
  *
  * This class extends PHP's DOMElement to allow
  * users to get and set the innerHTML property of
@@ -31,70 +31,87 @@ namespace Readability;
  *     echo $doc->saveXML();
  *
  * @author Keyvan Minoukadeh - http://www.keyvan.net - keyvan@keyvan.net
+ *
  * @see http://fivefilters.org (the project this was written for)
  */
 class JSLikeHTMLElement extends \DOMElement
 {
     /**
-     * Used for setting innerHTML like it's done in JavaScript:
+     * Used for setting innerHTML like it's done in JavaScript:.
+     *
      * @code
      * $div->innerHTML = '<h2>Chapter 2</h2><p>The story begins...</p>';
      * @endcode
      */
     public function __set($name, $value)
     {
-        if ($name == 'innerHTML') {
-            // first, empty the element
-            for ($x=$this->childNodes->length-1; $x>=0; $x--) {
-                $this->removeChild($this->childNodes->item($x));
-            }
-            // $value holds our new inner HTML
-            if ($value != '') {
-                $f = $this->ownerDocument->createDocumentFragment();
-                // appendXML() expects well-formed markup (XHTML)
-                $result = @$f->appendXML($value); // @ to suppress PHP warnings
-                if ($result) {
-                    if ($f->hasChildNodes()) {
-                        $this->appendChild($f);
-                    }
-                } else {
-                    // $value is probably ill-formed
-                    $f = new \DOMDocument();
-                    $value = mb_convert_encoding($value, 'HTML-ENTITIES', 'UTF-8');
-                    // Using <htmlfragment> will generate a warning, but so will bad HTML
-                    // (and by this point, bad HTML is what we've got).
-                    // We use it (and suppress the warning) because an HTML fragment will
-                    // be wrapped around <html><body> tags which we don't really want to keep.
-                    // Note: despite the warning, if loadHTML succeeds it will return true.
-                    $result = @$f->loadHTML('<htmlfragment>'.$value.'</htmlfragment>');
-                    if ($result) {
-                        $import = $f->getElementsByTagName('htmlfragment')->item(0);
-                        foreach ($import->childNodes as $child) {
-                            $importedNode = $this->ownerDocument->importNode($child, true);
-                            $this->appendChild($importedNode);
-                        }
-                    } else {
-                        // oh well, we tried, we really did. :(
-                        // this element is now empty
-                    }
-                }
+        if ('innerHTML' !== $name) {
+            $trace = debug_backtrace();
+            trigger_error('Undefined property via __set(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+
+            return;
+        }
+
+        // first, empty the element
+        for ($x = $this->childNodes->length - 1; $x >= 0; --$x) {
+            $this->removeChild($this->childNodes->item($x));
+        }
+
+        // $value holds our new inner HTML
+        $value = trim($value);
+        if (empty($value)) {
+            return;
+        }
+
+        // ensure bad entity won't generate warning
+        $previousError = libxml_use_internal_errors(true);
+
+        $f = $this->ownerDocument->createDocumentFragment();
+
+        // appendXML() expects well-formed markup (XHTML)
+        $result = $f->appendXML($value);
+        if ($result) {
+            if ($f->hasChildNodes()) {
+                $this->appendChild($f);
             }
         } else {
-            $trace = debug_backtrace();
-            trigger_error('Undefined property via __set(): '.$name.' in '.$trace[0]['file'].' on line '.$trace[0]['line'], E_USER_NOTICE);
+            // $value is probably ill-formed
+            $f = new \DOMDocument();
+            $value = mb_convert_encoding($value, 'HTML-ENTITIES', 'UTF-8');
+
+            // Using <htmlfragment> will generate a warning, but so will bad HTML
+            // (and by this point, bad HTML is what we've got).
+            // We use it (and suppress the warning) because an HTML fragment will
+            // be wrapped around <html><body> tags which we don't really want to keep.
+            // Note: despite the warning, if loadHTML succeeds it will return true.
+            $result = $f->loadHTML('<htmlfragment>' . $value . '</htmlfragment>');
+
+            if ($result) {
+                $import = $f->getElementsByTagName('htmlfragment')->item(0);
+
+                foreach ($import->childNodes as $child) {
+                    $importedNode = $this->ownerDocument->importNode($child, true);
+                    $this->appendChild($importedNode);
+                }
+            }
         }
+
+        libxml_clear_errors();
+        libxml_use_internal_errors($previousError);
     }
 
     /**
-     * Used for getting innerHTML like it's done in JavaScript:
+     * Used for getting innerHTML like it's done in JavaScript:.
+     *
      * @code
      * $string = $div->innerHTML;
      * @endcode
      */
     public function __get($name)
     {
-        if ($name == 'innerHTML') {
+        if ('innerHTML' === $name) {
             $inner = '';
+
             foreach ($this->childNodes as $child) {
                 $inner .= $this->ownerDocument->saveXML($child);
             }
@@ -103,13 +120,21 @@ class JSLikeHTMLElement extends \DOMElement
         }
 
         $trace = debug_backtrace();
-        trigger_error('Undefined property via __get(): '.$name.' in '.$trace[0]['file'].' on line '.$trace[0]['line'], E_USER_NOTICE);
-
-        return null;
+        trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
     }
 
     public function __toString()
     {
-        return '['.$this->tagName.']';
+        return '[' . $this->tagName . ']';
+    }
+
+    public function getInnerHtml()
+    {
+        return $this->__get('innerHTML');
+    }
+
+    public function setInnerHtml($value)
+    {
+        return $this->__set('innerHTML', $value);
     }
 }
