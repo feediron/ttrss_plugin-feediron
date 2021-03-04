@@ -281,21 +281,31 @@ class Feediron extends Plugin implements IHandler
 
     if (!isset($config['force_charset']))
     {
-      if ($content_type)
+      if (!$content_type)
       {
+        // Match charset from content_type header
         preg_match('/charset=(\S+)/', $content_type, $matches);
         if (isset($matches[1]) && !empty($matches[1])) {
           $this->charset = str_replace('"', "", html_entity_decode($matches[1]));
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Matched charset:", $this->charset);
+        } else {
+          // Attempt to detect encoding of html directly
+          $detected_charset = mb_detect_encoding($html, implode(',', mb_list_encodings()), true);
+          if (is_string($detected_charset)) {
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Detected charset:", $detected_charset);
+            $this->charset = $detected_charset;
+          } else {
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Failed to detect charset. Consider manually setting the chareset");
+          }
         }
       }
+
     } elseif ( isset( $config['force_charset'] ) ) {
       // use forced charset
       $this->charset = $config['force_charset'];
-    } elseif ( mb_detect_encoding($html, 'UTF-8', true) == 'UTF-8' ) {
-      $this->charset = 'UTF-8';
     }
 
-    Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "charset:", $this->charset);
+    Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Current charset:", $this->charset);
     if ($this->charset && isset($config['force_unicode']) && $config['force_unicode'])
     {
       $html = mb_convert_encoding($html, 'HTML-ENTITIES', $this->charset);
@@ -307,7 +317,7 @@ class Feediron extends Plugin implements IHandler
     if ( isset($this->charset) ){
       foreach($valid_charsets as $index => $alias) {
 
-          foreach($alias as $key => $value) {
+        foreach($alias as $key => $value) {
 
       		if ($value == $this->charset) {
       			$this->charset = $index;
