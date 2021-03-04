@@ -748,7 +748,7 @@ class Feediron extends Plugin implements IHandler
   */
   function test()
   {
-    Feediron_Logger::get()->set_log_level($_POST['verbose']?Feediron_Logger::LOG_VERBOSE:Feediron_Logger::LOG_TEST);
+    Feediron_Logger::get()->set_log_level(array_key_exists('verbose', $_POST)?Feediron_Logger::LOG_VERBOSE:Feediron_Logger::LOG_TEST);
     $test_url = $_POST['test_url'];
     Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Test url: $test_url");
 
