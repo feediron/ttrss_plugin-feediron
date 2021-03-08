@@ -484,7 +484,7 @@ class Feediron extends Plugin implements IHandler
         return array();
       }
 
-      Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Found ".count($entries)." link elements";
+      Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Found ".count($entries)." link elements");
 
       foreach($entries as $entry)
       {
