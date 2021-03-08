@@ -438,7 +438,7 @@ class Feediron extends Plugin implements IHandler
   function fetch_links($link, $config, $counter, $maxpages, $seenlinks = array())
   {
     $counter++;
-    Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Page ".$counter." of a maxiumum ".$maxpages." pages", $lnk);
+    Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Page ".$counter." of a maxiumum ".$maxpages." pages", $link);
     $html = $this->getArticleContent($link, $config);
     $links = $this->extractlinks($html, $config);
     if (count($links) == 0)
@@ -473,7 +473,7 @@ class Feediron extends Plugin implements IHandler
 
   function extractlinks($html, $config)
   {
-    $doc = Feediron_Helper::getDOM( $html, $this->charset, $config['debug'] );
+    $doc = Feediron_Helper::getDOM( $html, $this->charset, $this->defaults['debug'] );
     $links = array();
 
     $xpath = new DOMXPath($doc);
@@ -483,10 +483,9 @@ class Feediron extends Plugin implements IHandler
       if ($entries->length < 1){
         return array();
       }
-      if($this->loglevel == Feediron_Logger::LOG_VERBOSE){
-        $log_entries = array_map( array($this, 'getHtmlNode') , $entries);
-        Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Found ".count($entries)." link elements:", join("\n", $log_entries));
-      }
+
+      Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Found ".count($entries)." link elements";
+
       foreach($entries as $entry)
       {
         $links[] = $entry->getAttribute('href');
