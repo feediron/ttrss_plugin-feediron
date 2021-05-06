@@ -598,7 +598,7 @@ class Feediron extends Plugin implements IHandler
       $html = Feediron_Helper::reformat($html, $config['modify']);
     }
     // if we've got Tidy, let's clean it up for output
-    if (function_exists('tidy_parse_string') && $config['tidy'] !== false && $this->charset !== false) {
+    if (function_exists('tidy_parse_string') && $this->array_check($config, 'tidy') && $this->charset !== false) {
       try {
         $tidy = tidy_parse_string($html, array('indent'=>true, 'show-body-only' => true), str_replace(["-", "–"], '', $this->charset));
         $tidy->cleanRepair();
