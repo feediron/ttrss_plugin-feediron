@@ -16,6 +16,13 @@ spl_autoload_register(function ($class) {
         include $file;
 });
 
+//Load retrieval modules
+spl_autoload_register(function ($class) {
+    $file = __DIR__ . DIRECTORY_SEPARATOR . 'filters' . DIRECTORY_SEPARATOR . $class . DIRECTORY_SEPARATOR . 'init.php';
+    if(is_readable($file))
+        include $file;
+});
+
 class Feediron extends Plugin implements IHandler
 {
   private $host;
@@ -257,7 +264,22 @@ class Feediron extends Plugin implements IHandler
       Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Fetching from cache");
       return $this->cache[$link];
     }
-    list($html, $content_type) = $this->get_content($link);
+
+    // Build settings array
+    $settings = array( "fetch_last_content_type" => global $fetch_last_content_type );
+
+    if (isset($config['retriever']) {
+    $str = 'fi_ret_';
+    $class = $str . $config['retriever'];
+    } else {
+      $class = "fi_ret_simple"
+    }
+
+    if (class_exists($class)) {
+      list($html, $content_type) = ( new $class() )->get_content($html, $config, $settings);
+    } else {
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Unrecognized option: ".$config['retriever']." ".$class);
+    }
 
     $this->charset = false;
 
@@ -404,35 +426,6 @@ class Feediron extends Plugin implements IHandler
     $tags = array_filter($tags);
 
     return $tags;
-  }
-
-  function get_content($link)
-  {
-    global $fetch_last_content_type;
-    Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, $link);
-    if (version_compare(get_version(), '1.7.9', '>='))
-    {
-      $html = fetch_file_contents($link);
-      $content_type = $fetch_last_content_type;
-    }
-    else
-    {
-      // fallback to file_get_contents()
-      $html = file_get_contents($link);
-
-      // try to fetch charset from HTTP headers
-      $headers = $http_response_header;
-      $content_type = false;
-      foreach ($headers as $h)
-      {
-        if (substr(strtolower($h), 0, 13) == 'content-type:')
-        {
-          $content_type = substr($h, 14);
-          // don't break here to find LATEST (if redirected) entry
-        }
-      }
-    }
-    return array( $html,  $content_type);
   }
 
   function fetch_links($link, $config, $counter, $maxpages, $seenlinks = array())
