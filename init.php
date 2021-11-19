@@ -51,14 +51,14 @@ class Feediron extends Plugin implements IHandler
   }
 
   // Required API, Django...
-  function csrf_ignore($method)
+  function csrf_ignore($method): bool
   {
     $csrf_ignored = array("index", "edit");
     return array_search($method, $csrf_ignored) !== false;
   }
 
   // Allow only in active sessions
-  function before($method)
+  function before($method): bool
   {
     if ($_SESSION["uid"])
     {
@@ -68,7 +68,7 @@ class Feediron extends Plugin implements IHandler
   }
 
   // Required API
-  function after()
+  function after(): bool
   {
     return true;
   }
@@ -612,7 +612,7 @@ class Feediron extends Plugin implements IHandler
     return $html;
   }
 
-  function hook_prefs_tabs(...$args)
+  function hook_prefs_tabs(): void
   {
     print '<div id="feedironConfigTab" dojoType="dijit.layout.ContentPane"
     href="backend.php?op=feediron"
