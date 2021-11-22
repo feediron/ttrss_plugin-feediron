@@ -92,6 +92,10 @@ class fi_mod_xpath
           $cleanup = '//'.$cleanup;
         }
         $nodelist = $xpath->query($cleanup, $basenode);
+        if (!$nodelist) {
+          Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Node not found", $this->getHtmlNode($basenode));
+          continue;
+        }
         foreach ($nodelist as $node)
         {
           if ($node instanceof DOMAttr)
