@@ -47,14 +47,16 @@ class JSLikeHTMLElement extends \DOMElement
     {
         if ('innerHTML' !== $name) {
             $trace = debug_backtrace();
-            trigger_error('Undefined property via __set(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+            trigger_error('Undefined property via __set(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], \E_USER_NOTICE);
 
             return;
         }
 
         // first, empty the element
-        for ($x = $this->childNodes->length - 1; $x >= 0; --$x) {
-            $this->removeChild($this->childNodes->item($x));
+        if (isset($this->childNodes)) {
+            for ($x = $this->childNodes->length - 1; $x >= 0; --$x) {
+                $this->removeChild($this->childNodes->item($x));
+            }
         }
 
         // $value holds our new inner HTML
@@ -112,15 +114,17 @@ class JSLikeHTMLElement extends \DOMElement
         if ('innerHTML' === $name) {
             $inner = '';
 
-            foreach ($this->childNodes as $child) {
-                $inner .= $this->ownerDocument->saveXML($child);
+            if (isset($this->childNodes)) {
+                foreach ($this->childNodes as $child) {
+                    $inner .= $this->ownerDocument->saveXML($child);
+                }
             }
 
             return $inner;
         }
 
         $trace = debug_backtrace();
-        trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+        trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], \E_USER_NOTICE);
     }
 
     public function __toString()

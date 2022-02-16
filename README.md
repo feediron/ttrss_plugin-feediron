@@ -20,13 +20,13 @@ Then enable the plugin in TT-RSS preferences.
 
 ### Optional
 
-Install [Readability.php](https://github.com/andreskrey/readability.php) using [composer](https://getcomposer.org/). Assuming composer is installed, navigate to the FeeIron plugin filter folder `filters/fi_mod_readability` with `composer.json` present and run:
+Install [Readability.php](https://github.com/fivefilters/readability.php) using [composer](https://getcomposer.org/). Assuming composer is installed, navigate to the FeeIron plugin filter folder `filters/fi_mod_readability` with `composer.json` present and run:
 
 ```
 $ composer install
 ```
 
-Install [Readability.php](https://github.com/andreskrey/readability.php) when using docker-compose:
+Install [Readability.php](https://github.com/fivefilters/readability.php) when using docker-compose:
 
 In your docker-compose.yaml ensure your version is set to at least 3.6
 

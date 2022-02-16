@@ -6,8 +6,8 @@ if(is_readable($autoloader_file))
   include($autoloader_file);
 
 //Load Readability.php
-use andreskrey\Readability\Readability as ReadabilityPHP;
-use andreskrey\Readability\Configuration as ReadabilityPHPConf;
+use fivefilters\Readability\Readability as ReadabilityPHP;
+use fivefilters\Readability\Configuration as ReadabilityPHPConf;
 
 class fi_mod_readability
 {

@@ -6,7 +6,34 @@ Note: Also accepts all [Xpath type](https://github.com/feediron/ttrss_plugin-fee
 
 ### Optional Readability.php
 
-Install [Readability.php](https://github.com/andreskrey/readability.php) using [composer](https://getcomposer.org/). Assuming composer is installed, navigate to the FeeIron plugin filter folder `filters/fi_mod_readability` with `composer.json` present and run: `composer install`
+Install [Readability.php](https://github.com/fivefilters/readability.php) using [composer](https://getcomposer.org/). Assuming composer is installed, navigate to the FeeIron plugin filter folder `filters/fi_mod_readability` with `composer.json` present and run:
+
+```
+$ composer install
+```
+
+Install [Readability.php](https://github.com/fivefilters/readability.php) when using docker-compose:
+
+In your docker-compose.yaml ensure your version is set to at least 3.6
+
+```
+version: '3.6'
+```
+Install php8-phar in the app container
+
+```
+sudo docker-compose exec app apk add php8-phar
+```
+
+Download the latest composer.phar
+```
+sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app php8 -r "copy('https://getcomposer.org/download/latest-stable/composer.phar', 'composer.phar');"
+```
+
+Run the composer install
+```
+sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app php8 -d extension=phar.so ./composer.phar install
+```
 
 * [Readability](#readability) - `"type":"readability"`
 	1. [PHP-Readability](#php-readability)
