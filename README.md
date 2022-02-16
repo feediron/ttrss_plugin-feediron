@@ -28,7 +28,7 @@ $ composer install
 
 Install [Readability.php](https://github.com/andreskrey/readability.php) when using docker-compose:
 
-In your docker-compose.yaml ensure your version is set to at lease 3.6
+In your docker-compose.yaml ensure your version is set to at least 3.6
 
 ```
 version: '3.6'
