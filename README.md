@@ -73,9 +73,9 @@ A Basic Configuration must define:
 
 1. The site string. e.g. `example.com`
 	* Use the same configuration for multiple URL's by seperating them with the `|` Delimiter. e.g. `"example.com|example.net"`
-	* The configuration will be applied when the site string matches the `<link>` or `<author>` tag of the RSS feed item.
-		* The `<link>` takes precedence over the `<author>`
-		* `<author>` based configurations will **NOT** automatically show in the Testing Tab
+	* The configuration will be applied when the site string matches the `<link>` or `<author>` tag of the RSS feed item. Matching against `<tags>` is enabled only when `"explicit_match": "tags"` is used.
+		* The `<link>` takes precedence over the `<author>` unless overiden with the `explicit_match` option.
+		* `<author>` and `<tags>` based configurations will **NOT** automatically show in the Testing Tab
 2. The Filter type. e.g. `"type":"xpath"`
 3. The Filter config. e.g. `"xpath":"div[@id='content']"` or the array `"xpath": [ "div[@id='article']", "div[@id='footer']"]`
 
@@ -256,6 +256,8 @@ Result: `Tag1, Tag2, Tag3`
 
 # General Options:
 
+* [explicit_match](explicit_match---explicit_matchstr) - `"explicit_match":"str"`
+* [exclude_tags](exclude_tags---exclude_tagsstr---array-of-str-) - `exclude_tags:"str" / [ "array of str" ]`
 * [reformat / modify](#reformat--modify---reformatarray-of-options-modifyarray-of-options) - `"reformat":[array of options]` `"modify":[array of options]`
 	* [regex](#regex---typeregex) - `"type":"regex"`
 		* [pattern](#pattern---patternregex-str)  - `"pattern":"/regex str/"`
@@ -272,6 +274,33 @@ Result: `Tag1, Tag2, Tag3`
 * [force_unicode](#force_unicode---force_unicodebool) - `"force_unicode":bool`
 * [tidy-source](#tidy-source---tidy-sourcebool) - `"tidy-source":bool`
 * [tidy](#tidy---tidybool) - `"tidy":bool`
+
+## explicit_match - `"explicit_match":"str"`
+
+Accepts `url`, `author` or `tags` string to overide the site string match order of precedence. Without setting `"explicit_match":"tags"` article tags are not evaluated.
+
+```json
+"golem0Bde0C":{
+  "explicit_match":"tags",
+  "type":"xpath",
+  "xpath":"article"
+}
+```
+
+## exclude_tags - `exclude_tags:"str" / [ "array of str" ]`
+
+Exclude specific article `<tags>` from feediron processing
+
+```json
+"golem0Bde0C":{
+  "exclude_tags":[
+    "example",
+    "sports"
+  ],
+  "type":"xpath",
+  "xpath":"article"
+}
+```
 
 ## reformat / modify - `"reformat":[array of options]` `"modify":[array of options]`
 

@@ -82,8 +82,28 @@ class Feediron extends Plugin implements IHandler
       return $article;
     };
     $config = $this->getConfigSection($link);
+    if ( isset( $config['explicit_match'] ) && $config['explicit_match'] != 'url' ) {
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Ignoring url match as explicit_match is set to ".$config['explicit_match']);
+      $config = false;
+    }
     if ($config === false) {
       $config = $this->getConfigSection($article['author']);
+      if ( isset( $config['explicit_match'] ) && $config['explicit_match'] != 'author' ) {
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Ignoring author match as explicit_match is set to ".$config['explicit_match']);
+        $config = false;
+      }
+    }
+    if ($config === false && isset($config['explicit_match']) && $config['explicit_match'] == 'tags') {
+      $config = $this->getConfigSection($article['tags']);
+
+      $config['exclude_tags'] = Feediron_Helper::check_array( $config['exclude_tags'] );
+      Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Checking for exclude_tags");
+      foreach($config['exclude_tags'] as $excluded_tag) {
+        if ( in_array($excluded_tag, $article['tags'] ) {
+          Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Exclude tag found ".$excluded_tag);
+          $config = false;
+        }
+      }
     }
     if ($config !== false)
     {
