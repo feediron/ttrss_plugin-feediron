@@ -256,8 +256,8 @@ Result: `Tag1, Tag2, Tag3`
 
 # General Options:
 
-* [explicit_match](explicit_match---explicit_matchstr) - `"explicit_match":"str"`
-* [exclude_tags](exclude_tags---exclude_tagsstr---array-of-str-) - `exclude_tags:"str" / [ "array of str" ]`
+* [explicit_match](#explicit_match---explicit_matchstr) - `"explicit_match":"str"`
+* [exclude_tags](#exclude_tags---exclude_tagsstr---array-of-str-) - `exclude_tags:"str" / [ "array of str" ]`
 * [reformat / modify](#reformat--modify---reformatarray-of-options-modifyarray-of-options) - `"reformat":[array of options]` `"modify":[array of options]`
 	* [regex](#regex---typeregex) - `"type":"regex"`
 		* [pattern](#pattern---patternregex-str)  - `"pattern":"/regex str/"`
