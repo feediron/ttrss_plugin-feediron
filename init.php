@@ -767,16 +767,25 @@ class Feediron extends Plugin implements IHandler
       }
 
       $config = $this->getConfigSection($test_url);
-      $newconfig = json_decode($_POST['test_conf'], true);
+      $newconfig = json_decode($json_conf, true);
+      if ( !isset($newconfig["type"] ) ){
+        Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "No type found, digging deeper");
+        if ( isset($newconfig[0]["type"] ) ) {
+          $newconfig = array_values($newconfig)[0];
+          $this->host->set($this, 'test_conf', Feediron_Json::format(json_encode($newconfig)));
+        } else {
+          $json_reply['success'] = false;
+          $json_reply['errormessage'] = __('No type defined! ');
+          echo json_encode($json_reply);
+          return false;
+        }
+      }
       Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config posted: ", $newconfig);
       if($config != false){
         Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config found: ", $config);
         Feediron_Logger::get()->log_object(Feediron_Logger::LOG_TEST, "config diff", $this->arrayRecursiveDiff($config, $newconfig));
-        if(count($this->arrayRecursiveDiff($newconfig, $config))!= 0){
-          $this->host->set($this, 'test_conf', Feediron_Json::format(json_encode($config)));
-        }
       }
-      $config = json_decode($_POST['test_conf'], true);
+      $config = $newconfig;
     }else{
       $config = $this->getConfigSection($test_url);
     }
