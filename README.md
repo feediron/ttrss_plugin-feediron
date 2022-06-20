@@ -260,6 +260,7 @@ Result: `Tag1, Tag2, Tag3`
 	* [regex](#regex---typeregex) - `"type":"regex"`
 		* [pattern](#pattern---patternregex-str)  - `"pattern":"/regex str/"`
 		* [replace](#replace---replacestr) - `"replace":"str"`
+		* [count](#count---countint) - `"count":"int"`
 	* [replace](#replace---typereplace) - `"type":"replace"`
 		* [search](#search---typesearch-str---array-of-search-str-) - `"type":"search str" / [ "array of search str" ]`
 		* [replace](#replace---replacestr---array-of-str-) - `"replace":"str"`
@@ -288,6 +289,10 @@ A regular expression or regex string.
 #### replace - `"replace":"str"`
 
 String to replace regex match with
+
+#### count - `"count":"int"`
+
+Optional integer defining the number of replacements done.
 
 Example reformat golem.de url:
 

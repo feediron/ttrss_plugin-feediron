@@ -44,7 +44,11 @@ class Feediron_Helper
         break;
 
         case 'regex':
-        $string = preg_replace($option['pattern'], $option['replace'], $string);
+        if( isset( $option['count']) ){
+          $string = preg_replace($option['pattern'], $option['replace'], $string, $option['count']);
+        } else {
+          $string = preg_replace($option['pattern'], $option['replace'], $string);
+        }
         break;
       }
       Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Step result ", $string);
