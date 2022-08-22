@@ -284,7 +284,7 @@ class Feediron extends Plugin implements IHandler
       if (!$content_type)
       {
         // Match charset from content_type header
-        preg_match('/charset=(\S+)/', $content_type, $matches);
+        preg_match('/charset=(\S+)/', $html, $matches);
         if (isset($matches[1]) && !empty($matches[1])) {
           $this->charset = str_replace('"', "", html_entity_decode($matches[1]));
           Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Matched charset:", $this->charset);
