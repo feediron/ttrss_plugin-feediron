@@ -1,5 +1,14 @@
 {
-    "require": {
-        "andreskrey/readability.php": "^2.1"
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "name": "fivefilters/readability.php",
+      "type": "vcs",
+      "url": "https://dev.tt-rss.org/fox/readability-php.git"
     }
+  ],
+  "require": {
+    "fivefilters/readability.php": "dev-master"
+  }
 }
