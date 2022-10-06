@@ -33,20 +33,20 @@ In your docker-compose.yaml ensure your version is set to at least 3.6
 ```
 version: '3.6'
 ```
-Install php8-phar in the app container
+Install php81-phar in the app container
 
 ```
-sudo docker-compose exec app apk add php8-phar
+sudo docker-compose exec app apk add php81-phar
 ```
 
 Download the latest composer.phar
 ```
-sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app php8 -r "copy('https://getcomposer.org/download/latest-stable/composer.phar', 'composer.phar');"
+sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app php81 -r "copy('https://getcomposer.org/download/latest-stable/composer.phar', 'composer.phar');"
 ```
 
 Run the composer install
 ```
-sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app php8 -d extension=phar.so ./composer.phar install
+sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app php81 -d extension=phar.so ./composer.phar install
 ```
 ___
 
