@@ -13,10 +13,10 @@ Checkout the directory into your plugins folder like this (from tt-RSS root dire
 
 ```sh
 $ cd /var/www/ttrss
-$ git clone git://github.com/m42e/ttrss_plugin-feediron.git plugins.local/feediron
+$ git clone https://github.com/feediron/ttrss_plugin-feediron.git plugins.local/feediron
 ```
 
-Then enable the plugin in TT-RSS preferences.
+Then enable the plugin in TT-RSS preferences menu.
 
 ### Optional
 
