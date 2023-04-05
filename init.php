@@ -212,6 +212,8 @@ class Feediron extends Plugin implements IHandler
 
     if( array_key_exists('replace-tags', $config)){
       $NewContent['replace-tags'] = $config['replace-tags'];
+    } else {
+      $NewContent['replace-tags'] = False;
     }
 
     foreach($links as $lnk)
