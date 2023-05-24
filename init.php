@@ -460,7 +460,8 @@ class Feediron extends Plugin implements IHandler
       /* If recursive mode is active fetch links from newly fetched link */
       if(isset($config['multipage']['recursive']) && $config['multipage']['recursive'] && !($counter == ($maxpages-1)) )
       {
-        $links =  $this->fetch_links($lnk, $config, $counter, $maxpages, array($links, $link));
+        array_push($links, $link); // Add $link to $links array
+        $links =  $this->fetch_links($lnk, $config, $counter, $maxpages, $links);
       }
     }
     if(isset($config['multipage']['append']) && $config['multipage']['append'])
