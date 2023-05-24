@@ -36,17 +36,17 @@ version: '3.6'
 Install php81-phar in the app container
 
 ```
-sudo docker-compose exec app apk add php81-phar
+sudo docker-compose exec app apk add php81-mbstring php81-iconv php81-openssl 
 ```
 
 Download the latest composer.phar
 ```
-sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app php81 -r "copy('https://getcomposer.org/download/latest-stable/composer.phar', 'composer.phar');"
+sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app wget 'https://getcomposer.org/download/latest-stable/composer.phar' -O 'composer.phar'
 ```
 
 Run the composer install
 ```
-sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app php81 -d extension=phar.so ./composer.phar install
+sudo docker-compose exec --workdir /var/www/html/tt-rss/plugins.local/feediron/filters/fi_mod_readability/ --user app app php81 -d extension=php_openssl.so ./composer.phar install
 ```
 ___
 
