@@ -173,9 +173,9 @@ Uses PHP preg_match() in order to find and return a string from the article. Req
 }
 ```
 
-#### tags regex index - `"index":int`
+#### tags regex index - `"index":int/all`
 
-Specifies the number of the entry in article to return.
+Specifies the number of the entry in article to return. String value of `all` to fetches all instances of the `xpath` element.
 Default value `1`
 
 ```json

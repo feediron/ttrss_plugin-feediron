@@ -1,11 +1,13 @@
 <?php
 
+class_alias('fi_mod_tags_xpath', 'fi_mod_tags_all_xpath');
+
 class fi_mod_xpath
 {
 
   public function perform_filter( $html, $config, $settings )
   {
-    $debug = array_key_exists('debug', $config) ?: false;
+    $debug = isset($config['debug']) ? $config['debug'] : false;
     $doc = Feediron_Helper::getDOM( $html, $settings['charset'], $debug );
     $xpathdom = new DOMXPath($doc);
 
@@ -25,31 +27,39 @@ class fi_mod_xpath
       $basenode = false;
 
       if ($entries->length > 0) {
-        $basenode = $entries->item($index);
+        if ($index === 'all') {
+          // Loop through all entries
+          foreach ($entries as $entry) {
+            // Process each entry
+            $this->appendNode($htmlout, $xpathdom, $entry, $config);
+          }
+        } else {
+          // Check if the specified index is within the valid range
+          if ($index >= 0 && $index < $entries->length) {
+            // Select the specific entry based on the index
+            $basenode = $entries->item($index);
+            $this->appendNode($htmlout, $xpathdom, $basenode, $config);
+          } else {
+            // Handle the case where the index is out of range
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Invalid index specified: " + $index);
+          }
+        }
       }
 
-      if (!$basenode && count($xpaths) == 1) {
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Removed all content, reverting");
-        return $html;
-      } elseif (!$basenode && count($xpaths) >= 1){
-        Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "No node extracted, continuing");
-        continue;
+      if (count($htmlout) == 0) {
+        if (count($xpaths) > 1) {
+            // Continue to the next iteration if $htmlout is empty and there are more XPath expressions
+            continue;
+        } elseif (count($xpaths) == ($key + 1)) {
+            // Log and return original HTML if $htmlout is empty and it's the last XPath expression
+            Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "removed all content, reverting");
+            return $html;
+        }
       }
-
-      Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Extracted node", $this->getHtmlNode($basenode));
-      // remove nodes from cleanup configuration
-      $basenode = $this->cleanupNode($xpathdom, $basenode, $config);
-
-      //render nested nodes to html
-      $inner_html = $this->getInnerHtml($basenode);
-      if (!$inner_html){
-        //if there's no nested nodes, render the node itself
-        $inner_html = $basenode->ownerDocument->saveXML($basenode);
-      }
-      array_push($htmlout, $inner_html);
     }
-
-    $content = join((array_key_exists('join_element', $config)?$config['join_element']:''), $htmlout);
+    if (count($htmlout) > 1) {
+      $content = join((array_key_exists('join_element', $config)?$config['join_element']:''), $htmlout);
+    }
     if(array_key_exists('start_element', $config)){
       Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "Adding start element", $config['start_element']);
       $content = $config['start_element'].$content;
@@ -62,6 +72,22 @@ class fi_mod_xpath
 
     return $content;
   }
+
+  private function appendNode(&$htmlout, $xpathdom, $basenode, $config){
+    Feediron_Logger::get()->log_html(Feediron_Logger::LOG_VERBOSE, "append node", $this->getHtmlNode($basenode));
+    if (!empty(trim($basenode->nodeValue))) { 
+      // remove nodes from cleanup configuration
+       $basenode = $this->cleanupNode($xpathdom, $basenode, $config);
+
+       //render nested nodes to html
+       $inner_html = $this->getInnerHtml($basenode);
+       if (!$inner_html){
+          //if there's no nested nodes, render the node itself
+          $inner_html = $basenode->ownerDocument->saveXML($basenode);
+       }
+       $htmlout[] = $inner_html;
+    }
+ }
 
   private function getHtmlNode( $node ){
     if (is_object($node)){
