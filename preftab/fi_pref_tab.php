@@ -107,7 +107,7 @@ class Feediron_PrefTab{
 	}
 	private static function get_form_start($method){
 		$form = '<form dojoType="dijit.form.Form">';
-		$form .='<input dojoType="dijit.form.TextBox" style="display : none" name="op" value="pluginhandler">';
+		$form .='<input dojoType="dijit.form.TextBox" style="display : none" name="op" value="PluginHandler">';
 		$form .= '<input dojoType="dijit.form.TextBox" style="display : none" name="method" value="'.$method.'">';
 		$form .= '<input dojoType="dijit.form.TextBox" style="display : none" name="plugin" value="feediron">';
 		return $form;
