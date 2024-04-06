@@ -268,6 +268,7 @@ Result: `Tag1, Tag2, Tag3`
 		* xpath - `"xpath":"xpath str"`
 		* [append](#append---appendbool) - `"append":bool`
 		* [recursive](#recursive---recursivebool) - `"recursive":bool`
+    * [reformat](#reformat---reformatbool) - `"reformat":bool`
 		* [pages](#pages---pagesint) - `"pages":int`
 * [force_charset](#force_charset---force_charsetcharset) - `"force_charset":"charset"`
 * [force_unicode](#force_unicode---force_unicodebool) - `"force_unicode":bool`
@@ -375,7 +376,8 @@ You have to specify a ```xpath``` which identifies the links (&lt;a&gt;) to the 
 	"multipage": {
 		"xpath": "a[contains(@data-ga-category,'Pagination') and text() = 'Next']",
 		"append": true,
-		"recursive": true
+		"recursive": true,
+		"reformat": true
 	}
 }
 ```
@@ -385,6 +387,9 @@ Boolean - If false, only the links are used and the original link is ignored els
 
 #### recursive - `"recursive":bool`
 Boolean - If true this option to parses every following page for more links. To avoid infinite loops the fetching stops if an url is added twice.
+
+#### reformat - `"reformat":bool`
+Boolean - If true, this option will apply the URL reformat option to every found next page link.
 
 #### pages - `"pages":int`
 Integer - Maximum number of pages to recursively fetch.  Default value `10`

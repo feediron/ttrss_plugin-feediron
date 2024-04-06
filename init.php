@@ -455,8 +455,15 @@ class Feediron extends Plugin implements IHandler
     }
 
     foreach ($links as $lnk)
-    {
+    {      
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "link:".$lnk);
+
+      // reformat next page link if enabled
+      if (isset($config['multipage']['reformat']) && $config['multipage']['reformat'])
+      {
+        $lnk = $this->reformatUrl($lnk, $config);
+      }
+
       /* If recursive mode is active fetch links from newly fetched link */
       if(isset($config['multipage']['recursive']) && $config['multipage']['recursive'] && !($counter == ($maxpages-1)) )
       {
