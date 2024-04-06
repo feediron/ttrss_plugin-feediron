@@ -278,6 +278,20 @@ Result: `Tag1, Tag2, Tag3`
 
 Reformat is an array of formatting rules for the url of the full article. The rules are applied before the full article is fetched. Where as Modify is an array of formatting rules for article using the same options.
 
+In both replace cases ([replace (regex)](#replace---replacestr) and [replace (replace)](#replace---replacestr---array-of-str-)), it is possible to use replace modifiers. Following variables might be available in both options:
+
+ - `{$link}` = Link to the article.
+ - `{$scheme}` = Scheme like http / https
+ - `{$host}` = Host of the articles URL
+ - `{$port}` = Port of the articles URL
+ - `{$user}` = User if one was given in articles URL (unusual) 
+ - `{$pass}` = Password if one was given in articles URL (unusual)
+ - `{$path}` = Path after host/domain
+ - `{$query}` = everything after article url "?"
+ - `{$fragment}` = Fragment e.g. anchor followed by #
+
+If a variable is specified in `replace` option, but not known, it will not be replaced.
+
 ### regex - `"type":"regex"`
 
 regex takes a regex in an option called pattern and the replacement in replace. For details see [preg_replace](http://www.php.net/manual/de/function.preg-replace.php) in the PHP documentation.
