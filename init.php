@@ -440,7 +440,7 @@ class Feediron extends Plugin implements IHandler
   function fetch_links($link, $config, $counter, $maxpages, $seenlinks = array())
   {
     $counter++;
-    Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Page ".$counter." of a maxiumum ".$maxpages." pages", $link);
+    Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "Page ".$counter." of a maximum ".$maxpages." pages", $link);
     $html = $this->getArticleContent($link, $config);
     $links = $this->extractlinks($html, $config);
     if (count($links) == 0)
@@ -454,7 +454,7 @@ class Feediron extends Plugin implements IHandler
       return array($link);
     }
 
-    foreach ($links as $lnk)
+    foreach ($links as &$lnk)
     {      
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "link:".$lnk);
 
