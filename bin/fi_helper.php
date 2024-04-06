@@ -30,14 +30,20 @@ class Feediron_Helper
 
   }
 
-  public static function replaceStringVariableOptions(string $replaceString, array $replaceVars) {
-    return str_replace(
-      array_map(function($k) {
-          return '{$'.$k.'}';
-      }, array_keys($replaceVars)),
-      array_values($replaceVars),
-      $replaceString
-    );
+  public static function replaceStringVariableOptions(string|array $replaceString, array $replaceVars) {
+    if (is_array($replaceString)) {
+      return array_map(function(string|array $element) use ($replaceVars) {
+        return self::replaceStringVariableOptions($element, $replaceVars);
+      }, $replaceString);
+    } else {
+      return str_replace(
+        array_map(function($k) {
+            return '{$'.$k.'}';
+        }, array_keys($replaceVars)),
+        array_values($replaceVars),
+        $replaceString
+      );
+    }
   }
 
   // reformat a string with given options
