@@ -30,24 +30,48 @@ class Feediron_Helper
 
   }
 
+  public static function replaceStringVariableOptions(string $replaceString, array $replaceVars) {
+    return str_replace(
+      array_map(function($k) {
+          return '{$'.$k.'}';
+      }, array_keys($replaceVars)),
+      array_values($replaceVars),
+      $replaceString
+    );
+  }
+
   // reformat a string with given options
-  public static function reformat($string, $options)
+  public static function reformat($string, $options, $articleLink)
   {
     Feediron_Logger::get()->log(Feediron_Logger::LOG_VERBOSE, "Reformat ", $string);
+    
+    $replaceVars = ['link' => $articleLink];
+    $urlComponents = parse_url($articleLink);
+    if (is_array($urlComponents)) {
+      $replaceVars = array_merge($replaceVars, $urlComponents);
+    }
+
     foreach($options as $option)
     {
       Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Reformat step with option ", $option);
+      // Check for any string to be replaced in the replace part.
+      $replaceString = self::replaceStringVariableOptions($option['replace'], $replaceVars);
+      // Log modification of replacement only if really happened.
+      if ($option['replace'] != $replaceString) {
+        Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Reformat step - replace value: ", $replaceString);
+      }
+
       switch($option['type'])
       {
         case 'replace':
-        $string = str_replace($option['search'], $option['replace'], $string);
-        break;
+          $string = str_replace($option['search'], $replaceString, $string);
+          break;
 
         case 'regex':
         if( isset( $option['count']) ){
-          $string = preg_replace($option['pattern'], $option['replace'], $string, $option['count']);
+          $string = preg_replace($option['pattern'], $replaceString, $string, $option['count']);
         } else {
-          $string = preg_replace($option['pattern'], $option['replace'], $string);
+          $string = preg_replace($option['pattern'], $replaceString, $string);
         }
         break;
       }
