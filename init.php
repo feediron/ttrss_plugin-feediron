@@ -196,7 +196,7 @@ class Feediron extends Plugin implements IHandler
     $link = trim($url);
     if($this->array_check($config, 'reformat'))
     {
-      $link = Feediron_Helper::reformat($link, $config['reformat']);
+      $link = Feediron_Helper::reformat($link, $config['reformat'], $link);
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TTRSS, "Reformated url: ".$link);
     }
     return $link;
@@ -221,7 +221,7 @@ class Feediron extends Plugin implements IHandler
       $html = $this->getArticleContent($lnk, $config);
       if( isset( $config['tags'] ) )
       {
-        $NewContent['tags'] = $this->getArticleTags($html, $config['tags']);
+        $NewContent['tags'] = $this->getArticleTags($html, $config['tags'], $lnk);
       }
       Feediron_Logger::get()->log_html(Feediron_Logger::LOG_TEST, "Original Source ".$lnk.":", $html);
       $html = $this->processArticle($html, $config, $lnk);
@@ -360,7 +360,7 @@ class Feediron extends Plugin implements IHandler
     return $html;
   }
 
-  function getArticleTags( $html, $config )
+  function getArticleTags( $html, $config, string $articleLink )
   {
     // Build settings array
     $settings = array( "charset" => $this->charset );
@@ -396,7 +396,7 @@ class Feediron extends Plugin implements IHandler
       // If set perform modify
       if($this->array_check($config, 'modify'))
       {
-        $tag = Feediron_Helper::reformat($tag, $config['modify']);
+        $tag = Feediron_Helper::reformat($tag, $config['modify'], $articleLink);
       }
       // Strip tags of html and ensure plain text
       $tags[$key] = trim( preg_replace('/\s+/', ' ', strip_tags( $tag ) ) );
@@ -605,7 +605,7 @@ class Feediron extends Plugin implements IHandler
 
     if($this->array_check($config, 'modify'))
     {
-      $html = Feediron_Helper::reformat($html, $config['modify']);
+      $html = Feediron_Helper::reformat($html, $config['modify'], $link);
     }
     // if we've got Tidy, let's clean it up for output
     if (function_exists('tidy_parse_string') && $this->array_check($config, 'tidy') && $this->charset !== false) {
