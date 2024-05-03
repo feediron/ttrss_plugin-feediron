@@ -448,22 +448,24 @@ class Feediron extends Plugin implements IHandler
       return array($link);
     }
     $links = $this->fixlinks($link, $links);
+    // reformat all found links based on reformat.
+    if (isset($config['multipage']['reformat']) && $config['multipage']['reformat'])
+    {
+      for($lnkIdx = 0; $lnkIdx < count($links); $lnkIdx++)
+      {
+        $links[$lnkIdx] = $this->reformatUrl($links[$lnkIdx], $config);
+      }
+    }
+
     if (count(array_intersect($seenlinks, $links)) != 0)
     {
       Feediron_Logger::get()->log_object(Feediron_Logger::LOG_VERBOSE, "Break infinite loop for recursive multipage, link intersection",array_intersect($seenlinks, $links));
       return array($link);
     }
 
-    foreach ($links as &$lnk)
-    {      
+    foreach ($links as $lnk)
+    {
       Feediron_Logger::get()->log(Feediron_Logger::LOG_TEST, "link:".$lnk);
-
-      // reformat next page link if enabled
-      if (isset($config['multipage']['reformat']) && $config['multipage']['reformat'])
-      {
-        $lnk = $this->reformatUrl($lnk, $config);
-      }
-
       /* If recursive mode is active fetch links from newly fetched link */
       if(isset($config['multipage']['recursive']) && $config['multipage']['recursive'] && !($counter == ($maxpages-1)) )
       {
